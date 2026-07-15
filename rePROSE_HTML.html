@@ -1,0 +1,1670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>retroscribe Workspace</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <style>
+        /* ------------------------------------------------------------------
+           1. CORE DESIGN SYSTEM & THEME TOKENS
+        ------------------------------------------------------------------ */
+        :root {
+            --bg-color: #12141c;       
+            --text-color: #e2e8f0;     
+            --muted-color: #64748b;    
+            --accent-color: #ffffff;   /* Balanced to White by default for Dark Mode */
+            --text-glow: none;
+            --font-mono: 'JetBrains Mono', monospace;
+            --font-script: 'Courier Prime', monospace;
+            --canvas-width: 680px;     
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-mono);
+            font-size: 18px;
+            line-height: 1.7;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden; 
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        .app-view {
+            display: none; 
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .app-view.active {
+            display: flex; 
+            flex-direction: column;
+        }
+
+        /* ------------------------------------------------------------------
+           2. THE LAUNCHPAD LANDING SCREEN
+        ------------------------------------------------------------------ */
+        #launchpad-view {
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            background: radial-gradient(circle at center, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0.2) 100%), var(--bg-color);
+            overflow-y: auto;
+            padding: 40px 0;
+        }
+
+        .brand-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            max-width: 480px; 
+            padding: 0 50px;
+            margin-bottom: 100px;
+        }
+
+        .brand-logo-frame {
+            width: 100%;
+            height: auto; 
+            max-height: 70px; /* Reduced slightly to shift entire landing upward */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+            transition: color 0.4s ease;
+        }
+
+        .brand-logo-frame svg {
+            width: 100%;
+            height: auto;
+            fill: currentColor;
+        }
+
+        .brand-header h1 {
+            font-size: 2.5rem; /* Compacted logo footprint */
+            font-weight: 300;
+            letter-spacing: -1px;
+            text-align: center;
+            text-shadow: var(--text-glow);
+        }
+
+        .brand-header p {
+            color: var(--muted-color);
+            font-size: 1rem;
+            text-align: center;
+            width: 100%;
+            margin-top: 2px;
+        }
+
+        /* Markdown Helper Widget */
+        .markdown-cheat-sheet {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px dashed rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            padding: 10px 15px;
+            font-size: 0.75rem;
+            color: var(--muted-color);
+            text-align: center;
+            max-width: 760px;          /* Increased from 480px to match the active card boundaries */
+            width: calc(100% - 40px);  /* Maintains the matching 20px screen-edge margins on smaller displays */
+            margin-top: 0px;
+            margin-bottom: 25px;
+            line-height: 2.5;
+        }
+
+        .markdown-cheat-sheet code {
+            font-family: var(--font-mono);
+            color: var(--text-color);
+            background: rgba(255, 255, 255, 0.04);
+            padding: 1px 4px;
+            border-radius: 3px;
+        }
+
+        .suite-options {
+            display: flex;
+            gap: 20px;
+            max-width: 800px;
+            width: 100%;
+            padding: 0 20px;
+        }
+
+        .suite-card {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 30px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .suite-card:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: var(--accent-color);
+            transform: translateY(-4px);
+        }
+
+        .suite-card h2 {
+            font-size: 1.3rem;
+            font-weight: 400;
+            margin-bottom: 10px;
+            color: var(--text-color);
+            text-shadow: var(--text-glow);
+        }
+
+        .suite-card p {
+            font-size: 0.85rem;
+            color: var(--muted-color);
+            line-height: 1.6;
+        }
+
+        .panel-section-title {
+            font-size: 0.70rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--muted-color);
+            margin-top: 25px;
+            margin-bottom: 2px;
+            opacity: 0.8;
+        }
+
+        .theme-selection-panel {
+            display: flex;
+            gap: 24px;
+            max-width: 640px;
+            width: 100%;
+            padding: 0 20px;
+            margin-top: 0px;
+        }
+
+        .theme-card {
+            flex: 1;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            background: rgba(255, 255, 255, 0.01);
+            transition: all 0.2s ease;
+        }
+        
+        .t-dark { background: #12141c; color: #e2e8f0; border-color: rgba(255,255,255,0.1); }
+        .t-amber { background: #0a0800; color: #ffb000; border-color: #ffb000; text-shadow: 0 0 2px #ffb000; }
+        .t-matrix { background: #000500; color: #33ff33; border-color: #33ff33; text-shadow: 0 0 2px #33ff33; }
+        .t-cobalt { background: #000080; color: #ffffff; border-color: rgba(255,255,255,0.2); }
+
+        .theme-card:hover { transform: scale(1.03); }
+
+        /* ------------------------------------------------------------------
+           3. FLOATING PICKER MODAL DIALOG CONTAINER
+        ------------------------------------------------------------------ */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.85); 
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal-box {
+            background-color: var(--bg-color); 
+            border: 1px solid var(--accent-color); 
+            color: var(--text-color); 
+            width: 100%;
+            max-width: 500px;
+            height: 540px; 
+            border-radius: 8px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; 
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+            transition: background-color 0.4s ease, border-color 0.4s ease;
+        }
+
+        .modal-box h3 {
+            font-size: 1.15rem;
+            font-weight: 400;
+            margin-bottom: 15px;
+            text-align: center;
+            text-shadow: var(--text-glow);
+        }
+
+        .modal-tabs-bar {
+            display: flex;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 3px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .modal-tab-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--muted-color);
+            padding: 8px;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .modal-tab-btn.active {
+            background: var(--text-color);
+            color: var(--bg-color);
+            font-weight: bold;
+        }
+
+        .modal-scroll-well {
+            flex-grow: 1;
+            overflow-y: auto; 
+            padding-right: 4px;
+            margin-bottom: 15px;
+        }
+
+        .modal-scroll-well::-webkit-scrollbar { width: 4px; }
+        .modal-scroll-well::-webkit-scrollbar-track { background: transparent; }
+        .modal-scroll-well::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+        .modal-scroll-well::-webkit-scrollbar-thumb:hover { background: var(--accent-color); }
+
+        .tab-panel-view { display: none; }
+        .tab-panel-view.active { display: block; }
+
+        .picker-action-btn {
+            display: block;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--muted-color);
+            color: var(--text-color);
+            padding: 12px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-align: center;
+            margin-bottom: 15px;
+            transition: all 0.2s ease;
+            text-shadow: var(--text-glow);
+        }
+
+        .picker-action-btn:hover { 
+            border-color: var(--text-color); 
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        #new-doc-btn { background: rgba(56, 189, 248, 0.1); border-color: var(--accent-color); color: var(--accent-color); }
+        #new-doc-btn:hover { background: var(--accent-color); color: var(--bg-color); text-shadow: none; }
+        
+        #auth-btn { background: var(--text-color); color: var(--bg-color); border-color: var(--text-color); font-weight: bold; margin: 10px 0; width: 100%; }
+        #auth-btn:hover { opacity: 0.9; }
+
+        .document-list-title { font-size: 0.70rem; text-transform: uppercase; color: var(--muted-color); letter-spacing: 1px; margin-bottom: 8px; }
+        .limit-subtext { text-transform: none; font-size: 0.70rem; letter-spacing: 0px; color: var(--muted-color); margin-left: 4px; }
+        .document-scroll-list { margin-bottom: 10px; border-top: 1px solid rgba(255, 255, 255, 0.04); padding-top: 8px; }
+        
+        .doc-list-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 9px 6px; font-size: 0.80rem; border-radius: 4px; cursor: pointer; word-break: break-all;
+            color: var(--text-color); text-shadow: var(--text-glow);
+        }
+        .doc-list-item:hover { background: rgba(255, 255, 255, 0.03); color: var(--accent-color); }
+        
+        .list-download-btn {
+            background: transparent;
+            border: none;
+            color: var(--muted-color);
+            cursor: pointer;
+            font-family: var(--font-mono);
+            font-size: 0.80rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        .list-download-btn:hover {
+            color: var(--accent-color);
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        .list-delete-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--muted-color);
+            cursor: pointer;
+            font-family: var(--font-mono);
+            font-size: 0.70rem;
+            text-transform: uppercase;
+            padding: 2px 6px;
+            margin-right: 6px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        .list-delete-btn:hover {
+            color: #ef4444; 
+            border-color: rgba(239, 68, 68, 0.4);
+            background: rgba(239, 68, 68, 0.08);
+        }
+        
+        .header-download-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--muted-color);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 4px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .header-download-btn:hover {
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+        .modal-close-btn { background: transparent; border: none; color: var(--muted-color); font-family: var(--font-mono); font-size: 0.8rem; cursor: pointer; display: block; text-align: center; width: 100%; padding-top: 5px; }
+        .modal-close-btn:hover { color: var(--text-color); }
+
+        /* ------------------------------------------------------------------
+           REACTIVE SYSTEM ALERT DESIGN
+        ------------------------------------------------------------------ */
+        .alert-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(2px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+        
+        .alert-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .alert-box {
+            background-color: var(--bg-color);
+            border: 1px solid var(--accent-color);
+            padding: 25px;
+            border-radius: 6px;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+            font-family: var(--font-mono);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(0,0,0,0.3);
+        }
+
+        .alert-box h4 {
+            color: var(--accent-color);
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            text-shadow: var(--text-glow);
+        }
+
+        .alert-box p {
+            color: var(--text-color);
+            font-size: 0.85rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            text-shadow: var(--text-glow);
+        }
+
+        .alert-btn {
+            background: transparent;
+            border: 1px solid var(--text-color);
+            color: var(--text-color);
+            padding: 8px 20px;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-shadow: var(--text-glow);
+        }
+
+        .alert-btn:hover {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        /* ------------------------------------------------------------------
+           4. WORKSPACE STYLES (IMPROVED EDGE-TO-EDGE SYSTEM)
+        ------------------------------------------------------------------ */
+        .chrome-element {
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 1;
+        }
+
+        body.distraction-free .chrome-element {
+            opacity: 0 !important;
+            pointer-events: none; 
+            transform: translateY(-8px);
+        }
+        
+        body.distraction-free footer.chrome-element {
+            transform: translateY(8px);
+        }
+
+        #workspace-view {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr; 
+            align-items: center;
+            padding: 15px 40px; /* Reduced vertical padding slightly for more workspace */
+            width: 100%;
+            font-size: 0.85rem;
+            color: var(--muted-color);
+            z-index: 10;
+        }
+
+        .doc-left { display: flex; align-items: center; gap: 15px; justify-self: start; }
+        
+        .header-center-hub {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            justify-self: center;
+        }
+
+        .header-logo-container {
+            width: 110px; 
+            height: auto;
+            max-height: 24px;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            outline: none;
+            transition: opacity 0.2s ease, color 0.4s ease;
+        }
+
+        .header-logo-container:hover {
+            opacity: 0.8;
+        }
+
+        .header-logo-container svg {
+            width: 100%;
+            height: auto;
+            fill: currentColor;
+        }
+
+        .sync-status { display: flex; align-items: center; gap: 12px; justify-self: end; }
+
+        .inline-theme-picker {
+            display: flex;
+            gap: 6px;
+        }
+
+        .theme-square {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: transform 0.15s ease, border-color 0.15s ease;
+        }
+        
+        .theme-square:hover { transform: scale(1.25); }
+        .sq-dark { background-color: #12141c; border-color: #64748b; }
+        .sq-amber { background-color: #ffb000; border-color: #ffb000; }
+        .sq-matrix { background-color: #33ff33; border-color: #33ff33; }
+        .sq-cobalt { background-color: #000080; border-color: #ffffff; }
+
+        .doc-title {
+            color: var(--text-color);
+            border: none;
+            background: transparent;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            font-weight: bold;
+            outline: none;
+            width: 200px;
+            text-shadow: var(--text-glow);
+        }
+
+        .sync-dot {
+            width: 8px; height: 8px;
+            background-color: var(--muted-color);
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+
+        .sync-dot.connected { background-color: var(--accent-color); }
+
+        /* Stretched Canvas Layout - True edge-to-edge Virtual Typewriter */
+        main {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center; 
+            overflow-y: auto; 
+            padding: 0px 20px; /* Removed vertical padding entirely to stretch vertical layout borders */
+            width: 100%;
+        }
+
+        .editor-container { 
+            width: 100%; 
+            max-width: var(--canvas-width); 
+            height: 100%; 
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor {
+            width: 100%; 
+            height: 100%;
+            border: none; 
+            outline: none; 
+            background: transparent;
+            color: var(--text-color); 
+            font-family: var(--font-mono);
+            font-size: 1.1rem; 
+            line-height: 1.8; 
+            resize: none; 
+            white-space: pre-wrap;
+            text-shadow: var(--text-glow); 
+            padding-top: 40px;     /* Leaves an elegant visual margin for top header */
+            padding-bottom: 200px; /* Massive writing well bottom room to ensure comfortable scrolling */
+        }
+
+        .editor:empty:before {
+            content: attr(placeholder);
+            color: var(--muted-color);
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        /* ------------------------------------------------------------------
+           5. RIGID SCREENPLAY FORMATTING RIGGING (Screenplay Engine)
+        ------------------------------------------------------------------ */
+        body.mode-screenplay .editor {
+            font-family: var(--font-script);
+            font-size: 1rem;
+            line-height: 1.2;
+            white-space: normal;
+        }
+
+        body.mode-screenplay .editor div {
+            margin-bottom: 14pt;
+            width: 100%;
+            min-height: 1.2em;
+        }
+
+        body.mode-screenplay div[data-element="scene-heading"] {
+            text-transform: uppercase;
+            margin-top: 24pt;
+            margin-bottom: 14pt;
+            text-align: left;
+        }
+
+        body.mode-screenplay div[data-element="action"] {
+            text-transform: none;
+            text-align: left;
+        }
+
+        body.mode-screenplay div[data-element="character"] {
+            text-transform: uppercase;
+            padding-left: 40%;
+            margin-bottom: 2pt;
+        }
+
+        body.mode-screenplay div[data-element="parenthetical"] {
+            text-transform: none;
+            padding-left: 28%;
+            max-width: 70%;
+            margin-bottom: 2pt;
+        }
+
+        body.mode-screenplay div[data-element="dialogue"] {
+            text-transform: none;
+            padding-left: 22%;
+            max-width: 62%;
+        }
+
+        body.mode-screenplay div[data-element="transition"] {
+            text-transform: uppercase;
+            text-align: right;
+            padding-right: 5%;
+        }
+
+        footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px; /* Reduced vertical padding to coordinate with header changes */
+            width: 100%;
+            font-size: 0.80rem;
+            color: var(--muted-color);
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+            background-color: var(--bg-color);
+            transition: background-color 0.4s ease, border-top-color 0.4s ease;
+            z-index: 10;
+        }
+
+        .stats-left, .stats-right { display: flex; gap: 20px; }
+        #element-status-tag { color: var(--accent-color); font-weight: bold; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+
+    <div id="launchpad-view" class="app-view active">
+        <div class="brand-header">
+            <div class="brand-logo-frame">
+                <!-- Widescreen Vector Logo Main Asset Frame -->
+                <svg width="100%" height="100%" viewBox="0 0 2102 340" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+                    <g transform="matrix(4.16667,0,0,4.16667,-875.209,-2882.7)">
+                        <g transform="matrix(1.13216,0,0,1.13216,51.044,-99.6933)">
+                            <path d="M140.445,728.643C140.445,725.605 142.908,723.142 145.945,723.142C158.55,723.142 188.445,723.142 188.445,723.142L188.445,735.142L153.885,735.142L153.885,741.142L188.445,741.142L188.445,765.642C188.445,768.68 185.982,771.142 182.945,771.142C170.34,771.142 140.445,771.142 140.445,771.142L140.445,759.142L175.005,759.142L175.005,753.142L140.445,753.142L140.445,728.643Z" style="fill-rule:nonzero;"/>
+                            <path d="M200.445,723.142L248.445,723.142L248.445,735.142L213.885,735.142L213.885,759.142L248.445,759.142L248.445,771.142L200.445,771.142L200.445,723.142Z" style="fill-rule:nonzero;"/>
+                            <path d="M260.445,723.142L296.445,723.142L296.445,735.142L273.885,735.142L273.885,771.142L260.445,771.142L260.445,723.142Z" style="fill-rule:nonzero;"/>
+                            <path d="M308.445,723.142L321.885,723.142L321.885,771.142L308.445,771.142L308.445,723.142ZM308.445,699.142L321.885,699.142L321.885,711.142L308.445,711.142L308.445,699.142Z" style="fill-rule:nonzero;"/>
+                            <path d="M333.885,699.142L347.325,699.142L347.325,723.142L376.385,723.142C377.843,723.142 379.242,723.722 380.274,724.753C381.305,725.785 381.885,727.184 381.885,728.643C381.885,741.247 381.885,771.142 381.885,771.142L354.885,771.142L347.325,763.582L347.325,771.142L333.885,771.142L333.885,699.142ZM347.325,735.142L347.325,759.142L368.445,759.142L368.445,735.142L347.325,735.142Z" style="fill-rule:nonzero;"/>
+                            <path d="M393.885,723.142L441.885,723.142L441.885,753.142L407.325,753.142L407.325,759.142L441.885,759.142L441.885,771.142L393.885,771.142L393.885,723.142ZM407.325,735.142L407.325,741.142L428.445,741.142L428.445,735.142L407.325,735.142Z" style="fill-rule:nonzero;"/>
+                            <path d="M477.885,704.643C477.885,701.605 480.348,699.142 483.385,699.142C495.99,699.142 525.885,699.142 525.885,699.142L525.885,729.142L519.885,735.142L525.885,741.142L525.885,765.642C525.885,768.68 523.422,771.142 520.385,771.142C507.78,771.142 477.885,771.142 477.885,771.142L477.885,741.142L483.885,735.142L477.885,729.142L477.885,704.643ZM491.325,711.142L491.325,729.142L512.445,729.142L512.445,711.142L491.325,711.142ZM491.325,741.142L491.325,759.142L512.445,759.142L512.445,741.142L491.325,741.142Z" style="fill-rule:nonzero;"/>
+                            <path d="M537.885,699.142L585.885,699.142L585.885,705.642C585.885,707.101 585.305,708.5 584.274,709.531C583.242,710.563 581.843,711.142 580.385,711.142C570.632,711.142 551.325,711.142 551.325,711.142L551.325,729.142L576.885,729.142L585.885,738.142L585.885,762.142L576.885,771.142L537.885,771.142L537.885,764.643C537.885,763.184 538.464,761.785 539.496,760.753C540.528,759.722 541.927,759.142 543.385,759.142C553.138,759.142 572.445,759.142 572.445,759.142L572.445,741.142L537.885,741.142L537.885,699.142Z" style="fill-rule:nonzero;"/>
+                        </g>
+                    </g>
+                </svg>
+            
+            </div>
+            <p>Distraction-free storytelling.</p>
+        </div>
+
+       <!-- Markdown Shortcut Reference Block -->
+        <div class="markdown-cheat-sheet" style="text-align: center;">
+            <strong>Markdown Editor Shortcuts:</strong><br>Bold with <code>Ctrl+B</code> • Italicize with <code>Ctrl+I</code> • Clear headers with standard line breaks.
+        </div>
+        
+        <div class="suite-options">
+            <div class="suite-card" id="open-writer-btn">
+                <h2>Narrative</h2>
+                <p>Minimalist, focused environment optimized for long-form prose and creative drafts.</p>
+            </div>
+            
+            <div class="suite-card" id="open-script-btn">
+                <h2>Screenplay</h2>
+                <p>Rigidly precise layout generator mapping scene elements automatically via Tab & Enter.</p>
+            </div>
+        </div>
+
+        <span class="panel-section-title">Select Monitor Workspace Theme</span>
+        <div class="theme-selection-panel">
+            <div class="theme-card t-dark" onclick="applyAppTheme('dark')">Classic Dark</div>
+            <div class="theme-card t-amber" onclick="applyAppTheme('amber')">Amber CRT</div>
+            <div class="theme-card t-matrix" onclick="applyAppTheme('matrix')">Matrix Green</div>
+            <div class="theme-card t-cobalt" onclick="applyAppTheme('cobalt')">Retro Cobalt</div>
+        </div>
+                <!-- Inject This Copyright Block Directly Below the Theme Selection Panel -->
+        <span style="font-size: 0.65rem; color: var(--muted-color); margin-top: 75px; opacity: 0.6; letter-spacing: 0.5px; text-transform: uppercase;">
+            &copy; 2026 Phillip Joseph Villarreal. All Rights Reserved.
+        </span>
+    </div> <!-- This closes the #launchpad-view container -->
+
+    <div id="picker-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 id="modal-context-title">Narrative Workspace</h3>
+            
+            <div class="modal-tabs-bar">
+                <button class="modal-tab-btn active" id="tab-toggle-local">Local Storage</button>
+                <button class="modal-tab-btn" id="tab-toggle-cloud">Cloud Integration</button>
+            </div>
+
+            <div class="modal-scroll-well">
+                
+                <div id="panel-local-content" class="tab-panel-view active">
+                    <button class="picker-action-btn" id="new-doc-btn">+ Create Fresh Document</button>
+                    <div class="document-list-title">Recent Local Drafts <span class="limit-subtext" id="local-limit-tag">(limit: 10)</span></div>
+                    <div class="document-scroll-list" id="local-docs-target"></div>
+                </div>
+
+                <div id="panel-cloud-content" class="tab-panel-view">
+                    <div id="cloud-ui-injection-zone"></div>
+                </div>
+
+            </div>
+            
+            <button class="modal-close-btn" id="close-picker-btn">← Back to retroscribe</button>
+        </div>
+    </div>
+
+    <div id="zen-alert-overlay" class="alert-overlay">
+        <div class="alert-box">
+            <h4 id="zen-alert-title">System Alert</h4>
+            <p id="zen-alert-text">Notification parameters.</p>
+            <button class="alert-btn" onclick="closeZenAlert()">Acknowledge</button>
+        </div>
+    </div>
+
+    <div id="workspace-view" class="app-view">
+        <header class="chrome-element">
+            <div class="doc-left">
+                <input type="text" class="doc-title" value="untitledProse.txt" spellcheck="false">
+                <span id="save-indicator">• Auto-saved</span>
+            </div>
+
+            <div class="header-center-hub">
+                <button class="header-logo-container" id="return-home-btn" title="Return to retroscribe Launchpad">
+                   <svg width="100%" height="100%" viewBox="0 0 2102 340" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+                        <g transform="matrix(4.16667,0,0,4.16667,-875.209,-2882.7)">
+                            <g transform="matrix(1.13216,0,0,1.13216,51.044,-99.6933)">
+                                <path d="M140.445,728.643C140.445,725.605 142.908,723.142 145.945,723.142C158.55,723.142 188.445,723.142 188.445,723.142L188.445,735.142L153.885,735.142L153.885,741.142L188.445,741.142L188.445,765.642C188.445,768.68 185.982,771.142 182.945,771.142C170.34,771.142 140.445,771.142 140.445,771.142L140.445,759.142L175.005,759.142L175.005,753.142L140.445,753.142L140.445,728.643Z" style="fill-rule:nonzero;"/>
+                                <path d="M200.445,723.142L248.445,723.142L248.445,735.142L213.885,735.142L213.885,759.142L248.445,759.142L248.445,771.142L200.445,771.142L200.445,723.142Z" style="fill-rule:nonzero;"/>
+                                <path d="M260.445,723.142L296.445,723.142L296.445,735.142L273.885,735.142L273.885,771.142L260.445,771.142L260.445,723.142Z" style="fill-rule:nonzero;"/>
+                                <path d="M308.445,723.142L321.885,723.142L321.885,771.142L308.445,771.142L308.445,723.142ZM308.445,699.142L321.885,699.142L321.885,711.142L308.445,711.142L308.445,699.142Z" style="fill-rule:nonzero;"/>
+                                <path d="M333.885,699.142L347.325,699.142L347.325,723.142L376.385,723.142C377.843,723.142 379.242,723.722 380.274,724.753C381.305,725.785 381.885,727.184 381.885,728.643C381.885,741.247 381.885,771.142 381.885,771.142L354.885,771.142L347.325,763.582L347.325,771.142L333.885,771.142L333.885,699.142ZM347.325,735.142L347.325,759.142L368.445,759.142L368.445,735.142L347.325,735.142Z" style="fill-rule:nonzero;"/>
+                                <path d="M393.885,723.142L441.885,723.142L441.885,753.142L407.325,753.142L407.325,759.142L441.885,759.142L441.885,771.142L393.885,771.142L393.885,723.142ZM407.325,735.142L407.325,741.142L428.445,741.142L428.445,735.142L407.325,735.142Z" style="fill-rule:nonzero;"/>
+                                <path d="M477.885,704.643C477.885,701.605 480.348,699.142 483.385,699.142C495.99,699.142 525.885,699.142 525.885,699.142L525.885,729.142L519.885,735.142L525.885,741.142L525.885,765.642C525.885,768.68 523.422,771.142 520.385,771.142C507.78,771.142 477.885,771.142 477.885,771.142L477.885,741.142L483.885,735.142L477.885,729.142L477.885,704.643ZM491.325,711.142L491.325,729.142L512.445,729.142L512.445,711.142L491.325,711.142ZM491.325,741.142L491.325,759.142L512.445,759.142L512.445,741.142L491.325,741.142Z" style="fill-rule:nonzero;"/>
+                                <path d="M537.885,699.142L585.885,699.142L585.885,705.642C585.885,707.101 585.305,708.5 584.274,709.531C583.242,710.563 581.843,711.142 580.385,711.142C570.632,711.142 551.325,711.142 551.325,711.142L551.325,729.142L576.885,729.142L585.885,738.142L585.885,762.142L576.885,771.142L537.885,771.142L537.885,764.643C537.885,763.184 538.464,761.785 539.496,760.753C540.528,759.722 541.927,759.142 543.385,759.142C553.138,759.142 572.445,759.142 572.445,759.142L572.445,741.142L537.885,741.142L537.885,699.142Z" style="fill-rule:nonzero;"/>
+                            </g>
+                        </g>
+                    </svg>
+                </button>
+                <button class="header-download-btn" id="header-download-btn" onclick="handleWorkspaceDownload(event)">↓ Download</button>
+                <div class="inline-theme-picker">
+                    <div class="theme-square sq-dark" title="Classic Dark" onclick="applyAppTheme('dark')"></div>
+                    <div class="theme-square sq-amber" title="Amber CRT" onclick="applyAppTheme('amber')"></div>
+                    <div class="theme-square sq-matrix" title="Matrix Green" onclick="applyAppTheme('matrix')"></div>
+                    <div class="theme-square sq-cobalt" title="Retro Cobalt" onclick="applyAppTheme('cobalt')"></div>
+                </div>
+            </div>
+
+            <div class="sync-status">
+                <div id="sync-dot" class="sync-dot"></div>
+                <span id="cloud-status">Cloud: Local Only</span>
+            </div>
+        </header>
+
+        <main>
+            <div class="editor-container">
+                <div class="editor" contenteditable="true" spellcheck="true" placeholder="Start typing here...">Start typing here...</div>
+            </div>
+        </main>
+
+        <footer class="chrome-element">
+            <div class="stats-left">
+                <span>Words: <strong id="word-count">0</strong></span>
+                <span>Characters: <strong id="char-count">0</strong></span>
+            </div>
+            <div class="stats-right">
+                <span id="element-status-tag" style="display: none; margin-right: 15px;">Element: Action</span>
+                <span id="read-time">0 min read</span>
+            </div>
+        </footer>
+    </div>
+    
+
+    <script>
+        const CLIENT_ID = '819668101637-b1s5v7l35g6tu0oqt9j71argnr925phc.apps.googleusercontent.com';
+        const SCOPES = 'https://www.googleapis.com/auth/drive.file';
+
+        // --- GLOBAL RUNTIME STATE ---
+        let currentSuiteMode = 'narrative'; // 'narrative' or 'screenplay'
+
+        // --- TAB SELECTION SWAPPING HANDLERS ---
+        const tabToggleLocal = document.getElementById('tab-toggle-local');
+        const tabToggleCloud = document.getElementById('tab-toggle-cloud');
+        const panelLocalContent = document.getElementById('panel-local-content');
+        const panelCloudContent = document.getElementById('panel-cloud-content');
+        const cloudUiInjectionZone = document.getElementById('cloud-ui-injection-zone');
+
+        tabToggleLocal.addEventListener('click', () => {
+            tabToggleCloud.classList.remove('active');
+            tabToggleLocal.classList.add('active');
+            panelCloudContent.classList.remove('active');
+            panelLocalContent.classList.add('active');
+            listLocalFiles(); 
+        });
+
+        tabToggleCloud.addEventListener('click', () => {
+            tabToggleLocal.classList.remove('active');
+            tabToggleCloud.classList.add('active');
+            panelLocalContent.classList.remove('active');
+            panelCloudContent.classList.add('active');
+            renderCloudTabInterface(); 
+        });
+
+        function renderCloudTabInterface() {
+            if (!accessToken) {
+                cloudUiInjectionZone.innerHTML = `
+                    <div style="text-align: center; padding: 20px 10px;">
+                        <p style="font-size:0.85rem; color:var(--muted-color); line-height:1.6; margin-bottom:15px;">
+                            Link your authorized Google account to activate real-time server replication pipelines and unlock limitless document creation tracks.
+                        </p>
+                        <button class="picker-action-btn" id="auth-btn" onclick="if(tokenClient) tokenClient.requestAccessToken({prompt:'consent'});">G Connect Google Drive</button>
+                    </div>
+                `;
+            } else {
+                cloudUiInjectionZone.innerHTML = `
+                    <button class="picker-action-btn" id="new-cloud-doc-btn" style="background: rgba(56, 189, 248, 0.1); border-color: var(--accent-color); color: var(--accent-color);">+ Create Fresh Cloud Document</button>
+                    <div class="document-list-title">Google Cloud Documents</div>
+                    <div class="document-scroll-list" id="cloud-docs-target-node">
+                        <div style="font-size:0.8rem; color:var(--muted-color); padding: 10px;">Querying remote directories...</div>
+                    </div>
+                `;
+                
+                document.getElementById('new-cloud-doc-btn').addEventListener('click', () => {
+                    initializeDocumentTrack('cloud');
+                });
+                
+                listDriveFiles();
+            }
+        }
+        
+        // View Elements
+        const launchpadView = document.getElementById('launchpad-view');
+        const workspaceView = document.getElementById('workspace-view');
+        const pickerModal = document.getElementById('picker-modal');
+        const zenAlertOverlay = document.getElementById('zen-alert-overlay');
+        const zenAlertTitle = document.getElementById('zen-alert-title');
+        const zenAlertText = document.getElementById('zen-alert-text');
+        const modalContextTitle = document.getElementById('modal-context-title');
+
+        // Target Containers
+        const localDocsTarget = document.getElementById('local-docs-target');
+
+        // Buttons
+        const openWriterBtn = document.getElementById('open-writer-btn');
+        const openScriptBtn = document.getElementById('open-script-btn');
+        const closePickerBtn = document.getElementById('close-picker-btn');
+        const newDocBtn = document.getElementById('new-doc-btn');
+        const returnHomeBtn = document.getElementById('return-home-btn');
+
+        // Core App Selectors
+        const editor = document.querySelector('.editor');
+        const docTitle = document.querySelector('.doc-title');
+        const wordCountEl = document.getElementById('word-count');
+        const charCountEl = document.getElementById('char-count');
+        const readTimeEl = document.getElementById('read-time');
+        const elementStatusTag = document.getElementById('element-status-tag');
+        
+        const syncDot = document.getElementById('sync-dot');
+        const cloudStatus = document.getElementById('cloud-status');
+        const saveIndicator = document.getElementById('save-indicator');
+
+        // State Anchors
+        let currentLocalFileId = null; 
+        let currentDriveFileId = null; 
+        let idleTimer;
+        let tokenClient;
+        let accessToken = null;
+        let cloudSaveDebounceTimer;
+
+        // --- SYSTEM ALERTS ---
+        function showZenAlert(title, text) {
+            zenAlertTitle.textContent = title;
+            zenAlertText.textContent = text;
+            zenAlertOverlay.classList.add('active');
+        }
+
+        function closeZenAlert() {
+            zenAlertOverlay.classList.remove('active');
+        }
+
+        // --- APP THEMING ENGINE ---
+        function applyAppTheme(themeName) {
+            const root = document.documentElement;
+            
+           if (themeName === 'dark') {
+                root.style.setProperty('--bg-color', '#12141c');
+                root.style.setProperty('--text-color', '#ffffff');     /* Boosted from #e2e8f0 to pure white for crisp contrast */
+                root.style.setProperty('--muted-color', '#94a3b8');    /* Brightened from #64748b to let UI labels stand out legibly */
+                root.style.setProperty('--accent-color', '#ffffff');   
+                root.style.setProperty('--text-glow', 'none');
+            } 
+            else if (themeName === 'amber') {
+                root.style.setProperty('--bg-color', '#0a0800');
+                root.style.setProperty('--text-color', '#ffb000');
+                root.style.setProperty('--muted-color', '#8a6000');
+                root.style.setProperty('--accent-color', '#ffb000');
+                root.style.setProperty('--text-glow', '0 0 5px rgba(255,176,0,0.6)');
+            } 
+            else if (themeName === 'matrix') {
+                root.style.setProperty('--bg-color', '#000500');
+                root.style.setProperty('--text-color', '#33ff33');
+                root.style.setProperty('--muted-color', '#008800');
+                root.style.setProperty('--accent-color', '#33ff33');
+                root.style.setProperty('--text-glow', '0 0 5px rgba(51,255,51,0.6)');
+            } 
+            else if (themeName === 'cobalt') {
+                root.style.setProperty('--bg-color', '#000080');
+                root.style.setProperty('--text-color', '#ffffff');
+                root.style.setProperty('--muted-color', '#8a9be0');
+                root.style.setProperty('--accent-color', '#ffffff');   /* Enforces pristine white vector logos */
+                root.style.setProperty('--text-glow', 'none');
+            }
+            localStorage.setItem('zensuite_saved_theme', themeName);
+        }
+
+        // --- ROUTING & VIEW CONTROLS ---
+        openWriterBtn.addEventListener('click', () => { 
+            currentSuiteMode = 'narrative';
+            configureWorkspaceUIPresentation();
+            listLocalFiles(); 
+            if (accessToken) { listDriveFiles(); }
+            pickerModal.style.display = 'flex'; 
+        });
+
+        openScriptBtn.addEventListener('click', () => { 
+            currentSuiteMode = 'screenplay';
+            configureWorkspaceUIPresentation();
+            listLocalFiles(); 
+            if (accessToken) { listDriveFiles(); }
+            pickerModal.style.display = 'flex'; 
+        });
+        
+        closePickerBtn.addEventListener('click', () => { pickerModal.style.display = 'none'; });
+
+        returnHomeBtn.addEventListener('click', () => {
+            workspaceView.classList.remove('active');
+            launchpadView.classList.add('active');
+            document.body.classList.remove('distraction-free');
+        });
+
+        function configureWorkspaceUIPresentation() {
+            if (currentSuiteMode === 'screenplay') {
+                document.body.classList.remove('mode-narrative');
+                document.body.classList.add('mode-screenplay');
+                modalContextTitle.textContent = "Screenplay Workspace";
+                elementStatusTag.style.display = "inline";
+            } else {
+                document.body.classList.remove('mode-screenplay');
+                document.body.classList.add('mode-narrative');
+                modalContextTitle.textContent = "Narrative Workspace";
+                elementStatusTag.style.display = "none";
+            }
+        }
+
+        // --- CENTRAL UNIFIED TRACK CONTROLLER SYSTEM ---
+        function initializeDocumentTrack(originTab) {
+            if (originTab === 'local') {
+                const currentLocalCount = getLocalDatabase().filter(item => item.suiteMode === currentSuiteMode).length;
+                if (currentLocalCount >= 10) {
+                    showZenAlert(
+                        "⚠️ Local Storage Limit Reached", 
+                        "You have filled your 10 offline slots for this workspace app. Connect to Google Drive to activate boundless document tracking layers!"
+                    );
+                    return;
+                }
+            }
+
+            if (currentSuiteMode === 'screenplay') {
+                editor.innerHTML = '<div data-element="scene-heading">INT. NEW SCENE - DAY</div>';
+                docTitle.value = "untitledScript.fountain";
+            } else {
+                editor.innerHTML = "";
+                docTitle.value = "untitledProse.txt"; 
+            }
+
+            currentLocalFileId = "local_" + Date.now();
+            
+            if (originTab === 'cloud' && accessToken) {
+                saveIndicator.textContent = "• Allocating Cloud Node...";
+                createDriveFile(); 
+            } else {
+                currentDriveFileId = null;
+                saveDocument();
+            }
+
+            updateAnalytics(editor.innerText);
+            if (currentSuiteMode === 'screenplay') updateLiveElementTag();
+            pickerModifierSync();
+            
+            pickerModal.style.display = 'none';
+            launchpadView.classList.remove('active');
+            workspaceView.classList.add('active');
+        }
+
+        newDocBtn.addEventListener('click', () => {
+            initializeDocumentTrack('local');
+        });
+
+       
+       // --- THEATER MODE DISTRACTION-FREE TYPING EFFECT ---
+       // --- THEATER MODE DISTRACTION-FREE TYPING EFFECT ---
+        function startTypingDistractionHide() {
+            // Quality of Life Guard: Abort the fade entirely if the user is actively renaming the document
+            if (document.activeElement === docTitle) {
+                return;
+            }
+
+            // Otherwise, safely proceed into pristine theater mode immersion
+            if (workspaceView.classList.contains('active')) {
+                document.body.classList.add('distraction-free');
+            }
+        }
+
+        function showUIChromeOnInteraction() {
+            document.body.classList.remove('distraction-free');
+            clearTimeout(idleTimer);
+            idleTimer = setTimeout(startTypingDistractionHide, 1000); 
+        }
+
+        // Strictly listen to physical mouse movements across the screen viewport.
+        window.addEventListener('mousemove', showUIChromeOnInteraction);
+
+        // --- ANALYTICS ENGINE ---
+        function updateAnalytics(text) {
+            const charCount = text.length;
+            charCountEl.textContent = charCount.toLocaleString();
+
+            const words = text.trim().split(/\s+/).filter(word => word.length > 0);
+            const wordCount = words.length;
+            wordCountEl.textContent = wordCount.toLocaleString();
+
+            const readingTime = Math.ceil(wordCount / 200);
+            readTimeEl.textContent = currentSuiteMode === 'screenplay' 
+                ? `${Math.ceil(wordCount / 120)} min read` 
+                : `${readingTime} min read`;
+        }
+
+        // --- SCREENPLAY KEYBOARD STRUCTURAL STATE INTERCEPTOR ---
+        editor.addEventListener('keydown', (e) => {
+            if (currentSuiteMode !== 'screenplay') {
+                const isModifier = e.metaKey || e.ctrlKey;
+                if (isModifier && e.key.toLowerCase() === 'b') { e.preventDefault(); document.execCommand('bold', false, null); saveDocument(); }
+                if (isModifier && e.key.toLowerCase() === 'i') { e.preventDefault(); document.execCommand('italic', false, null); saveDocument(); }
+                return;
+            }
+
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+
+            let currentBlock = selection.getRangeAt(0).startContainer;
+            if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
+            while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
+                currentBlock = currentBlock.parentNode;
+            }
+
+            if (currentBlock === editor || !currentBlock.hasAttribute) {
+                document.execCommand('formatBlock', false, 'div');
+                currentBlock = editor.firstElementChild;
+                if (currentBlock) currentBlock.setAttribute('data-element', 'action');
+            }
+
+            const currentType = currentBlock.getAttribute('data-element') || 'action';
+
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                let nextType = 'character';
+
+                if (currentType === 'action') nextType = 'character';
+                else if (currentType === 'character') nextType = 'parenthetical';
+                else if (currentType === 'parenthetical') nextType = 'dialogue';
+                else if (currentType === 'dialogue') nextType = 'transition';
+                else if (currentType === 'transition') nextType = 'scene-heading';
+                else if (currentType === 'scene-heading') nextType = 'action';
+
+                currentBlock.setAttribute('data-element', nextType);
+                updateLiveElementTag();
+                saveDocument();
+            }
+
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                let targetType = 'action';
+
+                if (currentType === 'scene-heading') targetType = 'action';
+                else if (currentType === 'action') targetType = 'action';
+                else if (currentType === 'character') targetType = 'dialogue';
+                else if (currentType === 'dialogue') targetType = 'character';
+                else if (currentType === 'parenthetical') targetType = 'dialogue';
+                else if (currentType === 'transition') targetType = 'scene-heading';
+
+                const nextBlock = document.createElement('div');
+                nextBlock.setAttribute('data-element', targetType);
+                nextBlock.innerHTML = '<br>';
+
+                currentBlock.parentNode.insertBefore(nextBlock, currentBlock.nextSibling);
+
+                const newRange = document.createRange();
+                newRange.setStart(nextBlock, 0);
+                newRange.collapse(true);
+                selection.removeAllRanges();
+                selection.addRange(newRange);
+
+                updateLiveElementTag();
+                saveDocument();
+            }
+        });
+
+        editor.addEventListener('keyup', () => {
+            if (currentSuiteMode === 'screenplay') updateLiveElementTag();
+        });
+        editor.addEventListener('click', () => {
+            if (currentSuiteMode === 'screenplay') updateLiveElementTag();
+        });
+
+        function updateLiveElementTag() {
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+            let currentBlock = selection.getRangeAt(0).startContainer;
+            if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
+            while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
+                currentBlock = currentBlock.parentNode;
+            }
+            if (currentBlock && currentBlock.hasAttribute && currentBlock.hasAttribute('data-element')) {
+                const tag = currentBlock.getAttribute('data-element');
+                elementStatusTag.textContent = `Element: ${tag.replace('-', ' ')}`;
+            } else {
+                elementStatusTag.textContent = "Element: Action";
+            }
+        }
+
+        // --- SCREENPLAY AUTOMATIC CHARACTER FIRST-APPEARANCE CAPS ENGINE ---
+        function highlightFirstCharacterAppearance(characterName) {
+            if (!characterName || characterName.trim() === "") return;
+            
+            const cleanName = characterName.trim().toUpperCase();
+            const blocks = Array.from(editor.children);
+            const nameRegex = new RegExp(`\\b${cleanName}\\b`, 'i');
+
+            for (let block of blocks) {
+                if (block.getAttribute('data-element') === 'action') {
+                    const text = block.innerText;
+                    if (nameRegex.test(text)) {
+                        const updatedText = text.replace(nameRegex, (match) => match.toUpperCase());
+                        if (text !== updatedText) {
+                            block.innerText = updatedText;
+                        }
+                        break; 
+                    }
+                }
+            }
+        }
+
+        // --- DIRECT HTML EXPORT ROUTER LINK ---
+        function handleWorkspaceDownload(event) {
+            if (event) event.preventDefault();
+            
+            const titleValue = docTitle && docTitle.value ? docTitle.value : "untitled";
+            const editorContent = editor && editor.innerHTML ? editor.innerHTML : "";
+            
+            exportDocumentToDisk(titleValue, editorContent, currentSuiteMode);
+        }
+
+        // --- TEXT COMPILATION & RAW STORAGE EXPORTER ENGINE ---
+        function exportDocumentToDisk(title, content, mode) {
+            try {
+                let processedText = "";
+                let fileExtension = mode === 'screenplay' ? '.fountain' : '.txt';
+                let cleanTitle = title ? title.trim() : "untitled";
+
+                if (!cleanTitle.toLowerCase().endsWith(fileExtension)) {
+                    cleanTitle = cleanTitle.replace(/\.[^/.]+$/, "") + fileExtension;
+                }
+
+                if (mode === 'screenplay' && content) {
+                    const parserNode = document.createElement('div');
+                    parserNode.innerHTML = content;
+                    const blocks = Array.from(parserNode.children);
+
+                    if (blocks && blocks.length > 0) {
+                        processedText = blocks.map(block => {
+                            if (!block) return "";
+                            const type = (typeof block.getAttribute === 'function') ? (block.getAttribute('data-element') || 'action') : 'action';
+                            const text = block.innerText ? block.innerText.trim() : "";
+                            if (!text) return "";
+                            
+                            if (type === 'scene-heading') return text.toUpperCase();
+                            if (type === 'character') return text.toUpperCase();
+                            if (type === 'transition') return text.toUpperCase();
+                            if (type === 'parenthetical') return text.startsWith('(') ? text : `(${text})`;
+                            return text;
+                        }).filter(line => line !== "").join('\n\n');
+                    }
+                    if (!processedText.trim()) {
+                        processedText = parserNode.innerText ? parserNode.innerText.trim() : content;
+                    }
+                } else {
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = content || "";
+                    processedText = tempDiv.innerText || tempDiv.textContent || String(content);
+                }
+
+                const blob = new Blob([processedText], { type: 'text/plain;charset=utf-8' });
+                const tempLink = document.createElement('a');
+                tempLink.href = URL.createObjectURL(blob);
+                tempLink.download = cleanTitle;
+                
+                document.body.appendChild(tempLink);
+                tempLink.click();
+                document.body.removeChild(tempLink);
+                
+            } catch (error) {
+                if (typeof showZenAlert === 'function') {
+                    showZenAlert("Download Engine Error", error.message);
+                } else {
+                    alert("Download Error: " + error.message);
+                }
+            }
+        }
+
+        // --- CONTROLLED DOCUMENT DELETION ROUTER (LOCAL & CLOUD) ---
+        function requestDocumentDeletion(fileId, title, storageType) {
+            const storageLabel = storageType === 'cloud' ? 'Google Cloud Drive storage directory' : 'browser sandbox partition';
+            const confirmationText = `Are you absolutely certain you want to permanently delete "${title}"? This process will wipe the file from your ${storageLabel} and cannot be undone.`;
+            
+            zenAlertTitle.textContent = "Confirm Permanent Deletion?";
+            zenAlertText.textContent = confirmationText;
+            
+            const alertBox = document.querySelector('.alert-box');
+            let actionsRow = document.getElementById('alert-actions-row');
+            
+            if (!actionsRow) {
+                actionsRow = document.createElement('div');
+                actionsRow.id = 'alert-actions-row';
+                actionsRow.style.display = 'flex';
+                actionsRow.style.justifyContent = 'center';
+                actionsRow.style.gap = '12px';
+                actionsRow.style.marginTop = '20px';
+                alertBox.appendChild(actionsRow);
+            }
+            
+            const staticBtn = alertBox.querySelector('.alert-btn:not([id])');
+            if (staticBtn) staticBtn.style.display = 'none';
+            
+            actionsRow.innerHTML = `
+                <button class="alert-btn" id="confirm-delete-execute" style="border-color: #ef4444; color: #ef4444;">Permanently Delete</button>
+                <button class="alert-btn" id="cancel-delete-abort">Cancel</button>
+            `;
+            
+            zenAlertOverlay.classList.add('active');
+
+            document.getElementById('confirm-delete-execute').onclick = () => {
+                if (storageType === 'local') {
+                    executeLocalWipe(fileId);
+                } else if (storageType === 'cloud') {
+                    executeCloudWipe(fileId);
+                }
+                restoreStandardAlertOverlay();
+            };
+
+            document.getElementById('cancel-delete-abort').onclick = () => {
+                restoreStandardAlertOverlay();
+            };
+        }
+
+        function restoreStandardAlertOverlay() {
+            zenAlertOverlay.classList.remove('active');
+            const actionsRow = document.getElementById('alert-actions-row');
+            if (actionsRow) actionsRow.remove();
+            
+            const alertBox = document.querySelector('.alert-box');
+            const staticBtn = alertBox.querySelector('.alert-btn');
+            if (staticBtn) staticBtn.style.display = 'inline-block';
+        }
+
+        function executeLocalWipe(fileId) {
+            let db = getLocalDatabase();
+            db = db.filter(item => item.id !== fileId);
+            localStorage.setItem('zensuite_local_db', JSON.stringify(db));
+            
+            if (currentLocalFileId === fileId) {
+                editor.innerHTML = currentSuiteMode === 'screenplay' ? '<div data-element="scene-heading">INT. NEW SCENE - DAY</div>' : "";
+                docTitle.value = currentSuiteMode === 'screenplay' ? "untitledScript.fountain" : "untitledProse.txt";
+                currentLocalFileId = "local_" + Date.now();
+                currentDriveFileId = null;
+                pickerModifierSync();
+            }
+            listLocalFiles();
+        }
+
+        function executeCloudWipe(fileId) {
+            if (!accessToken) return;
+            saveIndicator.textContent = "• Transmitting Wipe Command...";
+            
+            fetch(`https://www.googleapis.com/drive/v3/files/${fileId}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            })
+            .then(() => {
+                saveIndicator.textContent = "• Cloud Archive Updated";
+                if (currentDriveFileId === fileId) {
+                    currentDriveFileId = null;
+                    pickerModifierSync();
+                }
+                listDriveFiles();
+            })
+            .catch(() => showZenAlert("Cloud Error", "Failed to clear item from Google Drive directories."));
+        }
+
+        // --- LOCAL METADATA STORAGE SYSTEM ---
+        function getLocalDatabase() {
+            const raw = localStorage.getItem('zensuite_local_db');
+            return raw ? JSON.parse(raw) : [];
+        }
+
+        function saveToLocalDatabase(fileObj) {
+            let db = getLocalDatabase();
+            const index = db.findIndex(item => item.id === fileObj.id);
+            if (index !== -1) {
+                db[index] = fileObj; 
+            } else {
+                if (db.filter(i => i.suiteMode === currentSuiteMode).length >= 10) return;
+                db.unshift(fileObj); 
+            }
+            localStorage.setItem('zensuite_local_db', JSON.stringify(db));
+        }
+
+        function listLocalFiles() {
+            // Strictly pull local drafts that match the current workspace mode and DO NOT have a cloud Drive ID
+            const db = getLocalDatabase().filter(item => item.suiteMode === currentSuiteMode && !item.driveId);
+            localDocsTarget.innerHTML = '';
+
+            if (db.length > 0) {
+                db.forEach(file => {
+                    const item = document.createElement('div');
+                    item.className = 'doc-list-item';
+                    item.innerHTML = `
+                        <span class="load-trigger" style="flex-grow:1; display:flex; align-items:center; cursor:pointer;">
+                            ${currentSuiteMode === 'screenplay' ? '🎬' : '📄'} ${file.title}
+                        </span>
+                        <div style="display:flex; align-items:center; gap:2px;">
+                            <button class="list-delete-btn" title="Delete Draft">Delete</button>
+                            <button class="list-download-btn" title="Download Local File">↓</button>
+                        </div>
+                    `;
+                    
+                    item.querySelector('.load-trigger').addEventListener('click', () => {
+                        loadLocalFile(file.id);
+                    });
+                    
+                    item.querySelector('.list-download-btn').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        exportDocumentToDisk(file.title, file.content, file.suiteMode);
+                    });
+
+                    item.querySelector('.list-delete-btn').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        requestDocumentDeletion(file.id, file.title, 'local');
+                    });
+                    
+                    localDocsTarget.appendChild(item);
+                });
+            } else {
+                localDocsTarget.innerHTML = `
+                    <div style="font-size:0.8rem; color:var(--muted-color); padding: 10px;">
+                        No tracking assets. Click 'Create Fresh Document' above to begin!
+                    </div>`;
+            }
+        }
+
+        function loadLocalFile(fileId) {
+            const db = getLocalDatabase();
+            const file = db.find(item => item.id === fileId);
+            if (!file) return;
+
+            currentSuiteMode = file.suiteMode || 'narrative';
+            configureWorkspaceUIPresentation();
+
+            editor.innerHTML = file.content;
+            docTitle.value = file.title;
+            currentLocalFileId = file.id;
+            currentDriveFileId = file.driveId || null;
+
+            localStorage.setItem(`zensuite_current_active_${currentSuiteMode}_id`, fileId);
+            updateAnalytics(editor.innerText);
+            pickerModifierSync();
+            if (currentSuiteMode === 'screenplay') updateLiveElementTag();
+            
+            pickerModal.style.display = 'none';
+            launchpadView.classList.remove('active');
+            workspaceView.classList.add('active');
+        }
+
+        function pickerModifierSync() {
+            if (currentDriveFileId && accessToken) {
+                syncDot.classList.add('connected');
+                cloudStatus.textContent = "Cloud: Connected";
+            } else {
+                syncDot.classList.remove('connected');
+                cloudStatus.textContent = accessToken ? "Cloud: Ready" : "Cloud: Local Only";
+            }
+        }
+
+        // --- GOOGLE OAUTH & DRIVE CONNECTIONS ---
+        window.onload = function() {
+            const cachedTheme = localStorage.getItem('zensuite_saved_theme');
+            if (cachedTheme) { applyAppTheme(cachedTheme); }
+
+            if (typeof google !== 'undefined') {
+                tokenClient = google.accounts.oauth2.initTokenClient({
+                    client_id: CLIENT_ID,
+                    scope: SCOPES,
+                    callback: (tokenResponse) => {
+                        if (tokenResponse.error !== undefined) return;
+                        accessToken = tokenResponse.access_token;
+                        
+                        pickerModifierSync();
+                        
+                        const tabToggleCloud = document.getElementById('tab-toggle-cloud');
+                        if (tabToggleCloud && tabToggleCloud.classList.contains('active')) {
+                            renderCloudTabInterface();
+                        }
+                    },
+                });
+            }
+        };
+
+        function listDriveFiles() {
+            if (!accessToken) return;
+            
+            const targetNode = document.getElementById('cloud-docs-target-node');
+            if (!targetNode) return;
+            
+            const query = encodeURIComponent(`appProperties has { key='suiteMode' and value='${currentSuiteMode}' } and trashed = false`);
+            
+            fetch(`https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id, name, modifiedTime)&orderBy=modifiedTime desc`, {
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.files && data.files.length > 0) {
+                    targetNode.innerHTML = ''; 
+                    data.files.forEach(file => {
+                        const item = document.createElement('div');
+                        item.className = 'doc-list-item';
+                        item.innerHTML = `
+                            <span class="load-trigger" style="flex-grow:1; display:flex; align-items:center; cursor:pointer;">☁️ ${file.name}</span>
+                            <div style="display:flex; align-items:center; gap:2px;">
+                                <button class="list-delete-btn" title="Delete Remote File">Delete</button>
+                                <button class="list-download-btn" title="Download Document">↓</button>
+                            </div>
+                        `;
+                        
+                        item.querySelector('.load-trigger').addEventListener('click', () => { 
+                            fetchDocumentFromDrive(file.id, file.name); 
+                        });
+
+                        item.querySelector('.list-download-btn').addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            fetch(`https://www.googleapis.com/drive/v3/files/${file.id}?alt=media`, {
+                                headers: { 'Authorization': `Bearer ${accessToken}` }
+                            })
+                            .then(res => res.text())
+                            .then(content => {
+                                exportDocumentToDisk(file.name, content, currentSuiteMode);
+                            });
+                        });
+
+                        item.querySelector('.list-delete-btn').addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            requestDocumentDeletion(file.id, file.name, 'cloud');
+                        });
+
+                        targetNode.appendChild(item);
+                    });
+                } else {
+                    targetNode.innerHTML = '<div style="font-size:0.8rem; color:var(--muted-color); padding: 10px;">No cloud files discovered.</div>';
+                }
+            })
+            .catch(() => { targetNode.innerHTML = '<div style="font-size:0.8rem; color:var(--muted-color); padding:10px;">Directory scanning malfunction.</div>'; });
+        }
+
+        function fetchDocumentFromDrive(fileId, fileName) {
+            if (!accessToken) return;
+            saveIndicator.textContent = "• Synchronizing Pipeline...";
+
+            fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            })
+            .then(res => res.text())
+            .then(content => {
+                editor.innerHTML = content;
+                docTitle.value = fileName;
+                currentDriveFileId = fileId;
+                
+                const db = getLocalDatabase();
+                const existing = db.find(i => i.driveId === fileId);
+                currentLocalFileId = existing ? existing.id : "local_" + Date.now();
+
+                saveDocument(); 
+                pickerModifierSync();
+
+                saveIndicator.textContent = "• Fully Synced Cloud & Local";
+                pickerModal.style.display = 'none';
+                launchpadView.classList.remove('active');
+                workspaceView.classList.add('active');
+            })
+            .catch(() => showZenAlert("Replication Warning", "Remote drive transmission dropped."));
+        }
+
+        function triggerCloudSave() {
+            if (!accessToken) return;
+            saveIndicator.textContent = "• Replicating Cloud Core...";
+            clearTimeout(cloudSaveDebounceTimer);
+            cloudSaveDebounceTimer = setTimeout(() => {
+                if (currentDriveFileId) { updateDriveFile(); } else { createDriveFile(); }
+            }, 2000);
+        }
+
+        function createDriveFile() {
+            const metadata = { 
+                name: docTitle.value || (currentSuiteMode === 'screenplay' ? 'untitledScript.fountain' : 'untitledProse.txt'), 
+                mimeType: 'text/plain',
+                appProperties: { suiteMode: currentSuiteMode }
+            };
+            
+            const fileContent = editor.innerHTML; 
+            const boundary = 'foo_bar_baz';
+            const delimiter = `\r\n--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n`;
+            const close_delim = `\r\n--${boundary}--`;
+            const multipartRequestBody = delimiter + JSON.stringify(metadata) + `\r\n--${boundary}\r\nContent-Type: text/plain\r\n\r\n` + fileContent + close_delim;
+
+            fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': `multipart/related; boundary=${boundary}` },
+                body: multipartRequestBody
+            })
+            .then(res => res.json())
+            .then(file => {
+                currentDriveFileId = file.id;
+                saveDocument(); 
+                listDriveFiles(); 
+            })
+            .catch(() => saveIndicator.textContent = "• Replication dropped.");
+        }
+
+       function updateDriveFile() {
+            if (!accessToken || !currentDriveFileId) return;
+
+            fetch(`https://www.googleapis.com/drive/v3/files/${currentDriveFileId}`, {
+                method: 'PATCH',
+                headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: docTitle.value })
+            })
+            .then(() => {
+                return fetch(`https://www.googleapis.com/upload/drive/v3/files/${currentDriveFileId}?uploadType=media`, {
+                    method: 'PATCH',
+                    headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'text/plain' },
+                    body: editor.innerHTML
+                });
+            })
+            .then(() => { 
+                // Only change the text if the user isn't currently deep in distraction-free typing
+                if (!document.body.classList.contains('distraction-free')) {
+                    saveIndicator.textContent = "• Fully Synced Cloud & Local"; 
+                }
+            })
+            .catch(() => { 
+                if (!document.body.classList.contains('distraction-free')) {
+                    saveIndicator.textContent = "• Replication dropped."; 
+                }
+            });
+        }
+
+        // --- CORE AUTO-SAVE PIPELINES ---
+        function saveDocument() {
+            if (!workspaceView.classList.contains('active')) return; 
+            
+            const fileRecord = {
+                id: currentLocalFileId,
+                title: docTitle.value || (currentSuiteMode === 'screenplay' ? 'untitledScript.fountain' : 'untitledProse.txt'),
+                content: editor.innerHTML,
+                suiteMode: currentSuiteMode,
+                driveId: currentDriveFileId
+            };
+
+            saveToLocalDatabase(fileRecord);
+            localStorage.setItem(`zensuite_current_active_${currentSuiteMode}_id`, currentLocalFileId);
+            
+            triggerCloudSave(); 
+        }
+
+        editor.addEventListener('input', () => {
+            updateAnalytics(editor.innerText);
+            
+            // Forces the 1-second hidden countdown to engage smoothly on cloud documents during input variations
+            clearTimeout(idleTimer);
+            idleTimer = setTimeout(startTypingDistractionHide, 1000);
+            
+            if (currentSuiteMode === 'screenplay') {
+                const selection = window.getSelection();
+                if (selection.rangeCount > 0) {
+                    let currentBlock = selection.getRangeAt(0).startContainer;
+                    if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
+                    while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
+                        currentBlock = currentBlock.parentNode;
+                    }
+                    
+                    if (currentBlock && currentBlock.getAttribute('data-element') === 'character') {
+                        highlightFirstCharacterAppearance(currentBlock.innerText);
+                    }
+                }
+            }
+            
+            saveDocument();
+        });
+    </script>
+</body>
+</html>
