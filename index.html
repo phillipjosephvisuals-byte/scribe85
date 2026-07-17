@@ -605,6 +605,19 @@
             opacity: 0.6;
             pointer-events: none;
         }
+        /* ------------------------------------------------------------------
+           4.5 NARRATIVE PARAGRAPH SPACING ENGINE
+        ------------------------------------------------------------------ */
+        /* Targets text blocks inside the editor ONLY when the body has the mode-narrative class */
+        body.mode-narrative .editor div, 
+        body.mode-narrative .editor p {
+            margin-bottom: 1.5em; /* Injects exactly one line's worth of empty vertical space between elements */
+        }
+
+        /* Standard safety catch for browsers that inject raw text or break-tags natively on first input */
+        body.mode-narrative .editor br {
+            margin-bottom: 0.75em;
+        }
 
         /* ------------------------------------------------------------------
            5. RIGID SCREENPLAY FORMATTING RIGGING (Screenplay Engine)
@@ -1023,7 +1036,8 @@
                 editor.innerHTML = '<div data-element="scene-heading">INT. NEW SCENE - DAY</div>';
                 docTitle.value = "untitledScript.fountain";
             } else {
-                editor.innerHTML = "";
+                // Wrap the initial line in a structural block so the CSS margin rule applies immediately
+                editor.innerHTML = '<div>Start typing here...</div>';
                 docTitle.value = "untitledProse.txt"; 
             }
 
