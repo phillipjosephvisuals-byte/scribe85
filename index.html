@@ -1021,8 +1021,9 @@
             }
         }
 
-        // --- CENTRAL UNIFIED TRACK CONTROLLER SYSTEM ---
+       // --- CENTRAL UNIFIED TRACK CONTROLLER SYSTEM ---
         function initializeDocumentTrack(originTab) {
+            // 1. Keep your existing local offline storage limits check
             if (originTab === 'local') {
                 const currentLocalCount = getLocalDatabase().filter(item => item.suiteMode === currentSuiteMode).length;
                 if (currentLocalCount >= 10) {
@@ -1034,17 +1035,21 @@
                 }
             }
 
+            // 2. Keep your existing empty canvas text initializations (with our paragraph spacing fix)
             if (currentSuiteMode === 'screenplay') {
                 editor.innerHTML = '<div data-element="scene-heading">INT. NEW SCENE - DAY</div>';
                 docTitle.value = "untitledScript.fountain";
             } else {
-                // Wrap the initial line in a structural block so the CSS margin rule applies immediately
                 editor.innerHTML = '<div>Start typing here...</div>';
                 docTitle.value = "untitledProse.txt"; 
             }
 
             currentLocalFileId = "local_" + Date.now();
             
+            // NEW: Explicitly lock the active workspace mode selection into persistent session cache
+            localStorage.setItem('zensuite_active_suite_mode', currentSuiteMode);
+            
+            // 3. Keep your cloud allocation network links
             if (originTab === 'cloud' && accessToken) {
                 saveIndicator.textContent = "• Allocating Cloud Node...";
                 createDriveFile(); 
@@ -1053,6 +1058,7 @@
                 saveDocument();
             }
 
+            // 4. Keep your existing data analytics updates and display panel view routers
             updateAnalytics(editor.innerText);
             if (currentSuiteMode === 'screenplay') updateLiveElementTag();
             pickerModifierSync();
@@ -1451,7 +1457,10 @@
             currentLocalFileId = file.id;
             currentDriveFileId = file.driveId || null;
 
+            // NEW: Ensure loading an existing asset locks the correct suite mode session in place
+            localStorage.setItem('zensuite_active_suite_mode', currentSuiteMode);
             localStorage.setItem(`zensuite_current_active_${currentSuiteMode}_id`, fileId);
+            
             updateAnalytics(editor.innerText);
             pickerModifierSync();
             if (currentSuiteMode === 'screenplay') updateLiveElementTag();
@@ -1476,11 +1485,16 @@
             const cachedTheme = localStorage.getItem('zensuite_saved_theme');
             if (cachedTheme) { applyAppTheme(cachedTheme); }
 
-            // NEW: Automatically restore the last active document on screen refresh!
-            const activeMode = currentSuiteMode; // 'narrative' or 'screenplay'
-            const savedActiveId = localStorage.getItem(`zensuite_current_active_${activeMode}_id`);
+            // 1. Restore the last active workspace mode session (narrative or screenplay)
+            const savedSuiteMode = localStorage.getItem('zensuite_active_suite_mode');
+            if (savedSuiteMode) {
+                currentSuiteMode = savedSuiteMode;
+                configureWorkspaceUIPresentation();
+            }
+
+            // 2. Hydrate the exact document track matching that active workspace mode session
+            const savedActiveId = localStorage.getItem(`zensuite_current_active_${currentSuiteMode}_id`);
             if (savedActiveId) {
-                // If a document was active before refreshing, reload it seamlessly
                 loadLocalFile(savedActiveId);
             }
 
