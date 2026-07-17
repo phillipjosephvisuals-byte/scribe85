@@ -999,9 +999,12 @@
         
         closePickerBtn.addEventListener('click', () => { pickerModal.style.display = 'none'; });
 // --- SECURING THE WORKSPACE EXIT ROUTER ---
-        returnHomeBtn.addEventListener('click', (e) => {
+       returnHomeBtn.addEventListener('click', (e) => {
             // e.currentTarget guarantees the event registers on the button, not its internal SVG paths
             e.preventDefault();
+            // NEW: Explicitly clear the view state so reloads keep you on the launchpad homepage
+            localStorage.setItem('zensuite_view_state', 'launchpad');
+            
             workspaceView.classList.remove('active');
             launchpadView.classList.add('active');
             document.body.classList.remove('distraction-free');
@@ -1045,9 +1048,13 @@
             }
 
             currentLocalFileId = "local_" + Date.now();
-            
-            // NEW: Explicitly lock the active workspace mode selection into persistent session cache
+
             localStorage.setItem('zensuite_active_suite_mode', currentSuiteMode);
+            // NEW: Record that the user has successfully entered the workspace area
+            localStorage.setItem('zensuite_view_state', 'workspace');
+            
+            // ... your existing save operations and updateAnalytics loops ...
+        }
             
             // 3. Keep your cloud allocation network links
             if (originTab === 'cloud' && accessToken) {
@@ -1460,6 +1467,8 @@
             // NEW: Ensure loading an existing asset locks the correct suite mode session in place
             localStorage.setItem('zensuite_active_suite_mode', currentSuiteMode);
             localStorage.setItem(`zensuite_current_active_${currentSuiteMode}_id`, fileId);
+            // NEW: Record that the user has successfully entered the workspace area
+            localStorage.setItem('zensuite_view_state', 'workspace');
             
             updateAnalytics(editor.innerText);
             pickerModifierSync();
@@ -1492,10 +1501,18 @@
                 configureWorkspaceUIPresentation();
             }
 
-            // 2. Hydrate the exact document track matching that active workspace mode session
-            const savedActiveId = localStorage.getItem(`zensuite_current_active_${currentSuiteMode}_id`);
-            if (savedActiveId) {
-                loadLocalFile(savedActiveId);
+            // 2. NEW: Only restore the document if the user was actively working inside the workspace
+            const savedViewState = localStorage.getItem('zensuite_view_state');
+            if (savedViewState === 'workspace') {
+                const savedActiveId = localStorage.getItem(`zensuite_current_active_${currentSuiteMode}_id`);
+                if (savedActiveId) {
+                    loadLocalFile(savedActiveId);
+                }
+            } else {
+                // Otherwise, guarantee they stay perfectly anchored to the pristine Launchpad landing view
+                workspaceView.classList.remove('active');
+                launchpadView.classList.add('active');
+                document.body.classList.remove('distraction-free');
             }
 
             if (typeof google !== 'undefined') {
