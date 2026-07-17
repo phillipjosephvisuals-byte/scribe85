@@ -998,8 +998,10 @@
         });
         
         closePickerBtn.addEventListener('click', () => { pickerModal.style.display = 'none'; });
-
-        returnHomeBtn.addEventListener('click', () => {
+// --- SECURING THE WORKSPACE EXIT ROUTER ---
+        returnHomeBtn.addEventListener('click', (e) => {
+            // e.currentTarget guarantees the event registers on the button, not its internal SVG paths
+            e.preventDefault();
             workspaceView.classList.remove('active');
             launchpadView.classList.add('active');
             document.body.classList.remove('distraction-free');
@@ -1082,6 +1084,7 @@
         function showUIChromeOnInteraction() {
             document.body.classList.remove('distraction-free');
             clearTimeout(idleTimer);
+            // Keeps chrome visible while user clicks header navigation or renames titles
             idleTimer = setTimeout(startTypingDistractionHide, 1000); 
         }
 
@@ -1468,10 +1471,18 @@
             }
         }
 
-        // --- GOOGLE OAUTH & DRIVE CONNECTIONS ---
+       // --- GOOGLE OAUTH & STATE HYDRATION ENGINE ---
         window.onload = function() {
             const cachedTheme = localStorage.getItem('zensuite_saved_theme');
             if (cachedTheme) { applyAppTheme(cachedTheme); }
+
+            // NEW: Automatically restore the last active document on screen refresh!
+            const activeMode = currentSuiteMode; // 'narrative' or 'screenplay'
+            const savedActiveId = localStorage.getItem(`zensuite_current_active_${activeMode}_id`);
+            if (savedActiveId) {
+                // If a document was active before refreshing, reload it seamlessly
+                loadLocalFile(savedActiveId);
+            }
 
             if (typeof google !== 'undefined') {
                 tokenClient = google.accounts.oauth2.initTokenClient({
