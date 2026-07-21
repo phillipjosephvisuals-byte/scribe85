@@ -71,13 +71,13 @@
             max-width: 480px; 
             padding: 0 50px;
             margin-bottom: 50px;
-            Margin-top: 100px;
+            margin-top: 100px;
         }
  
         .brand-logo-frame {
             width: 100%;
             height: auto; 
-            max-height: 50px; /* Reduced slightly to shift entire landing upward */
+            max-height: 50px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -94,7 +94,7 @@
         }
 
         .brand-header h1 {
-            font-size: 2.5rem; /* Compacted logo footprint */
+            font-size: 2.5rem;
             font-weight: 300;
             letter-spacing: -1px;
             text-align: center;
@@ -118,8 +118,8 @@
             font-size: 0.75rem;
             color: var(--muted-color);
             text-align: center;
-            max-width: 760px;          /* Increased from 480px to match the active card boundaries */
-            width: calc(100% - 40px);  /* Maintains the matching 20px screen-edge margins on smaller displays */
+            max-width: 760px;          
+            width: calc(100% - 40px);  
             margin-top: 0px;
             margin-bottom: 25px;
             line-height: 2.5;
@@ -480,7 +480,7 @@
             display: grid;
             grid-template-columns: 1fr auto 1fr; 
             align-items: center;
-            padding: 15px 40px; /* Reduced vertical padding slightly for more workspace */
+            padding: 15px 40px;
             width: 100%;
             font-size: 0.85rem;
             color: var(--muted-color);
@@ -570,7 +570,7 @@
             display: flex;
             justify-content: center; 
             overflow-y: auto; 
-            padding: 0px 20px; /* Removed vertical padding entirely to stretch vertical layout borders */
+            padding: 0px 20px;
             width: 100%;
         }
 
@@ -595,8 +595,8 @@
             resize: none; 
             white-space: pre-wrap;
             text-shadow: var(--text-glow); 
-            padding-top: 40px;     /* Leaves an elegant visual margin for top header */
-            padding-bottom: 200px; /* Massive writing well bottom room to ensure comfortable scrolling */
+            padding-top: 40px;
+            padding-bottom: 200px;
         }
 
         .editor:empty:before {
@@ -605,16 +605,16 @@
             opacity: 0.6;
             pointer-events: none;
         }
+
         /* ------------------------------------------------------------------
            4.5 NARRATIVE PARAGRAPH SPACING ENGINE
         ------------------------------------------------------------------ */
-        /* Targets text blocks inside the editor ONLY when the body has the mode-narrative class */
         body.mode-narrative .editor div, 
         body.mode-narrative .editor p {
-            margin-bottom: 1.5em; /* Injects exactly one line's worth of empty vertical space between elements */
+            margin-bottom: 1.5em;
+            transition: margin-bottom 0.2s ease;
         }
 
-        /* Standard safety catch for browsers that inject raw text or break-tags natively on first input */
         body.mode-narrative .editor br {
             margin-bottom: 0.75em;
         }
@@ -676,7 +676,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 40px; /* Reduced vertical padding to coordinate with header changes */
+            padding: 15px 40px;
             width: 100%;
             font-size: 0.80rem;
             color: var(--muted-color);
@@ -710,14 +710,13 @@
                         </g>
                     </g>
                 </svg>
-            
             </div>
             <p>Distraction-free storytelling.</p>
         </div>
 
-       <!-- Markdown Shortcut Reference Block -->
+        <!-- Markdown Shortcut Reference Block -->
         <div class="markdown-cheat-sheet" style="text-align: center;">
-            <strong>Markdown Editor Shortcuts:</strong><br>Bold with <code>Ctrl+B</code> • Italicize with <code>Ctrl+I</code> • Clear headers with standard line breaks.
+            <strong>Markdown Editor Shortcuts:</strong><br>Bold with <code>Ctrl+B</code> • Italicize with <code>Ctrl+I</code> • Indent lines with <code>Tab</code>.
         </div>
         
         <div class="suite-options">
@@ -739,11 +738,11 @@
             <div class="theme-card t-matrix" onclick="applyAppTheme('matrix')">Matrix Green</div>
             <div class="theme-card t-cobalt" onclick="applyAppTheme('cobalt')">Retro Cobalt</div>
         </div>
-                <!-- Inject This Copyright Block Directly Below the Theme Selection Panel -->
+
         <span style="font-size: 0.65rem; color: var(--muted-color); margin-top: 75px; opacity: 0.6; letter-spacing: 0.5px; text-transform: uppercase;">
             &copy; 2026 Phillip Joseph Villarreal. All Rights Reserved.
         </span>
-    </div> <!-- This closes the #launchpad-view container -->
+    </div>
 
     <div id="picker-modal" class="modal-overlay">
         <div class="modal-box">
@@ -755,7 +754,6 @@
             </div>
 
             <div class="modal-scroll-well">
-                
                 <div id="panel-local-content" class="tab-panel-view active">
                     <button class="picker-action-btn" id="new-doc-btn">+ Create Fresh Document</button>
                     <div class="document-list-title">Recent Local Drafts <span class="limit-subtext" id="local-limit-tag">(limit: 10)</span></div>
@@ -765,7 +763,6 @@
                 <div id="panel-cloud-content" class="tab-panel-view">
                     <div id="cloud-ui-injection-zone"></div>
                 </div>
-
             </div>
             
             <button class="modal-close-btn" id="close-picker-btn">← Back to retroscribe</button>
@@ -783,7 +780,7 @@
     <div id="workspace-view" class="app-view">
         <header class="chrome-element">
             <div class="doc-left">
-                <input type="text" class="doc-title" value="untitledProse.txt" spellcheck="false">
+                <input type="text" class="doc-title" value="untitledProse.rtf" spellcheck="false">
                 <span id="save-indicator">• Auto-saved</span>
             </div>
 
@@ -836,7 +833,6 @@
             </div>
         </footer>
     </div>
-    
 
     <script>
         const CLIENT_ID = '819668101637-b1s5v7l35g6tu0oqt9j71argnr925phc.apps.googleusercontent.com';
@@ -949,10 +945,10 @@
         function applyAppTheme(themeName) {
             const root = document.documentElement;
             
-           if (themeName === 'dark') {
+            if (themeName === 'dark') {
                 root.style.setProperty('--bg-color', '#12141c');
-                root.style.setProperty('--text-color', '#ffffff');     /* Boosted from #e2e8f0 to pure white for crisp contrast */
-                root.style.setProperty('--muted-color', '#94a3b8');    /* Brightened from #64748b to let UI labels stand out legibly */
+                root.style.setProperty('--text-color', '#ffffff');     
+                root.style.setProperty('--muted-color', '#94a3b8');    
                 root.style.setProperty('--accent-color', '#ffffff');   
                 root.style.setProperty('--text-glow', 'none');
             } 
@@ -974,7 +970,7 @@
                 root.style.setProperty('--bg-color', '#000080');
                 root.style.setProperty('--text-color', '#ffffff');
                 root.style.setProperty('--muted-color', '#8a9be0');
-                root.style.setProperty('--accent-color', '#ffffff');   /* Enforces pristine white vector logos */
+                root.style.setProperty('--accent-color', '#ffffff');   
                 root.style.setProperty('--text-glow', 'none');
             }
             localStorage.setItem('zensuite_saved_theme', themeName);
@@ -998,11 +994,9 @@
         });
         
         closePickerBtn.addEventListener('click', () => { pickerModal.style.display = 'none'; });
-// --- SECURING THE WORKSPACE EXIT ROUTER ---
-       returnHomeBtn.addEventListener('click', (e) => {
-            // e.currentTarget guarantees the event registers on the button, not its internal SVG paths
+
+        returnHomeBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            // NEW: Explicitly clear the view state so reloads keep you on the launchpad homepage
             localStorage.setItem('zensuite_view_state', 'launchpad');
             
             workspaceView.classList.remove('active');
@@ -1024,9 +1018,8 @@
             }
         }
 
-       // --- CENTRAL UNIFIED TRACK CONTROLLER SYSTEM ---
+        // --- CENTRAL UNIFIED TRACK CONTROLLER SYSTEM ---
         function initializeDocumentTrack(originTab) {
-            // 1. Keep your existing local offline storage limits check
             if (originTab === 'local') {
                 const currentLocalCount = getLocalDatabase().filter(item => item.suiteMode === currentSuiteMode).length;
                 if (currentLocalCount >= 10) {
@@ -1038,25 +1031,19 @@
                 }
             }
 
-            // 2. Keep your existing empty canvas text initializations (with our paragraph spacing fix)
             if (currentSuiteMode === 'screenplay') {
                 editor.innerHTML = '<div data-element="scene-heading">INT. NEW SCENE - DAY</div>';
                 docTitle.value = "untitledScript.fountain";
             } else {
                 editor.innerHTML = '<div>Start typing here...</div>';
-                docTitle.value = "untitledProse.txt"; 
+                docTitle.value = "untitledProse.rtf"; 
             }
 
             currentLocalFileId = "local_" + Date.now();
 
             localStorage.setItem('zensuite_active_suite_mode', currentSuiteMode);
-            // NEW: Record that the user has successfully entered the workspace area
             localStorage.setItem('zensuite_view_state', 'workspace');
-            
-            // ... your existing save operations and updateAnalytics loops ...
-        }
-            
-            // 3. Keep your cloud allocation network links
+
             if (originTab === 'cloud' && accessToken) {
                 saveIndicator.textContent = "• Allocating Cloud Node...";
                 createDriveFile(); 
@@ -1065,7 +1052,6 @@
                 saveDocument();
             }
 
-            // 4. Keep your existing data analytics updates and display panel view routers
             updateAnalytics(editor.innerText);
             if (currentSuiteMode === 'screenplay') updateLiveElementTag();
             pickerModifierSync();
@@ -1079,16 +1065,10 @@
             initializeDocumentTrack('local');
         });
 
-       
-       // --- THEATER MODE DISTRACTION-FREE TYPING EFFECT ---
-       // --- THEATER MODE DISTRACTION-FREE TYPING EFFECT ---
+        // --- THEATER MODE DISTRACTION-FREE TYPING EFFECT ---
         function startTypingDistractionHide() {
-            // Quality of Life Guard: Abort the fade entirely if the user is actively renaming the document
-            if (document.activeElement === docTitle) {
-                return;
-            }
+            if (document.activeElement === docTitle) return;
 
-            // Otherwise, safely proceed into pristine theater mode immersion
             if (workspaceView.classList.contains('active')) {
                 document.body.classList.add('distraction-free');
             }
@@ -1097,37 +1077,34 @@
         function showUIChromeOnInteraction() {
             document.body.classList.remove('distraction-free');
             clearTimeout(idleTimer);
-            // Keeps chrome visible while user clicks header navigation or renames titles
             idleTimer = setTimeout(startTypingDistractionHide, 1000); 
         }
 
-        // Strictly listen to physical mouse movements across the screen viewport.
         window.addEventListener('mousemove', showUIChromeOnInteraction);
 
         /* ------------------------------------------------------------------
-   DYNAMIC LINE SPACING CALCULATOR FOR INDENTED LIST GROUPS
------------------------------------------------------------------- */
-function applyDynamicListSpacing() {
-    const blocks = Array.from(editor.children);
-    
-    blocks.forEach((block, index) => {
-        const indent = parseInt(block.dataset.indent || "0", 10);
-        const nextBlock = blocks[index + 1];
-        const nextIndent = nextBlock ? parseInt(nextBlock.dataset.indent || "0", 10) : 0;
+           DYNAMIC LINE SPACING CALCULATOR FOR INDENTED LIST GROUPS
+        ------------------------------------------------------------------ */
+        function applyDynamicListSpacing() {
+            const blocks = Array.from(editor.children);
+            
+            blocks.forEach((block, index) => {
+                const indent = parseInt(block.dataset.indent || "0", 10);
+                const nextBlock = blocks[index + 1];
+                const nextIndent = nextBlock ? parseInt(nextBlock.dataset.indent || "0", 10) : 0;
 
-        if (indent > 0) {
-            // If the next block shares the same indent level, tighten spacing to .75
-            if (nextBlock && nextIndent === indent) {
-                block.style.marginBottom = "0.75em";
-            } else {
-                // Final block in the indented sequence receives standard 1.5em narrative spacing
-                block.style.marginBottom = "1.5em";
-            }
-        } else {
-            block.style.marginBottom = ""; // Revert to standard CSS rule
+                if (indent > 0) {
+                    if (nextBlock && nextIndent === indent) {
+                        block.style.marginBottom = "0.75em";
+                    } else {
+                        block.style.marginBottom = "1.5em";
+                    }
+                } else {
+                    block.style.marginBottom = ""; 
+                }
+            });
         }
-    });
-}
+
         // --- ANALYTICS ENGINE ---
         function updateAnalytics(text) {
             const charCount = text.length;
@@ -1143,84 +1120,81 @@ function applyDynamicListSpacing() {
                 : `${readingTime} min read`;
         }
 
-        // --- SCREENPLAY KEYBOARD STRUCTURAL STATE INTERCEPTOR ---
+        // --- UNIFIED KEYBOARD INPUT INTERCEPTOR ENGINE ---
         editor.addEventListener('keydown', (e) => {
-    // --- NARRATIVE MODE SMART INDENTATION & LIST ENGINE ---
-    if (currentSuiteMode === 'narrative') {
-        const isModifier = e.metaKey || e.ctrlKey;
-        if (isModifier && e.key.toLowerCase() === 'b') { e.preventDefault(); document.execCommand('bold', false, null); saveDocument(); return; }
-        if (isModifier && e.key.toLowerCase() === 'i') { e.preventDefault(); document.execCommand('italic', false, null); saveDocument(); return; }
+            // A. NARRATIVE MODE KEYBOARD ENGINE
+            if (currentSuiteMode === 'narrative') {
+                const isModifier = e.metaKey || e.ctrlKey;
+                if (isModifier && e.key.toLowerCase() === 'b') { e.preventDefault(); document.execCommand('bold', false, null); saveDocument(); return; }
+                if (isModifier && e.key.toLowerCase() === 'i') { e.preventDefault(); document.execCommand('italic', false, null); saveDocument(); return; }
 
-        const selection = window.getSelection();
-        if (!selection.rangeCount) return;
+                const selection = window.getSelection();
+                if (!selection.rangeCount) return;
 
-        let currentBlock = selection.getRangeAt(0).startContainer;
-        if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
-        
-        while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
-            currentBlock = currentBlock.parentNode;
-        }
+                let currentBlock = selection.getRangeAt(0).startContainer;
+                if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
+                
+                while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
+                    currentBlock = currentBlock.parentNode;
+                }
 
-        if (currentBlock === editor) {
-            document.execCommand('formatBlock', false, 'div');
-            currentBlock = editor.firstElementChild;
-        }
+                if (currentBlock === editor) {
+                    document.execCommand('formatBlock', false, 'div');
+                    currentBlock = editor.firstElementChild;
+                }
 
-        const currentIndent = parseInt(currentBlock.dataset.indent || "0", 10);
+                const currentIndent = parseInt(currentBlock.dataset.indent || "0", 10);
 
-        // 1. TAB: Increase Indentation
-        if (e.key === 'Tab') {
-            e.preventDefault();
-            const newIndent = currentIndent + 1;
-            currentBlock.dataset.indent = newIndent;
-            currentBlock.style.paddingLeft = `${newIndent * 30}px`;
-            applyDynamicListSpacing();
-            saveDocument();
-            return;
-        }
+                // Tab -> Increase Indent
+                if (e.key === 'Tab') {
+                    e.preventDefault();
+                    const newIndent = currentIndent + 1;
+                    currentBlock.dataset.indent = newIndent;
+                    currentBlock.style.paddingLeft = `${newIndent * 30}px`;
+                    applyDynamicListSpacing();
+                    saveDocument();
+                    return;
+                }
 
-        // 2. ENTER: Smart Carry-Over or Progressive Un-indentation
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            const textContent = currentBlock.innerText.trim();
+                // Enter -> Indent Carry-over or Un-indenting
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const textContent = currentBlock.innerText.trim();
 
-            // Scenario A: Enter on an empty line -> Reduce Indentation
-            if (textContent === "" && currentIndent > 0) {
-                const newIndent = currentIndent - 1;
-                currentBlock.dataset.indent = newIndent;
-                currentBlock.style.paddingLeft = newIndent > 0 ? `${newIndent * 30}px` : "0px";
-                applyDynamicListSpacing();
-                saveDocument();
+                    // Empty line enter -> step back
+                    if (textContent === "" && currentIndent > 0) {
+                        const newIndent = currentIndent - 1;
+                        currentBlock.dataset.indent = newIndent;
+                        currentBlock.style.paddingLeft = newIndent > 0 ? `${newIndent * 30}px` : "0px";
+                        applyDynamicListSpacing();
+                        saveDocument();
+                        return;
+                    }
+
+                    // Carrying indent to new line
+                    const nextBlock = document.createElement('div');
+                    if (currentIndent > 0) {
+                        nextBlock.dataset.indent = currentIndent;
+                        nextBlock.style.paddingLeft = `${currentIndent * 30}px`;
+                    }
+                    nextBlock.innerHTML = '<br>';
+
+                    currentBlock.parentNode.insertBefore(nextBlock, currentBlock.nextSibling);
+
+                    const newRange = document.createRange();
+                    newRange.setStart(nextBlock, 0);
+                    newRange.collapse(true);
+                    selection.removeAllRanges();
+                    selection.addRange(newRange);
+
+                    applyDynamicListSpacing();
+                    saveDocument();
+                    return;
+                }
                 return;
             }
 
-            // Scenario B: Standard Enter -> Carry Indentation Level to New Line
-            const nextBlock = document.createElement('div');
-            if (currentIndent > 0) {
-                nextBlock.dataset.indent = currentIndent;
-                nextBlock.style.paddingLeft = `${currentIndent * 30}px`;
-            }
-            nextBlock.innerHTML = '<br>';
-
-            currentBlock.parentNode.insertBefore(nextBlock, currentBlock.nextSibling);
-
-            // Move cursor to the new line
-            const newRange = document.createRange();
-            newRange.setStart(nextBlock, 0);
-            newRange.collapse(true);
-            selection.removeAllRanges();
-            selection.addRange(newRange);
-
-            applyDynamicListSpacing();
-            saveDocument();
-            return;
-        }
-
-        return; // Exit out of narrative keydown handler
-    }
-
-    // --- SCREENPLAY MODE KEYBOARD ENGINE (LEAVE YOUR EXISTING SCREENPLAY CODE BELOW THIS) ---
-
+            // B. SCREENPLAY MODE KEYBOARD ENGINE
             const selection = window.getSelection();
             if (!selection.rangeCount) return;
 
@@ -1305,7 +1279,6 @@ function applyDynamicListSpacing() {
             }
         }
 
-        // --- SCREENPLAY AUTOMATIC CHARACTER FIRST-APPEARANCE CAPS ENGINE ---
         function highlightFirstCharacterAppearance(characterName) {
             if (!characterName || characterName.trim() === "") return;
             
@@ -1327,7 +1300,7 @@ function applyDynamicListSpacing() {
             }
         }
 
-        // --- DIRECT HTML EXPORT ROUTER LINK ---
+        // --- DIRECT DOWNLOAD DISPATCHER ---
         function handleWorkspaceDownload(event) {
             if (event) event.preventDefault();
             
@@ -1337,35 +1310,82 @@ function applyDynamicListSpacing() {
             exportDocumentToDisk(titleValue, editorContent, currentSuiteMode);
         }
 
-        // --- TEXT COMPILATION & RAW STORAGE EXPORTER ENGINE ---
+        // --- RTF CONVERTER FOR RICH NARRATIVE DOWNLOADS ---
         function convertHtmlToRtf(htmlContent) {
-    let rtf = "{\\rtf1\\ansi\\deff0 {\\fonttbl{\\f0 JetBrains Mono;}}\n";
-    rtf += "\\viewkind4\\uc1\\dscr\\f0\\fs24 "; // Default font styling
+            let rtf = "{\\rtf1\\ansi\\deff0 {\\fonttbl{\\f0 JetBrains Mono;}}\n";
+            rtf += "\\viewkind4\\uc1\\dscr\\f0\\fs24 ";
 
-    // Convert line breaks and paragraph containers
-    let clean = htmlContent
-        .replace(/<div><br><\/div>/gi, "\\par\n")
-        .replace(/<div>/gi, "\\par ")
-        .replace(/<\/div>/gi, "")
-        .replace(/<p>/gi, "\\par ")
-        .replace(/<\/p>/gi, "")
-        .replace(/<br\s*[\/]?>/gi, "\\par ");
+            let clean = htmlContent
+                .replace(/<div><br><\/div>/gi, "\\par\n")
+                .replace(/<div>/gi, "\\par ")
+                .replace(/<\/div>/gi, "")
+                .replace(/<p>/gi, "\\par ")
+                .replace(/<\/p>/gi, "")
+                .replace(/<br\s*[\/]?>/gi, "\\par ");
 
-    // Convert Rich Text Formatting tags
-    clean = clean
-        .replace(/<b>(.*?)<\/b>/gi, "\\b $1\\b0 ")
-        .replace(/<strong>(.*?)<\/strong>/gi, "\\b $1\\b0 ")
-        .replace(/<i>(.*?)<\/i>/gi, "\\i $1\\i0 ")
-        .replace(/<em>(.*?)<\/em>/gi, "\\i $1\\i0 ");
+            clean = clean
+                .replace(/<b>(.*?)<\/b>/gi, "\\b $1\\b0 ")
+                .replace(/<strong>(.*?)<\/strong>/gi, "\\b $1\\b0 ")
+                .replace(/<i>(.*?)<\/i>/gi, "\\i $1\\i0 ")
+                .replace(/<em>(.*?)<\/em>/gi, "\\i $1\\i0 ");
 
-    // Strip out any remaining lingering HTML tags
-    clean = clean.replace(/<[^>]+>/g, '');
+            clean = clean.replace(/<[^>]+>/g, '');
 
-    rtf += clean + "}";
-    return rtf;
-}
+            rtf += clean + "}";
+            return rtf;
+        }
 
-        // --- CONTROLLED DOCUMENT DELETION ROUTER (LOCAL & CLOUD) ---
+        // --- EXPORTER ENGINE ---
+        function exportDocumentToDisk(title, content, mode) {
+            try {
+                let processedText = "";
+                let fileExtension = mode === 'screenplay' ? '.fountain' : '.rtf';
+                let cleanTitle = title ? title.trim() : "untitled";
+
+                if (!cleanTitle.toLowerCase().endsWith(fileExtension)) {
+                    cleanTitle = cleanTitle.replace(/\.[^/.]+$/, "") + fileExtension;
+                }
+
+                if (mode === 'narrative') {
+                    processedText = convertHtmlToRtf(content);
+                } else {
+                    const parserNode = document.createElement('div');
+                    parserNode.innerHTML = content;
+                    const blocks = Array.from(parserNode.children);
+
+                    if (blocks && blocks.length > 0) {
+                        processedText = blocks.map(block => {
+                            if (!block) return "";
+                            const type = (typeof block.getAttribute === 'function') ? (block.getAttribute('data-element') || 'action') : 'action';
+                            const text = block.innerText ? block.innerText.trim() : "";
+                            if (!text) return "";
+                            
+                            if (type === 'scene-heading' || type === 'character' || type === 'transition') return text.toUpperCase();
+                            if (type === 'parenthetical') return text.startsWith('(') ? text : `(${text})`;
+                            return text;
+                        }).filter(line => line !== "").join('\n\n');
+                    }
+                    if (!processedText.trim()) {
+                        processedText = parserNode.innerText ? parserNode.innerText.trim() : content;
+                    }
+                }
+
+                const mimeType = mode === 'narrative' ? 'application/rtf' : 'text/plain;charset=utf-8';
+                const blob = new Blob([processedText], { type: mimeType });
+                const tempLink = document.createElement('a');
+                tempLink.href = URL.createObjectURL(blob);
+                tempLink.download = cleanTitle;
+                
+                document.body.appendChild(tempLink);
+                tempLink.click();
+                document.body.removeChild(tempLink);
+                
+            } catch (error) {
+                showZenAlert("Download Engine Error", error.message);
+            }
+        }
+
+        // --- CONTROLLED DOCUMENT DELETION ROUTER ---
         function requestDocumentDeletion(fileId, title, storageType) {
             const storageLabel = storageType === 'cloud' ? 'Google Cloud Drive storage directory' : 'browser sandbox partition';
             const confirmationText = `Are you absolutely certain you want to permanently delete "${title}"? This process will wipe the file from your ${storageLabel} and cannot be undone.`;
@@ -1427,7 +1447,7 @@ function applyDynamicListSpacing() {
             
             if (currentLocalFileId === fileId) {
                 editor.innerHTML = currentSuiteMode === 'screenplay' ? '<div data-element="scene-heading">INT. NEW SCENE - DAY</div>' : "";
-                docTitle.value = currentSuiteMode === 'screenplay' ? "untitledScript.fountain" : "untitledProse.txt";
+                docTitle.value = currentSuiteMode === 'screenplay' ? "untitledScript.fountain" : "untitledProse.rtf";
                 currentLocalFileId = "local_" + Date.now();
                 currentDriveFileId = null;
                 pickerModifierSync();
@@ -1473,7 +1493,6 @@ function applyDynamicListSpacing() {
         }
 
         function listLocalFiles() {
-            // Strictly pull local drafts that match the current workspace mode and DO NOT have a cloud Drive ID
             const db = getLocalDatabase().filter(item => item.suiteMode === currentSuiteMode && !item.driveId);
             localDocsTarget.innerHTML = '';
 
@@ -1528,10 +1547,8 @@ function applyDynamicListSpacing() {
             currentLocalFileId = file.id;
             currentDriveFileId = file.driveId || null;
 
-            // NEW: Ensure loading an existing asset locks the correct suite mode session in place
             localStorage.setItem('zensuite_active_suite_mode', currentSuiteMode);
             localStorage.setItem(`zensuite_current_active_${currentSuiteMode}_id`, fileId);
-            // NEW: Record that the user has successfully entered the workspace area
             localStorage.setItem('zensuite_view_state', 'workspace');
             
             updateAnalytics(editor.innerText);
@@ -1553,19 +1570,17 @@ function applyDynamicListSpacing() {
             }
         }
 
-       // --- GOOGLE OAUTH & STATE HYDRATION ENGINE ---
+        // --- GOOGLE OAUTH & STATE HYDRATION ENGINE ---
         window.onload = function() {
             const cachedTheme = localStorage.getItem('zensuite_saved_theme');
             if (cachedTheme) { applyAppTheme(cachedTheme); }
 
-            // 1. Restore the last active workspace mode session (narrative or screenplay)
             const savedSuiteMode = localStorage.getItem('zensuite_active_suite_mode');
             if (savedSuiteMode) {
                 currentSuiteMode = savedSuiteMode;
                 configureWorkspaceUIPresentation();
             }
 
-            // 2. NEW: Only restore the document if the user was actively working inside the workspace
             const savedViewState = localStorage.getItem('zensuite_view_state');
             if (savedViewState === 'workspace') {
                 const savedActiveId = localStorage.getItem(`zensuite_current_active_${currentSuiteMode}_id`);
@@ -1573,7 +1588,6 @@ function applyDynamicListSpacing() {
                     loadLocalFile(savedActiveId);
                 }
             } else {
-                // Otherwise, guarantee they stay perfectly anchored to the pristine Launchpad landing view
                 workspaceView.classList.remove('active');
                 launchpadView.classList.add('active');
                 document.body.classList.remove('distraction-free');
@@ -1692,7 +1706,7 @@ function applyDynamicListSpacing() {
 
         function createDriveFile() {
             const metadata = { 
-                name: docTitle.value || (currentSuiteMode === 'screenplay' ? 'untitledScript.fountain' : 'untitledProse.txt'), 
+                name: docTitle.value || (currentSuiteMode === 'screenplay' ? 'untitledScript.fountain' : 'untitledProse.rtf'), 
                 mimeType: 'text/plain',
                 appProperties: { suiteMode: currentSuiteMode }
             };
@@ -1717,7 +1731,7 @@ function applyDynamicListSpacing() {
             .catch(() => saveIndicator.textContent = "• Replication dropped.");
         }
 
-       function updateDriveFile() {
+        function updateDriveFile() {
             if (!accessToken || !currentDriveFileId) return;
 
             fetch(`https://www.googleapis.com/drive/v3/files/${currentDriveFileId}`, {
@@ -1733,7 +1747,6 @@ function applyDynamicListSpacing() {
                 });
             })
             .then(() => { 
-                // Only change the text if the user isn't currently deep in distraction-free typing
                 if (!document.body.classList.contains('distraction-free')) {
                     saveIndicator.textContent = "• Fully Synced Cloud & Local"; 
                 }
@@ -1751,7 +1764,7 @@ function applyDynamicListSpacing() {
             
             const fileRecord = {
                 id: currentLocalFileId,
-                title: docTitle.value || (currentSuiteMode === 'screenplay' ? 'untitledScript.fountain' : 'untitledProse.txt'),
+                title: docTitle.value || (currentSuiteMode === 'screenplay' ? 'untitledScript.fountain' : 'untitledProse.rtf'),
                 content: editor.innerHTML,
                 suiteMode: currentSuiteMode,
                 driveId: currentDriveFileId
@@ -1766,7 +1779,6 @@ function applyDynamicListSpacing() {
         editor.addEventListener('input', () => {
             updateAnalytics(editor.innerText);
             
-            // Forces the 1-second hidden countdown to engage smoothly on cloud documents during input variations
             clearTimeout(idleTimer);
             idleTimer = setTimeout(startTypingDistractionHide, 1000);
             
@@ -1789,4 +1801,4 @@ function applyDynamicListSpacing() {
         });
     </script>
 </body>
-</html> 
+</html>
