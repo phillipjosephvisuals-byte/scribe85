@@ -577,14 +577,14 @@
         .editor-container { 
             width: 100%; 
             max-width: var(--canvas-width); 
-            height: 100%; 
+            min-height: 100%; 
             display: flex;
             flex-direction: column;
         }
 
         .editor {
             width: 100%; 
-            height: 100%;
+            min-height: 100%;
             border: none; 
             outline: none; 
             background: transparent;
@@ -1377,6 +1377,22 @@ function convertHtmlToRtf(htmlContent) {
     return rtf;
 }
 
+        // --- AUTO-SCROLL TYPEWRITER CURSOR TRACKER ---
+function scrollToCursor() {
+    const selection = window.getSelection();
+    if (!selection.rangeCount) return;
+
+    const range = selection.getRangeAt(0);
+    let currentBlock = range.startContainer;
+    if (currentBlock.nodeType === Node.TEXT_NODE) {
+        currentBlock = currentBlock.parentNode;
+    }
+
+    // Smoothly scroll the active line into view if it dips below the viewport fold
+    if (currentBlock && currentBlock !== editor && typeof currentBlock.scrollIntoView === 'function') {
+        currentBlock.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+}
         // --- EXPORTER ENGINE ---
         function exportDocumentToDisk(title, content, mode) {
             try {
@@ -1819,28 +1835,29 @@ function convertHtmlToRtf(htmlContent) {
         }
 
         editor.addEventListener('input', () => {
-            updateAnalytics(editor.innerText);
-            
-            clearTimeout(idleTimer);
-            idleTimer = setTimeout(startTypingDistractionHide, 1000);
-            
-            if (currentSuiteMode === 'screenplay') {
-                const selection = window.getSelection();
-                if (selection.rangeCount > 0) {
-                    let currentBlock = selection.getRangeAt(0).startContainer;
-                    if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
-                    while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
-                        currentBlock = currentBlock.parentNode;
-                    }
-                    
-                    if (currentBlock && currentBlock.getAttribute('data-element') === 'character') {
-                        highlightFirstCharacterAppearance(currentBlock.innerText);
-                    }
-                }
+    updateAnalytics(editor.innerText);
+    
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(startTypingDistractionHide, 1000);
+    
+    if (currentSuiteMode === 'screenplay') {
+        const selection = window.getSelection();
+        if (selection.rangeCount > 0) {
+            let currentBlock = selection.getRangeAt(0).startContainer;
+            if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
+            while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
+                currentBlock = currentBlock.parentNode;
             }
             
-            saveDocument();
-        });
+            if (currentBlock && currentBlock.getAttribute('data-element') === 'character') {
+                highlightFirstCharacterAppearance(currentBlock.innerText);
+            }
+        }
+    }
+    
+    saveDocument();
+    scrollToCursor(); // <--- Add this here!
+});
     </script>
 </body>
 </html>
