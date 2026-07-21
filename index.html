@@ -1311,29 +1311,69 @@
         }
 
         // --- RTF CONVERTER FOR RICH NARRATIVE DOWNLOADS ---
-        function convertHtmlToRtf(htmlContent) {
-            let rtf = "{\\rtf1\\ansi\\deff0 {\\fonttbl{\\f0 JetBrains Mono;}}\n";
-            rtf += "\\viewkind4\\uc1\\dscr\\f0\\fs24 ";
+       // --- DOM-AWARE RTF CONVERTER ENGINE ---
+function convertHtmlToRtf(htmlContent) {
+    const temp = document.createElement('div');
+    temp.innerHTML = htmlContent;
 
-            let clean = htmlContent
-                .replace(/<div><br><\/div>/gi, "\\par\n")
-                .replace(/<div>/gi, "\\par ")
-                .replace(/<\/div>/gi, "")
-                .replace(/<p>/gi, "\\par ")
-                .replace(/<\/p>/gi, "")
-                .replace(/<br\s*[\/]?>/gi, "\\par ");
+    let rtf = "{\\rtf1\\ansi\\deff0 {\\fonttbl{\\f0 JetBrains Mono;}}\n";
+    rtf += "\\viewkind4\\uc1\\dscr\\f0\\fs24 "; // Default font setup
 
-            clean = clean
-                .replace(/<b>(.*?)<\/b>/gi, "\\b $1\\b0 ")
-                .replace(/<strong>(.*?)<\/strong>/gi, "\\b $1\\b0 ")
-                .replace(/<i>(.*?)<\/i>/gi, "\\i $1\\i0 ")
-                .replace(/<em>(.*?)<\/em>/gi, "\\i $1\\i0 ");
-
-            clean = clean.replace(/<[^>]+>/g, '');
-
-            rtf += clean + "}";
-            return rtf;
+    function parseNode(node) {
+        // 1. Text Node: Escape RTF control characters
+        if (node.nodeType === Node.TEXT_NODE) {
+            return node.textContent
+                .replace(/\\/g, "\\\\")
+                .replace(/\{/g, "\\{")
+                .replace(/\}/g, "\\}");
         }
+
+        // 2. Element Node: Parse HTML tags into RTF syntax
+        if (node.nodeType === Node.ELEMENT_NODE) {
+            const tag = node.tagName.toLowerCase();
+            const inner = Array.from(node.childNodes).map(parseNode).join('');
+
+            // Bold
+            if (tag === 'b' || tag === 'strong') {
+                return `\\b ${inner}\\b0 `;
+            }
+            // Italics
+            if (tag === 'i' || tag === 'em') {
+                return `\\i ${inner}\\i0 `;
+            }
+            // Line Break
+            if (tag === 'br') {
+                return "\\line ";
+            }
+            // Block Containers (div, p)
+            if (tag === 'div' || tag === 'p') {
+                const indentLevel = parseInt(node.dataset.indent || "0", 10);
+                // Convert indent steps to RTF twips (1/2 inch = 360 twips)
+                const indentTwips = indentLevel * 360; 
+
+                // Dynamic list vs paragraph spacing
+                let spaceAfterTwips = 216; // Standard paragraph spacing (~1.5em)
+                if (node.style.marginBottom === "0.75em") {
+                    spaceAfterTwips = 108; // Tightened list spacing (.75em)
+                }
+
+                let controlCodes = `\\par\\sa${spaceAfterTwips}`;
+                if (indentTwips > 0) {
+                    controlCodes += `\\li${indentTwips}`;
+                }
+
+                return `${controlCodes} ${inner}`;
+            }
+
+            return inner;
+        }
+        return "";
+    }
+
+    const compiledRtfBody = Array.from(temp.childNodes).map(parseNode).join('');
+    rtf += compiledRtfBody + "}";
+    return rtf;
+}
 
         // --- EXPORTER ENGINE ---
         function exportDocumentToDisk(title, content, mode) {
