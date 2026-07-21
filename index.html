@@ -1104,6 +1104,30 @@
         // Strictly listen to physical mouse movements across the screen viewport.
         window.addEventListener('mousemove', showUIChromeOnInteraction);
 
+        /* ------------------------------------------------------------------
+   DYNAMIC LINE SPACING CALCULATOR FOR INDENTED LIST GROUPS
+------------------------------------------------------------------ */
+function applyDynamicListSpacing() {
+    const blocks = Array.from(editor.children);
+    
+    blocks.forEach((block, index) => {
+        const indent = parseInt(block.dataset.indent || "0", 10);
+        const nextBlock = blocks[index + 1];
+        const nextIndent = nextBlock ? parseInt(nextBlock.dataset.indent || "0", 10) : 0;
+
+        if (indent > 0) {
+            // If the next block shares the same indent level, tighten spacing to .75
+            if (nextBlock && nextIndent === indent) {
+                block.style.marginBottom = "0.75em";
+            } else {
+                // Final block in the indented sequence receives standard 1.5em narrative spacing
+                block.style.marginBottom = "1.5em";
+            }
+        } else {
+            block.style.marginBottom = ""; // Revert to standard CSS rule
+        }
+    });
+}
         // --- ANALYTICS ENGINE ---
         function updateAnalytics(text) {
             const charCount = text.length;
@@ -1121,12 +1145,81 @@
 
         // --- SCREENPLAY KEYBOARD STRUCTURAL STATE INTERCEPTOR ---
         editor.addEventListener('keydown', (e) => {
-            if (currentSuiteMode !== 'screenplay') {
-                const isModifier = e.metaKey || e.ctrlKey;
-                if (isModifier && e.key.toLowerCase() === 'b') { e.preventDefault(); document.execCommand('bold', false, null); saveDocument(); }
-                if (isModifier && e.key.toLowerCase() === 'i') { e.preventDefault(); document.execCommand('italic', false, null); saveDocument(); }
+    // --- NARRATIVE MODE SMART INDENTATION & LIST ENGINE ---
+    if (currentSuiteMode === 'narrative') {
+        const isModifier = e.metaKey || e.ctrlKey;
+        if (isModifier && e.key.toLowerCase() === 'b') { e.preventDefault(); document.execCommand('bold', false, null); saveDocument(); return; }
+        if (isModifier && e.key.toLowerCase() === 'i') { e.preventDefault(); document.execCommand('italic', false, null); saveDocument(); return; }
+
+        const selection = window.getSelection();
+        if (!selection.rangeCount) return;
+
+        let currentBlock = selection.getRangeAt(0).startContainer;
+        if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
+        
+        while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
+            currentBlock = currentBlock.parentNode;
+        }
+
+        if (currentBlock === editor) {
+            document.execCommand('formatBlock', false, 'div');
+            currentBlock = editor.firstElementChild;
+        }
+
+        const currentIndent = parseInt(currentBlock.dataset.indent || "0", 10);
+
+        // 1. TAB: Increase Indentation
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            const newIndent = currentIndent + 1;
+            currentBlock.dataset.indent = newIndent;
+            currentBlock.style.paddingLeft = `${newIndent * 30}px`;
+            applyDynamicListSpacing();
+            saveDocument();
+            return;
+        }
+
+        // 2. ENTER: Smart Carry-Over or Progressive Un-indentation
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const textContent = currentBlock.innerText.trim();
+
+            // Scenario A: Enter on an empty line -> Reduce Indentation
+            if (textContent === "" && currentIndent > 0) {
+                const newIndent = currentIndent - 1;
+                currentBlock.dataset.indent = newIndent;
+                currentBlock.style.paddingLeft = newIndent > 0 ? `${newIndent * 30}px` : "0px";
+                applyDynamicListSpacing();
+                saveDocument();
                 return;
             }
+
+            // Scenario B: Standard Enter -> Carry Indentation Level to New Line
+            const nextBlock = document.createElement('div');
+            if (currentIndent > 0) {
+                nextBlock.dataset.indent = currentIndent;
+                nextBlock.style.paddingLeft = `${currentIndent * 30}px`;
+            }
+            nextBlock.innerHTML = '<br>';
+
+            currentBlock.parentNode.insertBefore(nextBlock, currentBlock.nextSibling);
+
+            // Move cursor to the new line
+            const newRange = document.createRange();
+            newRange.setStart(nextBlock, 0);
+            newRange.collapse(true);
+            selection.removeAllRanges();
+            selection.addRange(newRange);
+
+            applyDynamicListSpacing();
+            saveDocument();
+            return;
+        }
+
+        return; // Exit out of narrative keydown handler
+    }
+
+    // --- SCREENPLAY MODE KEYBOARD ENGINE (LEAVE YOUR EXISTING SCREENPLAY CODE BELOW THIS) ---
 
             const selection = window.getSelection();
             if (!selection.rangeCount) return;
@@ -1245,61 +1338,32 @@
         }
 
         // --- TEXT COMPILATION & RAW STORAGE EXPORTER ENGINE ---
-        function exportDocumentToDisk(title, content, mode) {
-            try {
-                let processedText = "";
-                let fileExtension = mode === 'screenplay' ? '.fountain' : '.txt';
-                let cleanTitle = title ? title.trim() : "untitled";
+        function convertHtmlToRtf(htmlContent) {
+    let rtf = "{\\rtf1\\ansi\\deff0 {\\fonttbl{\\f0 JetBrains Mono;}}\n";
+    rtf += "\\viewkind4\\uc1\\dscr\\f0\\fs24 "; // Default font styling
 
-                if (!cleanTitle.toLowerCase().endsWith(fileExtension)) {
-                    cleanTitle = cleanTitle.replace(/\.[^/.]+$/, "") + fileExtension;
-                }
+    // Convert line breaks and paragraph containers
+    let clean = htmlContent
+        .replace(/<div><br><\/div>/gi, "\\par\n")
+        .replace(/<div>/gi, "\\par ")
+        .replace(/<\/div>/gi, "")
+        .replace(/<p>/gi, "\\par ")
+        .replace(/<\/p>/gi, "")
+        .replace(/<br\s*[\/]?>/gi, "\\par ");
 
-                if (mode === 'screenplay' && content) {
-                    const parserNode = document.createElement('div');
-                    parserNode.innerHTML = content;
-                    const blocks = Array.from(parserNode.children);
+    // Convert Rich Text Formatting tags
+    clean = clean
+        .replace(/<b>(.*?)<\/b>/gi, "\\b $1\\b0 ")
+        .replace(/<strong>(.*?)<\/strong>/gi, "\\b $1\\b0 ")
+        .replace(/<i>(.*?)<\/i>/gi, "\\i $1\\i0 ")
+        .replace(/<em>(.*?)<\/em>/gi, "\\i $1\\i0 ");
 
-                    if (blocks && blocks.length > 0) {
-                        processedText = blocks.map(block => {
-                            if (!block) return "";
-                            const type = (typeof block.getAttribute === 'function') ? (block.getAttribute('data-element') || 'action') : 'action';
-                            const text = block.innerText ? block.innerText.trim() : "";
-                            if (!text) return "";
-                            
-                            if (type === 'scene-heading') return text.toUpperCase();
-                            if (type === 'character') return text.toUpperCase();
-                            if (type === 'transition') return text.toUpperCase();
-                            if (type === 'parenthetical') return text.startsWith('(') ? text : `(${text})`;
-                            return text;
-                        }).filter(line => line !== "").join('\n\n');
-                    }
-                    if (!processedText.trim()) {
-                        processedText = parserNode.innerText ? parserNode.innerText.trim() : content;
-                    }
-                } else {
-                    const tempDiv = document.createElement('div');
-                    tempDiv.innerHTML = content || "";
-                    processedText = tempDiv.innerText || tempDiv.textContent || String(content);
-                }
+    // Strip out any remaining lingering HTML tags
+    clean = clean.replace(/<[^>]+>/g, '');
 
-                const blob = new Blob([processedText], { type: 'text/plain;charset=utf-8' });
-                const tempLink = document.createElement('a');
-                tempLink.href = URL.createObjectURL(blob);
-                tempLink.download = cleanTitle;
-                
-                document.body.appendChild(tempLink);
-                tempLink.click();
-                document.body.removeChild(tempLink);
-                
-            } catch (error) {
-                if (typeof showZenAlert === 'function') {
-                    showZenAlert("Download Engine Error", error.message);
-                } else {
-                    alert("Download Error: " + error.message);
-                }
-            }
-        }
+    rtf += clean + "}";
+    return rtf;
+}
 
         // --- CONTROLLED DOCUMENT DELETION ROUTER (LOCAL & CLOUD) ---
         function requestDocumentDeletion(fileId, title, storageType) {
