@@ -1312,12 +1312,13 @@
 
         // --- RTF CONVERTER FOR RICH NARRATIVE DOWNLOADS ---
        // --- DOM-AWARE RTF CONVERTER ENGINE ---
+// --- DOM-AWARE RTF CONVERTER ENGINE (WITH PARAGRAPH RESETS) ---
 function convertHtmlToRtf(htmlContent) {
     const temp = document.createElement('div');
     temp.innerHTML = htmlContent;
 
     let rtf = "{\\rtf1\\ansi\\deff0 {\\fonttbl{\\f0 JetBrains Mono;}}\n";
-    rtf += "\\viewkind4\\uc1\\dscr\\f0\\fs24 "; // Default font setup
+    rtf += "\\viewkind4\\uc1\\dscr "; // Base RTF initialization
 
     function parseNode(node) {
         // 1. Text Node: Escape RTF control characters
@@ -1328,12 +1329,12 @@ function convertHtmlToRtf(htmlContent) {
                 .replace(/\}/g, "\\}");
         }
 
-        // 2. Element Node: Parse HTML tags into RTF syntax
+        // 2. Element Node: Parse HTML tags into explicit RTF styles
         if (node.nodeType === Node.ELEMENT_NODE) {
             const tag = node.tagName.toLowerCase();
             const inner = Array.from(node.childNodes).map(parseNode).join('');
 
-            // Bold
+            // Bolding
             if (tag === 'b' || tag === 'strong') {
                 return `\\b ${inner}\\b0 `;
             }
@@ -1341,28 +1342,29 @@ function convertHtmlToRtf(htmlContent) {
             if (tag === 'i' || tag === 'em') {
                 return `\\i ${inner}\\i0 `;
             }
-            // Line Break
+            // In-line Break
             if (tag === 'br') {
                 return "\\line ";
             }
-            // Block Containers (div, p)
+            // Paragraph / Div Block Containers
             if (tag === 'div' || tag === 'p') {
-                const indentLevel = parseInt(node.dataset.indent || "0", 10);
-                // Convert indent steps to RTF twips (1/2 inch = 360 twips)
-                const indentTwips = indentLevel * 360; 
+                // Calculate indent level from data attribute OR style padding
+                const indentAttr = parseInt(node.dataset.indent || "0", 10);
+                const stylePadding = parseInt(node.style.paddingLeft || "0", 10);
+                const indentFromStyle = Math.round(stylePadding / 30);
+                const indentLevel = Math.max(indentAttr, indentFromStyle);
 
-                // Dynamic list vs paragraph spacing
-                let spaceAfterTwips = 216; // Standard paragraph spacing (~1.5em)
+                // Convert indent steps to RTF Twips (720 twips = 0.5 inches)
+                const indentTwips = indentLevel * 720; 
+
+                // Dynamic spacing calculation (0.75em list vs 1.5em standard break)
+                let spaceAfterTwips = 216; // Standard paragraph space after (~1.5em)
                 if (node.style.marginBottom === "0.75em") {
                     spaceAfterTwips = 108; // Tightened list spacing (.75em)
                 }
 
-                let controlCodes = `\\par\\sa${spaceAfterTwips}`;
-                if (indentTwips > 0) {
-                    controlCodes += `\\li${indentTwips}`;
-                }
-
-                return `${controlCodes} ${inner}`;
+                // \pard resets paragraph formatting so indents do not bleed onto subsequent lines
+                return `\\par\\pard\\f0\\fs24\\sa${spaceAfterTwips}\\li${indentTwips} ${inner}`;
             }
 
             return inner;
