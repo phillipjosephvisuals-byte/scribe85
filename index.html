@@ -117,7 +117,7 @@
             flex-direction: column;
             align-items: center;
             width: 100%;
-            max-width: 860px;
+            max-width: 760px;
             margin-top: 10px;
             margin-bottom: 25px;
         }
@@ -190,12 +190,12 @@
         .theme-card:hover { transform: translateY(-2px); }
 
         /* ------------------------------------------------------------------
-           EXPANDABLE SUITE CARDS (Requirement 1 & 2 Refinements)
+           EXPANDABLE SUITE CARDS
         ------------------------------------------------------------------ */
         .suite-options {
             display: flex;
             gap: 20px;
-            max-width: 860px; /* Expanded max-width for single line shortcut layout */
+            max-width: 860px;
             width: 100%;
             padding: 0 20px;
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -252,7 +252,6 @@
             text-align: center;
         }
 
-        /* Requirement 2: Clean centered descriptions without awkward spacing */
         .suite-card p.card-desc {
             font-size: 0.85rem;
             color: var(--muted-color);
@@ -357,7 +356,6 @@
             margin-bottom: 30px;
         }
 
-        /* Requirement 1: Controls fit cleanly on a single line */
         .shortcuts-list {
             display: flex;
             flex-direction: column;
@@ -852,7 +850,6 @@
         .sq-matrix { background-color: #33ff33; border-color: #33ff33; }
         .sq-cobalt { background-color: #000080; border-color: #ffffff; }
 
-        /* Requirement 3: Document Title Underline & Glow Affordance */
         .doc-title {
             color: var(--text-color);
             border: none;
@@ -1035,12 +1032,12 @@
         #element-status-tag { color: var(--accent-color); font-weight: bold; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
 
         /* ------------------------------------------------------------------
-           6. RESPONSIVE MOBILE MEDIA QUERIES
+           6. RESPONSIVE MOBILE MEDIA QUERIES (Prevent Navigation Bar Crowding)
         ------------------------------------------------------------------ */
         @media (max-width: 600px) {
             body { font-size: 16px; }
 
-            .brand-header { padding: 0 20px; margin-top: 20px; }
+            .brand-header { padding: 0 15px; margin-top: 20px; }
             .brand-header h1 { font-size: 1.8rem; }
             .suite-options { flex-direction: column; gap: 15px; }
             
@@ -1049,26 +1046,58 @@
                 gap: 15px;
             }
 
+            /* Responsive Header Layout Fixes */
             header {
-                grid-template-columns: auto 1fr auto;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: center;
                 padding: 10px 15px;
+                gap: 8px;
             }
 
-            .inline-theme-picker { display: none; }
-            .doc-title { width: 140px; font-size: 0.8rem; }
-            #save-indicator { display: none; }
-            .guide-trigger-btn { padding: 2px 6px; font-size: 0.68rem; }
+            .doc-left {
+                order: 1;
+                gap: 8px;
+            }
+
+            .header-logo-container {
+                width: 75px; /* Compact logo size for mobile screens */
+            }
+
+            .inline-theme-picker { display: flex; gap: 4px; }
+
+            .header-center-hub {
+                order: 3;
+                width: 100%; /* Spans full width underneath left/right clusters */
+                margin-top: 4px;
+            }
+
+            .doc-title { 
+                width: 100%; 
+                max-width: 220px; 
+                font-size: 0.8rem; 
+            }
+
+            .sync-status {
+                order: 2;
+                gap: 6px;
+            }
+
+            #save-indicator { display: none; } /* Hide string on small screen to save horizontal room */
+            .guide-trigger-btn { padding: 2px 6px; font-size: 0.65rem; }
 
             main { padding: 0 10px; }
-            .editor { font-size: 0.95rem; padding-top: 20px; }
+            .editor { font-size: 0.95rem; padding-top: 15px; }
 
             footer {
                 padding: 10px 15px;
                 font-size: 0.7rem;
+                grid-template-columns: 1fr auto;
             }
 
-            .footer-files-btn { padding: 4px 12px; font-size: 0.7rem; }
-            #read-time { display: none; }
+            .footer-center { order: 2; }
+            .stats-right { display: none; } /* Hide reading time on mobile screen */
         }
     </style>
 </head>
@@ -1127,7 +1156,6 @@
 
                 <div class="card-header-toggle" onclick="toggleSuiteCard('narrative')">
                     <h2>Narrative 85</h2>
-                    <!-- Requirement 2: Clean centered description -->
                     <p class="card-desc">An unencumbered environment designed for long form prose, essay drafts, and creative writing. Features smart paragraph spacing, multi tier list indentation, and automated RTF formatting exports.</p>
                     <span class="expand-hint" id="hint-narrative">+ click to expand</span>
                 </div>
@@ -1136,7 +1164,6 @@
                     <div class="how-it-works-divider">— how it works —</div>
                     
                     <div class="how-it-works-grid">
-                        <!-- Requirement 1: Single line controls -->
                         <div class="shortcuts-list">
                             <div class="shortcut-item"><code>Ctrl + B</code> <span>Bold selection</span></div>
                             <div class="shortcut-item"><code>Ctrl + I</code> <span>Italicize selection</span></div>
@@ -1167,7 +1194,6 @@
 
                 <div class="card-header-toggle" onclick="toggleSuiteCard('screenplay')">
                     <h2>Screenplay 85</h2>
-                    <!-- Requirement 2: Clean centered description -->
                     <p class="card-desc">A rigid screenplay layout engine adhering to Industry Fountain standards. Automatically cycles through sluglines, action, characters, parentheticals, and dialogue using key triggers.</p>
                     <span class="expand-hint" id="hint-screenplay">+ click to expand</span>
                 </div>
@@ -1176,7 +1202,6 @@
                     <div class="how-it-works-divider">— how it works —</div>
                     
                     <div class="how-it-works-grid">
-                        <!-- Requirement 1: Single line controls -->
                         <div class="shortcuts-list">
                             <div class="shortcut-item"><code>Ctrl + B</code> <span>Bold text (or <code>*bold*</code>)</span></div>
                             <div class="shortcut-item"><code>Ctrl + I</code> <span>Italicize text (or <code>_italics_</code>)</span></div>
@@ -1309,7 +1334,6 @@
                 </div>
             </div>
 
-            <!-- Requirement 3: Editable title with underline and glow affordance -->
             <div class="header-center-hub">
                 <input type="text" class="doc-title" value="untitledProse.rtf" spellcheck="false" title="Click to rename document">
             </div>
