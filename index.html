@@ -19,7 +19,7 @@
             --text-color: #e2e8f0;     
             --muted-color: #64748b;    
             --accent-color: #ffffff;   /* Balanced to White by default for Dark Mode */
-            --text-glow: none;
+            --text-glow: 0 0 8px rgba(255,255,255,0.6);
             --font-mono: 'JetBrains Mono', monospace;
             --font-script: 'Courier Prime', monospace;
             --canvas-width: 680px;     
@@ -70,8 +70,8 @@
             width: 100%;
             max-width: 480px; 
             padding: 0 50px;
-            margin-bottom: 50px;
-            margin-top: 100px;
+            margin-bottom: 15px;
+            margin-top: 40px;
         }
  
         .brand-logo-frame {
@@ -83,7 +83,7 @@
             justify-content: center;
             color: var(--accent-color);
             margin-bottom: 5px;
-            margin-top: 30px;
+            margin-top: 15px;
             transition: color 0.4s ease;
         }
 
@@ -109,91 +109,71 @@
             margin-top: 2px;
         }
 
-        /* Markdown Helper Widget */
-        .markdown-cheat-sheet {
-            background: rgba(255, 255, 255, 0.01);
-            border: 1px dashed rgba(255, 255, 255, 0.08);
-            border-radius: 6px;
-            padding: 10px 15px;
-            font-size: 0.75rem;
-            color: var(--muted-color);
-            text-align: center;
-            max-width: 760px;          
-            width: calc(100% - 40px);  
-            margin-top: 0px;
-            margin-bottom: 25px;
-            line-height: 2.5;
-        }
-
-        .markdown-cheat-sheet code {
-            font-family: var(--font-mono);
-            color: var(--text-color);
-            background: rgba(255, 255, 255, 0.04);
-            padding: 1px 4px;
-            border-radius: 3px;
-        }
-
-        .suite-options {
+        /* ------------------------------------------------------------------
+           COLLAPSIBLE LAUNCHPAD THEME SELECTION WRAPPER
+        ------------------------------------------------------------------ */
+        .collapsible-theme-hub {
             display: flex;
-            gap: 20px;
-            max-width: 800px;
+            flex-direction: column;
+            align-items: center;
             width: 100%;
-            padding: 0 20px;
+            max-width: 860px;
+            margin-top: 10px;
+            margin-bottom: 25px;
         }
 
-        .suite-card {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 30px 25px;
-            border-radius: 8px;
+        .theme-accordion-toggle {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: transparent;
+            border: none;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 6px 16px;
+            border-radius: 20px;
+            transition: background 0.2s ease;
         }
 
-        .suite-card:hover {
+        .theme-accordion-toggle:hover {
             background: rgba(255, 255, 255, 0.04);
-            border-color: var(--accent-color);
-            transform: translateY(-4px);
         }
 
-        .suite-card h2 {
-            font-size: 1.3rem;
-            font-weight: 400;
-            margin-bottom: 10px;
-            color: var(--text-color);
-            text-shadow: var(--text-glow);
-        }
-
-        .suite-card p {
-            font-size: 0.85rem;
+        .theme-toggle-label {
+            font-size: 0.75rem;
+            text-transform: lowercase;
+            letter-spacing: 1px;
             color: var(--muted-color);
-            line-height: 1.6;
+            font-family: var(--font-mono);
+            user-select: none;
         }
 
-        .panel-section-title {
-            font-size: 0.70rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--muted-color);
-            margin-top: 25px;
-            margin-bottom: 2px;
-            opacity: 0.8;
+        .theme-square-group {
+            display: flex;
+            gap: 6px;
         }
 
         .theme-selection-panel {
             display: flex;
-            gap: 24px;
-            max-width: 640px;
+            gap: 16px;
             width: 100%;
             padding: 0 20px;
-            margin-top: 0px;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease, margin-top 0.3s ease;
+            margin-top: 0;
+        }
+
+        .collapsible-theme-hub.expanded .theme-selection-panel {
+            max-height: 120px;
+            opacity: 1;
+            margin-top: 15px;
         }
 
         .theme-card {
             flex: 1;
-            padding: 8px 12px;
-            border-radius: 4px;
+            padding: 10px 12px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 0.75rem;
             text-align: center;
@@ -207,10 +187,282 @@
         .t-matrix { background: #000500; color: #33ff33; border-color: #33ff33; text-shadow: 0 0 2px #33ff33; }
         .t-cobalt { background: #000080; color: #ffffff; border-color: rgba(255,255,255,0.2); }
 
-        .theme-card:hover { transform: scale(1.03); }
+        .theme-card:hover { transform: translateY(-2px); }
 
         /* ------------------------------------------------------------------
-           3. FLOATING PICKER MODAL DIALOG CONTAINER
+           EXPANDABLE SUITE CARDS (Requirement 1 & 2 Refinements)
+        ------------------------------------------------------------------ */
+        .suite-options {
+            display: flex;
+            gap: 20px;
+            max-width: 860px; /* Expanded max-width for single line shortcut layout */
+            width: 100%;
+            padding: 0 20px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .suite-card {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 25px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+            text-align: center;
+            position: relative;
+        }
+
+        .suite-card:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .suite-card.hidden {
+            display: none !important;
+        }
+
+        .suite-card.expanded {
+            flex: 1 1 100%;
+            cursor: default;
+            border-color: var(--accent-color);
+            background: rgba(255, 255, 255, 0.03);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            padding: 30px 35px;
+        }
+
+        .card-header-toggle {
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .suite-card h2 {
+            font-size: 1.35rem;
+            font-weight: 400;
+            margin-bottom: 8px;
+            color: var(--text-color);
+            text-shadow: var(--text-glow);
+            text-align: center;
+        }
+
+        /* Requirement 2: Clean centered descriptions without awkward spacing */
+        .suite-card p.card-desc {
+            font-size: 0.85rem;
+            color: var(--muted-color);
+            line-height: 1.6;
+            text-align: center;
+            max-width: 620px;
+            margin: 0 auto;
+        }
+
+        .card-close-x {
+            display: none;
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: transparent;
+            border: none;
+            color: var(--muted-color);
+            font-size: 1.2rem;
+            font-family: var(--font-mono);
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .suite-card.expanded .card-close-x {
+            display: block;
+        }
+
+        .card-close-x:hover {
+            color: var(--text-color);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .expand-hint {
+            font-size: 0.72rem;
+            color: var(--muted-color);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            opacity: 0.65;
+            margin-top: 18px;
+            display: block;
+            text-align: center;
+            transition: opacity 0.2s ease;
+        }
+
+        .suite-card.expanded .expand-hint {
+            display: none;
+        }
+
+        .card-header-toggle:hover .expand-hint {
+            opacity: 1;
+            color: var(--accent-color);
+        }
+
+        .suite-card-details {
+            display: none;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            animation: fadeIn 0.4s ease forwards;
+            text-align: left;
+            width: 100%;
+        }
+
+        .suite-card.expanded .suite-card-details {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .how-it-works-divider {
+            text-align: center;
+            font-size: 0.75rem;
+            text-transform: lowercase;
+            letter-spacing: 2px;
+            color: var(--muted-color);
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .how-it-works-divider::before,
+        .how-it-works-divider::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 30%;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .how-it-works-divider::before { left: 0; }
+        .how-it-works-divider::after { right: 0; }
+
+        .how-it-works-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 25px;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        /* Requirement 1: Controls fit cleanly on a single line */
+        .shortcuts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-size: 0.82rem;
+            color: var(--text-color);
+        }
+
+        .shortcut-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+        }
+
+        .shortcut-item span {
+            white-space: nowrap;
+        }
+
+        .shortcut-item code {
+            font-family: var(--font-mono);
+            color: var(--accent-color);
+            background: rgba(255, 255, 255, 0.06);
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            white-space: nowrap;
+            display: inline-block;
+        }
+
+        .formatting-preview-box {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 16px;
+            font-size: 0.75rem;
+            line-height: 1.5;
+            color: var(--text-color);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+            max-height: 240px;
+            overflow-y: auto;
+        }
+
+        .screenplay-preview { font-family: var(--font-script); }
+        .narrative-preview { font-family: var(--font-mono); }
+
+        .tab-badge {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--accent-color);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 1px 5px;
+            border-radius: 3px;
+            margin-right: 6px;
+            display: inline-block;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        .preview-line-wrapper {
+            display: flex;
+            align-items: baseline;
+            margin-bottom: 6px;
+        }
+
+        .preview-heading { text-transform: uppercase; font-weight: bold; margin-bottom: 4pt; }
+        .preview-action { margin-bottom: 8px; }
+        .preview-character { text-transform: uppercase; text-align: center; margin-top: 6px; font-weight: bold; }
+        .preview-parenthetical { text-align: center; opacity: 0.8; }
+        .preview-dialogue { text-align: center; padding: 0 10%; margin-bottom: 8px; }
+        .preview-transition { text-transform: uppercase; text-align: right; margin-top: 6px; opacity: 0.7; }
+
+        .write-btn-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .suite-write-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            font-weight: bold;
+            text-transform: lowercase;
+            letter-spacing: 1.5px;
+            padding: 10px 45px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+        }
+
+        .suite-write-btn:hover {
+            background: var(--accent-color);
+            color: var(--bg-color);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+            transform: scale(1.04);
+        }
+
+        /* ------------------------------------------------------------------
+           3. FLOATING PICKER & GUIDE MODAL DIALOG CONTAINERS
         ------------------------------------------------------------------ */
         .modal-overlay {
             position: fixed;
@@ -237,6 +489,12 @@
             overflow: hidden; 
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
             transition: background-color 0.4s ease, border-color 0.4s ease;
+        }
+
+        .guide-modal-box {
+            max-width: 780px;
+            height: auto;
+            max-height: 85vh;
         }
 
         .modal-box h3 {
@@ -345,6 +603,25 @@
             background: rgba(56, 189, 248, 0.1);
         }
 
+        .list-rename-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--muted-color);
+            cursor: pointer;
+            font-family: var(--font-mono);
+            font-size: 0.70rem;
+            text-transform: uppercase;
+            padding: 2px 6px;
+            margin-right: 4px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        .list-rename-btn:hover {
+            color: var(--accent-color);
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
         .list-delete-btn {
             background: transparent;
             border: 1px solid transparent;
@@ -364,21 +641,6 @@
             background: rgba(239, 68, 68, 0.08);
         }
         
-        .header-download-btn {
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--muted-color);
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            padding: 4px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .header-download-btn:hover {
-            color: var(--accent-color);
-            border-color: var(--accent-color);
-        }
         .modal-close-btn { background: transparent; border: none; color: var(--muted-color); font-family: var(--font-mono); font-size: 0.8rem; cursor: pointer; display: block; text-align: center; width: 100%; padding-top: 5px; }
         .modal-close-btn:hover { color: var(--text-color); }
 
@@ -433,6 +695,19 @@
             text-shadow: var(--text-glow);
         }
 
+        .alert-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--muted-color);
+            color: var(--text-color);
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+            outline: none;
+        }
+
         .alert-btn {
             background: transparent;
             border: 1px solid var(--text-color);
@@ -452,7 +727,7 @@
         }
 
         /* ------------------------------------------------------------------
-           4. WORKSPACE STYLES (IMPROVED EDGE-TO-EDGE SYSTEM)
+           4. WORKSPACE STYLES
         ------------------------------------------------------------------ */
         .chrome-element {
             transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
@@ -487,12 +762,17 @@
             z-index: 10;
         }
 
-        .doc-left { display: flex; align-items: center; gap: 15px; justify-self: start; }
+        .doc-left { 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            justify-self: start; 
+        }
         
         .header-center-hub {
             display: flex;
             align-items: center;
-            gap: 15px;
+            justify-content: center;
             justify-self: center;
         }
 
@@ -521,7 +801,36 @@
             fill: currentColor;
         }
 
-        .sync-status { display: flex; align-items: center; gap: 12px; justify-self: end; }
+        .sync-status { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            justify-self: end; 
+        }
+
+        #save-indicator {
+            font-size: 0.75rem;
+            color: var(--muted-color);
+        }
+
+        .guide-trigger-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: var(--muted-color);
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            padding: 2px 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-left: 6px;
+        }
+
+        .guide-trigger-btn:hover {
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+            background: rgba(255, 255, 255, 0.05);
+        }
 
         .inline-theme-picker {
             display: flex;
@@ -543,15 +852,26 @@
         .sq-matrix { background-color: #33ff33; border-color: #33ff33; }
         .sq-cobalt { background-color: #000080; border-color: #ffffff; }
 
+        /* Requirement 3: Document Title Underline & Glow Affordance */
         .doc-title {
             color: var(--text-color);
             border: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
             background: transparent;
             font-family: var(--font-mono);
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: bold;
             outline: none;
-            width: 200px;
+            width: 260px;
+            text-align: center;
+            padding-bottom: 2px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease, text-shadow 0.3s ease;
+        }
+
+        .doc-title:hover, 
+        .doc-title:focus {
+            border-bottom-color: var(--accent-color);
+            box-shadow: 0 1px 6px rgba(255, 255, 255, 0.3);
             text-shadow: var(--text-glow);
         }
 
@@ -564,7 +884,6 @@
 
         .sync-dot.connected { background-color: var(--accent-color); }
 
-        /* Stretched Canvas Layout - True edge-to-edge Virtual Typewriter */
         main {
             flex-grow: 1;
             display: flex;
@@ -612,7 +931,7 @@
         body.mode-narrative .editor div, 
         body.mode-narrative .editor p {
             margin-bottom: 1.5em;
-            transition: margin-bottom 0.2s ease;
+            transition: margin-bottom 0.2s ease, margin-top 0.2s ease;
         }
 
         body.mode-narrative .editor br {
@@ -620,7 +939,7 @@
         }
 
         /* ------------------------------------------------------------------
-           5. RIGID SCREENPLAY FORMATTING RIGGING (Screenplay Engine)
+           5. RIGID SCREENPLAY FORMATTING RIGGING
         ------------------------------------------------------------------ */
         body.mode-screenplay .editor {
             font-family: var(--font-script);
@@ -638,13 +957,15 @@
         body.mode-screenplay div[data-element="scene-heading"] {
             text-transform: uppercase;
             margin-top: 24pt;
-            margin-bottom: 14pt;
+            margin-bottom: 4pt;
             text-align: left;
+            font-weight: bold;
         }
 
         body.mode-screenplay div[data-element="action"] {
             text-transform: none;
             text-align: left;
+            margin-bottom: 14pt;
         }
 
         body.mode-screenplay div[data-element="character"] {
@@ -664,17 +985,19 @@
             text-transform: none;
             padding-left: 22%;
             max-width: 62%;
+            margin-bottom: 14pt;
         }
 
         body.mode-screenplay div[data-element="transition"] {
             text-transform: uppercase;
             text-align: right;
             padding-right: 5%;
+            margin-bottom: 14pt;
         }
 
         footer {
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
             align-items: center;
             padding: 15px 40px;
             width: 100%;
@@ -686,8 +1009,67 @@
             z-index: 10;
         }
 
-        .stats-left, .stats-right { display: flex; gap: 20px; }
+        .stats-left { justify-self: start; display: flex; gap: 20px; }
+        .footer-center { justify-self: center; }
+        .stats-right { justify-self: end; display: flex; gap: 20px; }
+
+        .footer-files-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--text-color);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 5px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-shadow: var(--text-glow);
+        }
+
+        .footer-files-btn:hover {
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
         #element-status-tag { color: var(--accent-color); font-weight: bold; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* ------------------------------------------------------------------
+           6. RESPONSIVE MOBILE MEDIA QUERIES
+        ------------------------------------------------------------------ */
+        @media (max-width: 600px) {
+            body { font-size: 16px; }
+
+            .brand-header { padding: 0 20px; margin-top: 20px; }
+            .brand-header h1 { font-size: 1.8rem; }
+            .suite-options { flex-direction: column; gap: 15px; }
+            
+            .how-it-works-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            header {
+                grid-template-columns: auto 1fr auto;
+                padding: 10px 15px;
+            }
+
+            .inline-theme-picker { display: none; }
+            .doc-title { width: 140px; font-size: 0.8rem; }
+            #save-indicator { display: none; }
+            .guide-trigger-btn { padding: 2px 6px; font-size: 0.68rem; }
+
+            main { padding: 0 10px; }
+            .editor { font-size: 0.95rem; padding-top: 20px; }
+
+            footer {
+                padding: 10px 15px;
+                font-size: 0.7rem;
+            }
+
+            .footer-files-btn { padding: 4px 12px; font-size: 0.7rem; }
+            #read-time { display: none; }
+        }
     </style>
 </head>
 <body>
@@ -714,29 +1096,137 @@
             <p>Distraction-free storytelling.</p>
         </div>
 
-        <!-- Markdown Shortcut Reference Block -->
-        <div class="markdown-cheat-sheet" style="text-align: center;">
-            <strong>Markdown Editor Shortcuts:</strong><br>Bold with <code>Ctrl+B</code> • Italicize with <code>Ctrl+I</code> • Indent lines with <code>Tab</code>.
+        <!-- Collapsible Header Theme Picker Unit -->
+        <div class="collapsible-theme-hub" id="theme-accordion-hub">
+            <button class="theme-accordion-toggle" onclick="toggleThemeAccordion()">
+                <div class="theme-square-group">
+                    <div class="theme-square sq-dark" title="Classic Dark"></div>
+                    <div class="theme-square sq-amber" title="Amber CRT"></div>
+                </div>
+                <span class="theme-toggle-label">themes</span>
+                <div class="theme-square-group">
+                    <div class="theme-square sq-matrix" title="Matrix Green"></div>
+                    <div class="theme-square sq-cobalt" title="Retro Cobalt"></div>
+                </div>
+            </button>
+
+            <div class="theme-selection-panel">
+                <div class="theme-card t-dark" onclick="applyAppTheme('dark')">Classic Dark</div>
+                <div class="theme-card t-amber" onclick="applyAppTheme('amber')">Amber CRT</div>
+                <div class="theme-card t-matrix" onclick="applyAppTheme('matrix')">Matrix Green</div>
+                <div class="theme-card t-cobalt" onclick="applyAppTheme('cobalt')">Retro Cobalt</div>
+            </div>
         </div>
         
+        <!-- EXPANDABLE SUITE CARDS CONTAINER -->
         <div class="suite-options">
-            <div class="suite-card" id="open-writer-btn">
-                <h2>Narrative</h2>
-                <p>Minimalist, focused environment optimized for long-form prose and creative drafts.</p>
+            
+            <!-- NARRATIVE CARD -->
+            <div class="suite-card" id="card-narrative">
+                <button class="card-close-x" onclick="collapseSuiteCard('narrative', event)" title="Close window">✕</button>
+
+                <div class="card-header-toggle" onclick="toggleSuiteCard('narrative')">
+                    <h2>Narrative 85</h2>
+                    <!-- Requirement 2: Clean centered description -->
+                    <p class="card-desc">An unencumbered environment designed for long form prose, essay drafts, and creative writing. Features smart paragraph spacing, multi tier list indentation, and automated RTF formatting exports.</p>
+                    <span class="expand-hint" id="hint-narrative">+ click to expand</span>
+                </div>
+
+                <div class="suite-card-details">
+                    <div class="how-it-works-divider">— how it works —</div>
+                    
+                    <div class="how-it-works-grid">
+                        <!-- Requirement 1: Single line controls -->
+                        <div class="shortcuts-list">
+                            <div class="shortcut-item"><code>Ctrl + B</code> <span>Bold selection</span></div>
+                            <div class="shortcut-item"><code>Ctrl + I</code> <span>Italicize selection</span></div>
+                            <div class="shortcut-item"><code>*text*</code> <span>Type asterisks for <b>bold</b></span></div>
+                            <div class="shortcut-item"><code>_text_</code> <span>Type underscores for <i>italics</i></span></div>
+                            <div class="shortcut-item"><code>Tab</code> <span>Indent paragraph / list item</span></div>
+                            <div class="shortcut-item"><code>Enter</code> <span>Carries indentation to next line</span></div>
+                            <div class="shortcut-item"><code>Enter (empty)</code> <span>De-indents line step-by-step</span></div>
+                        </div>
+
+                        <div class="formatting-preview-box narrative-preview">
+                            <div style="margin-bottom: 1.25em;">Standard prose paragraph preceding list block.</div>
+                            <div style="padding-left: 30px; margin-bottom: 0.7em;">1. First indented list item</div>
+                            <div style="padding-left: 30px; margin-bottom: 1.5em;">2. Final item in list with trailing room</div>
+                            <div>Back to flush-left narrative prose!</div>
+                        </div>
+                    </div>
+
+                    <div class="write-btn-wrapper">
+                        <button class="suite-write-btn" onclick="triggerSuiteWrite('narrative', event)">write</button>
+                    </div>
+                </div>
             </div>
             
-            <div class="suite-card" id="open-script-btn">
-                <h2>Screenplay</h2>
-                <p>Rigidly precise layout generator mapping scene elements automatically via Tab & Enter.</p>
-            </div>
-        </div>
+            <!-- SCREENPLAY CARD -->
+            <div class="suite-card" id="card-screenplay">
+                <button class="card-close-x" onclick="collapseSuiteCard('screenplay', event)" title="Close window">✕</button>
 
-        <span class="panel-section-title">Select Monitor Workspace Theme</span>
-        <div class="theme-selection-panel">
-            <div class="theme-card t-dark" onclick="applyAppTheme('dark')">Classic Dark</div>
-            <div class="theme-card t-amber" onclick="applyAppTheme('amber')">Amber CRT</div>
-            <div class="theme-card t-matrix" onclick="applyAppTheme('matrix')">Matrix Green</div>
-            <div class="theme-card t-cobalt" onclick="applyAppTheme('cobalt')">Retro Cobalt</div>
+                <div class="card-header-toggle" onclick="toggleSuiteCard('screenplay')">
+                    <h2>Screenplay 85</h2>
+                    <!-- Requirement 2: Clean centered description -->
+                    <p class="card-desc">A rigid screenplay layout engine adhering to Industry Fountain standards. Automatically cycles through sluglines, action, characters, parentheticals, and dialogue using key triggers.</p>
+                    <span class="expand-hint" id="hint-screenplay">+ click to expand</span>
+                </div>
+
+                <div class="suite-card-details">
+                    <div class="how-it-works-divider">— how it works —</div>
+                    
+                    <div class="how-it-works-grid">
+                        <!-- Requirement 1: Single line controls -->
+                        <div class="shortcuts-list">
+                            <div class="shortcut-item"><code>Ctrl + B</code> <span>Bold text (or <code>*bold*</code>)</span></div>
+                            <div class="shortcut-item"><code>Ctrl + I</code> <span>Italicize text (or <code>_italics_</code>)</span></div>
+                            <div class="shortcut-item"><code>Tab x0</code> <span>Scene Heading (Slugline)</span></div>
+                            <div class="shortcut-item"><code>Tab x0</code> <span>Action Description</span></div>
+                            <div class="shortcut-item"><code>Tab x1</code> <span>Character Name</span></div>
+                            <div class="shortcut-item"><code>Tab x2</code> <span>Parenthetical Direction</span></div>
+                            <div class="shortcut-item"><code>Tab x3</code> <span>Spoken Dialogue Block</span></div>
+                            <div class="shortcut-item"><code>Tab x4</code> <span>Scene Transition (CUT TO:)</span></div>
+                        </div>
+
+                        <div class="formatting-preview-box screenplay-preview">
+                            <div class="preview-line-wrapper">
+                                <span class="tab-badge">Tab x0</span>
+                                <div class="preview-heading" style="margin-bottom:0;">INT. COFFEE SHOP - DAY</div>
+                            </div>
+
+                            <div class="preview-line-wrapper">
+                                <span class="tab-badge">Tab x0</span>
+                                <div class="preview-action" style="margin-bottom:0;">MARCUS sits across from JULIA.</div>
+                            </div>
+
+                            <div class="preview-line-wrapper" style="justify-content: center;">
+                                <span class="tab-badge">Tab x1</span>
+                                <div class="preview-character" style="margin:0;">MARCUS</div>
+                            </div>
+
+                            <div class="preview-line-wrapper" style="justify-content: center;">
+                                <span class="tab-badge">Tab x2</span>
+                                <div class="preview-parenthetical" style="margin:0;">(leaning in)</div>
+                            </div>
+
+                            <div class="preview-line-wrapper" style="justify-content: center;">
+                                <span class="tab-badge">Tab x3</span>
+                                <div class="preview-dialogue" style="margin:0; padding:0;">Did you remember the blueprints?</div>
+                            </div>
+
+                            <div class="preview-line-wrapper" style="justify-content: flex-end;">
+                                <span class="tab-badge">Tab x4</span>
+                                <div class="preview-transition" style="margin:0;">CUT TO:</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="write-btn-wrapper">
+                        <button class="suite-write-btn" onclick="triggerSuiteWrite('screenplay', event)">write</button>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <span style="font-size: 0.65rem; color: var(--muted-color); margin-top: 75px; opacity: 0.6; letter-spacing: 0.5px; text-transform: uppercase;">
@@ -744,6 +1234,7 @@
         </span>
     </div>
 
+    <!-- DOCUMENT PICKER MODAL -->
     <div id="picker-modal" class="modal-overlay">
         <div class="modal-box">
             <h3 id="modal-context-title">Narrative Workspace</h3>
@@ -769,22 +1260,31 @@
         </div>
     </div>
 
+    <!-- IN-WORKSPACE INSTRUCTIONS / HOW IT WORKS MODAL -->
+    <div id="guide-modal" class="modal-overlay">
+        <div class="modal-box guide-modal-box">
+            <h3 id="guide-modal-title">How It Works</h3>
+            
+            <div class="modal-scroll-well" id="guide-modal-content"></div>
+            
+            <button class="modal-close-btn" onclick="closeGuideModal()">← Resume Writing</button>
+        </div>
+    </div>
+
     <div id="zen-alert-overlay" class="alert-overlay">
         <div class="alert-box">
             <h4 id="zen-alert-title">System Alert</h4>
             <p id="zen-alert-text">Notification parameters.</p>
-            <button class="alert-btn" onclick="closeZenAlert()">Acknowledge</button>
+            <div id="alert-interactive-body"></div>
+            <div id="alert-actions-well">
+                <button class="alert-btn" onclick="closeZenAlert()">Acknowledge</button>
+            </div>
         </div>
     </div>
 
     <div id="workspace-view" class="app-view">
         <header class="chrome-element">
             <div class="doc-left">
-                <input type="text" class="doc-title" value="untitledProse.rtf" spellcheck="false">
-                <span id="save-indicator">• Auto-saved</span>
-            </div>
-
-            <div class="header-center-hub">
                 <button class="header-logo-container" id="return-home-btn" title="Return to retroscribe Launchpad">
                    <svg width="100%" height="100%" viewBox="0 0 2102 340" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
                         <g transform="matrix(4.16667,0,0,4.16667,-875.209,-2882.7)">
@@ -801,7 +1301,6 @@
                         </g>
                     </svg>
                 </button>
-                <button class="header-download-btn" id="header-download-btn" onclick="handleWorkspaceDownload(event)">↓ Download</button>
                 <div class="inline-theme-picker">
                     <div class="theme-square sq-dark" title="Classic Dark" onclick="applyAppTheme('dark')"></div>
                     <div class="theme-square sq-amber" title="Amber CRT" onclick="applyAppTheme('amber')"></div>
@@ -810,9 +1309,16 @@
                 </div>
             </div>
 
+            <!-- Requirement 3: Editable title with underline and glow affordance -->
+            <div class="header-center-hub">
+                <input type="text" class="doc-title" value="untitledProse.rtf" spellcheck="false" title="Click to rename document">
+            </div>
+
             <div class="sync-status">
+                <span id="save-indicator">• Auto-saved</span>
                 <div id="sync-dot" class="sync-dot"></div>
                 <span id="cloud-status">Cloud: Local Only</span>
+                <button class="guide-trigger-btn" onclick="openGuideModal()" title="View mode instructions">? How it works</button>
             </div>
         </header>
 
@@ -827,6 +1333,11 @@
                 <span>Words: <strong id="word-count">0</strong></span>
                 <span>Characters: <strong id="char-count">0</strong></span>
             </div>
+
+            <div class="footer-center">
+                <button class="footer-files-btn" onclick="openPickerModal(event)">↓ Download / Files</button>
+            </div>
+
             <div class="stats-right">
                 <span id="element-status-tag" style="display: none; margin-right: 15px;">Element: Action</span>
                 <span id="read-time">0 min read</span>
@@ -840,6 +1351,141 @@
 
         // --- GLOBAL RUNTIME STATE ---
         let currentSuiteMode = 'narrative'; // 'narrative' or 'screenplay'
+
+        // --- ACCORDION THEME TOGGLE FOR LANDING SCREEN ---
+        function toggleThemeAccordion() {
+            const hub = document.getElementById('theme-accordion-hub');
+            hub.classList.toggle('expanded');
+        }
+
+        // --- SUITE CARD EXPANSION LOGIC ---
+        function toggleSuiteCard(mode) {
+            const cardNarrative = document.getElementById('card-narrative');
+            const cardScreenplay = document.getElementById('card-screenplay');
+
+            if (mode === 'narrative') {
+                if (!cardNarrative.classList.contains('expanded')) {
+                    cardNarrative.classList.add('expanded');
+                    cardScreenplay.classList.add('hidden');
+                }
+            } else if (mode === 'screenplay') {
+                if (!cardScreenplay.classList.contains('expanded')) {
+                    cardScreenplay.classList.add('expanded');
+                    cardNarrative.classList.add('hidden');
+                }
+            }
+        }
+
+        function collapseSuiteCard(mode, event) {
+            if (event) event.stopPropagation();
+            const cardNarrative = document.getElementById('card-narrative');
+            const cardScreenplay = document.getElementById('card-screenplay');
+
+            cardNarrative.classList.remove('expanded');
+            cardScreenplay.classList.remove('expanded');
+            cardNarrative.classList.remove('hidden');
+            cardScreenplay.classList.remove('hidden');
+        }
+
+        // --- IN-WORKSPACE HOW IT WORKS MODAL ENGINE ---
+        function openGuideModal() {
+            const guideModal = document.getElementById('guide-modal');
+            const guideTitle = document.getElementById('guide-modal-title');
+            const guideContent = document.getElementById('guide-modal-content');
+
+            if (currentSuiteMode === 'narrative') {
+                guideTitle.textContent = "Narrative 85 Guide";
+                guideContent.innerHTML = `
+                    <div class="how-it-works-grid" style="margin-bottom:0;">
+                        <div class="shortcuts-list">
+                            <div class="shortcut-item"><code>Ctrl + B</code> <span>Bold selection</span></div>
+                            <div class="shortcut-item"><code>Ctrl + I</code> <span>Italicize selection</span></div>
+                            <div class="shortcut-item"><code>*text*</code> <span>Type asterisks for <b>bold</b></span></div>
+                            <div class="shortcut-item"><code>_text_</code> <span>Type underscores for <i>italics</i></span></div>
+                            <div class="shortcut-item"><code>Tab</code> <span>Indent paragraph / list item</span></div>
+                            <div class="shortcut-item"><code>Enter</code> <span>Carries indentation to next line</span></div>
+                            <div class="shortcut-item"><code>Enter (empty)</code> <span>De-indents line step-by-step</span></div>
+                        </div>
+
+                        <div class="formatting-preview-box narrative-preview">
+                            <div style="margin-bottom: 1.25em;">Standard prose paragraph preceding list block.</div>
+                            <div style="padding-left: 30px; margin-bottom: 0.7em;">1. First indented list item</div>
+                            <div style="padding-left: 30px; margin-bottom: 1.5em;">2. Final item in list with trailing room</div>
+                            <div>Back to flush-left narrative prose!</div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                guideTitle.textContent = "Screenplay 85 Guide";
+                guideContent.innerHTML = `
+                    <div class="how-it-works-grid" style="margin-bottom:0;">
+                        <div class="shortcuts-list">
+                            <div class="shortcut-item"><code>Ctrl + B</code> <span>Bold text (or <code>*bold*</code>)</span></div>
+                            <div class="shortcut-item"><code>Ctrl + I</code> <span>Italicize text (or <code>_italics_</code>)</span></div>
+                            <div class="shortcut-item"><code>Tab x0</code> <span>Scene Heading (Slugline)</span></div>
+                            <div class="shortcut-item"><code>Tab x0</code> <span>Action Description</span></div>
+                            <div class="shortcut-item"><code>Tab x1</code> <span>Character Name</span></div>
+                            <div class="shortcut-item"><code>Tab x2</code> <span>Parenthetical Direction</span></div>
+                            <div class="shortcut-item"><code>Tab x3</code> <span>Spoken Dialogue Block</span></div>
+                            <div class="shortcut-item"><code>Tab x4</code> <span>Scene Transition (CUT TO:)</span></div>
+                        </div>
+
+                        <div class="formatting-preview-box screenplay-preview">
+                            <div class="preview-line-wrapper">
+                                <span class="tab-badge">Tab x0</span>
+                                <div class="preview-heading" style="margin-bottom:0;">INT. COFFEE SHOP - DAY</div>
+                            </div>
+
+                            <div class="preview-line-wrapper">
+                                <span class="tab-badge">Tab x0</span>
+                                <div class="preview-action" style="margin-bottom:0;">MARCUS sits across from JULIA.</div>
+                            </div>
+
+                            <div class="preview-line-wrapper" style="justify-content: center;">
+                                <span class="tab-badge">Tab x1</span>
+                                <div class="preview-character" style="margin:0;">MARCUS</div>
+                            </div>
+
+                            <div class="preview-line-wrapper" style="justify-content: center;">
+                                <span class="tab-badge">Tab x2</span>
+                                <div class="preview-parenthetical" style="margin:0;">(leaning in)</div>
+                            </div>
+
+                            <div class="preview-line-wrapper" style="justify-content: center;">
+                                <span class="tab-badge">Tab x3</span>
+                                <div class="preview-dialogue" style="margin:0; padding:0;">Did you remember the blueprints?</div>
+                            </div>
+
+                            <div class="preview-line-wrapper" style="justify-content: flex-end;">
+                                <span class="tab-badge">Tab x4</span>
+                                <div class="preview-transition" style="margin:0;">CUT TO:</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            guideModal.style.display = 'flex';
+        }
+
+        function closeGuideModal() {
+            document.getElementById('guide-modal').style.display = 'none';
+        }
+
+        // Open Document Picker Modal
+        function openPickerModal(event) {
+            if (event) event.preventDefault();
+            configureWorkspaceUIPresentation();
+            listLocalFiles(); 
+            if (accessToken) { listDriveFiles(); }
+            pickerModal.style.display = 'flex';
+        }
+
+        function triggerSuiteWrite(mode, event) {
+            if (event) event.stopPropagation();
+            currentSuiteMode = mode;
+            openPickerModal(event);
+        }
 
         // --- TAB SELECTION SWAPPING HANDLERS ---
         const tabToggleLocal = document.getElementById('tab-toggle-local');
@@ -904,8 +1550,6 @@
         const localDocsTarget = document.getElementById('local-docs-target');
 
         // Buttons
-        const openWriterBtn = document.getElementById('open-writer-btn');
-        const openScriptBtn = document.getElementById('open-script-btn');
         const closePickerBtn = document.getElementById('close-picker-btn');
         const newDocBtn = document.getElementById('new-doc-btn');
         const returnHomeBtn = document.getElementById('return-home-btn');
@@ -934,6 +1578,8 @@
         function showZenAlert(title, text) {
             zenAlertTitle.textContent = title;
             zenAlertText.textContent = text;
+            document.getElementById('alert-interactive-body').innerHTML = "";
+            document.getElementById('alert-actions-well').innerHTML = `<button class="alert-btn" onclick="closeZenAlert()">Acknowledge</button>`;
             zenAlertOverlay.classList.add('active');
         }
 
@@ -950,49 +1596,33 @@
                 root.style.setProperty('--text-color', '#ffffff');     
                 root.style.setProperty('--muted-color', '#94a3b8');    
                 root.style.setProperty('--accent-color', '#ffffff');   
-                root.style.setProperty('--text-glow', 'none');
+                root.style.setProperty('--text-glow', '0 0 8px rgba(255,255,255,0.6)');
             } 
             else if (themeName === 'amber') {
                 root.style.setProperty('--bg-color', '#0a0800');
                 root.style.setProperty('--text-color', '#ffb000');
                 root.style.setProperty('--muted-color', '#8a6000');
                 root.style.setProperty('--accent-color', '#ffb000');
-                root.style.setProperty('--text-glow', '0 0 5px rgba(255,176,0,0.6)');
+                root.style.setProperty('--text-glow', '0 0 8px rgba(255,176,0,0.6)');
             } 
             else if (themeName === 'matrix') {
                 root.style.setProperty('--bg-color', '#000500');
                 root.style.setProperty('--text-color', '#33ff33');
                 root.style.setProperty('--muted-color', '#008800');
                 root.style.setProperty('--accent-color', '#33ff33');
-                root.style.setProperty('--text-glow', '0 0 5px rgba(51,255,51,0.6)');
+                root.style.setProperty('--text-glow', '0 0 8px rgba(51,255,51,0.6)');
             } 
             else if (themeName === 'cobalt') {
                 root.style.setProperty('--bg-color', '#000080');
                 root.style.setProperty('--text-color', '#ffffff');
                 root.style.setProperty('--muted-color', '#8a9be0');
                 root.style.setProperty('--accent-color', '#ffffff');   
-                root.style.setProperty('--text-glow', 'none');
+                root.style.setProperty('--text-glow', '0 0 8px rgba(255,255,255,0.6)');
             }
             localStorage.setItem('zensuite_saved_theme', themeName);
         }
 
         // --- ROUTING & VIEW CONTROLS ---
-        openWriterBtn.addEventListener('click', () => { 
-            currentSuiteMode = 'narrative';
-            configureWorkspaceUIPresentation();
-            listLocalFiles(); 
-            if (accessToken) { listDriveFiles(); }
-            pickerModal.style.display = 'flex'; 
-        });
-
-        openScriptBtn.addEventListener('click', () => { 
-            currentSuiteMode = 'screenplay';
-            configureWorkspaceUIPresentation();
-            listLocalFiles(); 
-            if (accessToken) { listDriveFiles(); }
-            pickerModal.style.display = 'flex'; 
-        });
-        
         closePickerBtn.addEventListener('click', () => { pickerModal.style.display = 'none'; });
 
         returnHomeBtn.addEventListener('click', (e) => {
@@ -1090,27 +1720,96 @@
             
             blocks.forEach((block, index) => {
                 const indent = parseInt(block.dataset.indent || "0", 10);
+                const prevBlock = blocks[index - 1];
                 const nextBlock = blocks[index + 1];
+                
+                const prevIndent = prevBlock ? parseInt(prevBlock.dataset.indent || "0", 10) : 0;
                 const nextIndent = nextBlock ? parseInt(nextBlock.dataset.indent || "0", 10) : 0;
 
                 if (indent > 0) {
+                    if (prevIndent === 0) {
+                        block.style.marginTop = "1.25em";
+                    } else {
+                        block.style.marginTop = "";
+                    }
+
                     if (nextBlock && nextIndent === indent) {
-                        block.style.marginBottom = "0.75em";
+                        block.style.marginBottom = "0.7em";
                     } else {
                         block.style.marginBottom = "1.5em";
                     }
                 } else {
+                    block.style.marginTop = "";
                     block.style.marginBottom = ""; 
                 }
             });
         }
 
+        // --- INLINE MARKDOWN AUTO-CONVERTER (*bold* & _italics_) WITH ZERO-WIDTH STYLE ISOLATION ---
+        function processInlineMarkdownFormatting() {
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+
+            let currentBlock = selection.getRangeAt(0).startContainer;
+            if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
+
+            if (!currentBlock || currentBlock === editor) return;
+
+            let html = currentBlock.innerHTML;
+            let modified = false;
+
+            // Convert *bold* -> <b>bold</b> + Zero-Width Space (\u200B)
+            const boldRegex = /(?<!\w)\*([^*]+)\*(?!\w)/g;
+            if (boldRegex.test(html)) {
+                currentBlock.innerHTML = html.replace(boldRegex, '<b>$1</b>&#8203;');
+                modified = true;
+            }
+
+            // Convert _italics_ -> <i>italics</i> + Zero-Width Space (\u200B)
+            const italicRegex = /(?<!\w)_([^_]+)_(?!\w)/g;
+            if (italicRegex.test(currentBlock.innerHTML)) {
+                currentBlock.innerHTML = currentBlock.innerHTML.replace(italicRegex, '<i>$1</i>&#8203;');
+                modified = true;
+            }
+
+            if (modified) {
+                placeCaretAfterFormatting(currentBlock);
+            }
+        }
+
+        function placeCaretAfterFormatting(container) {
+            const selection = window.getSelection();
+            const range = document.createRange();
+            
+            let lastChild = container.lastChild;
+            if (!lastChild) return;
+
+            if (lastChild.nodeType === Node.ELEMENT_NODE && (lastChild.tagName === 'B' || lastChild.tagName === 'I')) {
+                const zwsp = document.createTextNode('\u200B');
+                container.appendChild(zwsp);
+                lastChild = zwsp;
+            }
+
+            if (lastChild.nodeType === Node.TEXT_NODE) {
+                range.setStart(lastChild, lastChild.length);
+                range.collapse(true);
+            } else {
+                range.selectNodeContents(lastChild);
+                range.collapse(false);
+            }
+
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+
         // --- ANALYTICS ENGINE ---
         function updateAnalytics(text) {
-            const charCount = text.length;
+            const cleanText = text.replace(/\u200B/g, "");
+            
+            const charCount = cleanText.length;
             charCountEl.textContent = charCount.toLocaleString();
 
-            const words = text.trim().split(/\s+/).filter(word => word.length > 0);
+            const words = cleanText.trim().split(/\s+/).filter(word => word.length > 0);
             const wordCount = words.length;
             wordCountEl.textContent = wordCount.toLocaleString();
 
@@ -1300,99 +1999,83 @@
             }
         }
 
-        // --- DIRECT DOWNLOAD DISPATCHER ---
-        function handleWorkspaceDownload(event) {
-            if (event) event.preventDefault();
-            
-            const titleValue = docTitle && docTitle.value ? docTitle.value : "untitled";
-            const editorContent = editor && editor.innerHTML ? editor.innerHTML : "";
-            
-            exportDocumentToDisk(titleValue, editorContent, currentSuiteMode);
-        }
+        // --- DOM-AWARE RTF CONVERTER ENGINE ---
+        function convertHtmlToRtf(htmlContent) {
+            const temp = document.createElement('div');
+            temp.innerHTML = htmlContent;
 
-        // --- RTF CONVERTER FOR RICH NARRATIVE DOWNLOADS ---
-       // --- DOM-AWARE RTF CONVERTER ENGINE ---
-// --- DOM-AWARE RTF CONVERTER ENGINE (WITH PARAGRAPH RESETS) ---
-function convertHtmlToRtf(htmlContent) {
-    const temp = document.createElement('div');
-    temp.innerHTML = htmlContent;
+            let rtf = "{\\rtf1\\ansi\\deff0 {\\fonttbl{\\f0 JetBrains Mono;}}\n";
+            rtf += "\\viewkind4\\uc1\\dscr "; 
 
-    let rtf = "{\\rtf1\\ansi\\deff0 {\\fonttbl{\\f0 JetBrains Mono;}}\n";
-    rtf += "\\viewkind4\\uc1\\dscr "; // Base RTF initialization
-
-    function parseNode(node) {
-        // 1. Text Node: Escape RTF control characters
-        if (node.nodeType === Node.TEXT_NODE) {
-            return node.textContent
-                .replace(/\\/g, "\\\\")
-                .replace(/\{/g, "\\{")
-                .replace(/\}/g, "\\}");
-        }
-
-        // 2. Element Node: Parse HTML tags into explicit RTF styles
-        if (node.nodeType === Node.ELEMENT_NODE) {
-            const tag = node.tagName.toLowerCase();
-            const inner = Array.from(node.childNodes).map(parseNode).join('');
-
-            // Bolding
-            if (tag === 'b' || tag === 'strong') {
-                return `\\b ${inner}\\b0 `;
-            }
-            // Italics
-            if (tag === 'i' || tag === 'em') {
-                return `\\i ${inner}\\i0 `;
-            }
-            // In-line Break
-            if (tag === 'br') {
-                return "\\line ";
-            }
-            // Paragraph / Div Block Containers
-            if (tag === 'div' || tag === 'p') {
-                // Calculate indent level from data attribute OR style padding
-                const indentAttr = parseInt(node.dataset.indent || "0", 10);
-                const stylePadding = parseInt(node.style.paddingLeft || "0", 10);
-                const indentFromStyle = Math.round(stylePadding / 30);
-                const indentLevel = Math.max(indentAttr, indentFromStyle);
-
-                // Convert indent steps to RTF Twips (720 twips = 0.5 inches)
-                const indentTwips = indentLevel * 720; 
-
-                // Dynamic spacing calculation (0.75em list vs 1.5em standard break)
-                let spaceAfterTwips = 216; // Standard paragraph space after (~1.5em)
-                if (node.style.marginBottom === "0.75em") {
-                    spaceAfterTwips = 108; // Tightened list spacing (.75em)
+            function parseNode(node) {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    return node.textContent
+                        .replace(/\u200B/g, "")
+                        .replace(/\\/g, "\\\\")
+                        .replace(/\{/g, "\\{")
+                        .replace(/\}/g, "\\}");
                 }
 
-                // \pard resets paragraph formatting so indents do not bleed onto subsequent lines
-                return `\\par\\pard\\f0\\fs24\\sa${spaceAfterTwips}\\li${indentTwips} ${inner}`;
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                    const tag = node.tagName.toLowerCase();
+                    const inner = Array.from(node.childNodes).map(parseNode).join('');
+
+                    if (tag === 'b' || tag === 'strong') {
+                        return `\\b ${inner}\\b0 `;
+                    }
+                    if (tag === 'i' || tag === 'em') {
+                        return `\\i ${inner}\\i0 `;
+                    }
+                    if (tag === 'br') {
+                        return "\\line ";
+                    }
+                    if (tag === 'div' || tag === 'p') {
+                        const indentAttr = parseInt(node.dataset.indent || "0", 10);
+                        const stylePadding = parseInt(node.style.paddingLeft || "0", 10);
+                        const indentFromStyle = Math.round(stylePadding / 30);
+                        const indentLevel = Math.max(indentAttr, indentFromStyle);
+
+                        const indentTwips = indentLevel * 720; 
+
+                        let spaceBeforeTwips = 0;
+                        if (node.style.marginTop === "1.25em") {
+                            spaceBeforeTwips = 180; 
+                        }
+
+                        let spaceAfterTwips = 216; 
+                        if (node.style.marginBottom === "0.7em" || node.style.marginBottom === "0.75em") {
+                            spaceAfterTwips = 100; 
+                        }
+
+                        return `\\par\\pard\\f0\\fs24\\sb${spaceBeforeTwips}\\sa${spaceAfterTwips}\\li${indentTwips} ${inner}`;
+                    }
+
+                    return inner;
+                }
+                return "";
             }
 
-            return inner;
+            const compiledRtfBody = Array.from(temp.childNodes).map(parseNode).join('');
+            rtf += compiledRtfBody + "}";
+            return rtf;
         }
-        return "";
-    }
-
-    const compiledRtfBody = Array.from(temp.childNodes).map(parseNode).join('');
-    rtf += compiledRtfBody + "}";
-    return rtf;
-}
 
         // --- AUTO-SCROLL TYPEWRITER CURSOR TRACKER ---
-function scrollToCursor() {
-    const selection = window.getSelection();
-    if (!selection.rangeCount) return;
+        function scrollToCursor() {
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
 
-    const range = selection.getRangeAt(0);
-    let currentBlock = range.startContainer;
-    if (currentBlock.nodeType === Node.TEXT_NODE) {
-        currentBlock = currentBlock.parentNode;
-    }
+            const range = selection.getRangeAt(0);
+            let currentBlock = range.startContainer;
+            if (currentBlock.nodeType === Node.TEXT_NODE) {
+                currentBlock = currentBlock.parentNode;
+            }
 
-    // Smoothly scroll the active line into view if it dips below the viewport fold
-    if (currentBlock && currentBlock !== editor && typeof currentBlock.scrollIntoView === 'function') {
-        currentBlock.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-    }
-}
+            if (currentBlock && currentBlock !== editor && typeof currentBlock.scrollIntoView === 'function') {
+                currentBlock.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            }
+        }
+
         // --- EXPORTER ENGINE ---
         function exportDocumentToDisk(title, content, mode) {
             try {
@@ -1415,7 +2098,7 @@ function scrollToCursor() {
                         processedText = blocks.map(block => {
                             if (!block) return "";
                             const type = (typeof block.getAttribute === 'function') ? (block.getAttribute('data-element') || 'action') : 'action';
-                            const text = block.innerText ? block.innerText.trim() : "";
+                            const text = block.innerText ? block.innerText.replace(/\u200B/g, "").trim() : "";
                             if (!text) return "";
                             
                             if (type === 'scene-heading' || type === 'character' || type === 'transition') return text.toUpperCase();
@@ -1424,7 +2107,7 @@ function scrollToCursor() {
                         }).filter(line => line !== "").join('\n\n');
                     }
                     if (!processedText.trim()) {
-                        processedText = parserNode.innerText ? parserNode.innerText.trim() : content;
+                        processedText = parserNode.innerText ? parserNode.innerText.replace(/\u200B/g, "").trim() : content;
                     }
                 }
 
@@ -1443,6 +2126,71 @@ function scrollToCursor() {
             }
         }
 
+        // In-Modal Rename Logic
+        function requestDocumentRename(fileId, currentTitle, storageType) {
+            zenAlertTitle.textContent = "Rename Document";
+            zenAlertText.textContent = `Enter a new file title for "${currentTitle}":`;
+            
+            const bodyWell = document.getElementById('alert-interactive-body');
+            bodyWell.innerHTML = `<input type="text" id="rename-title-input" class="alert-input" value="${currentTitle}">`;
+            
+            const actionsWell = document.getElementById('alert-actions-well');
+            actionsWell.innerHTML = `
+                <button class="alert-btn" id="confirm-rename-execute">Save Name</button>
+                <button class="alert-btn" onclick="closeZenAlert()">Cancel</button>
+            `;
+            
+            zenAlertOverlay.classList.add('active');
+            const inputEl = document.getElementById('rename-title-input');
+            inputEl.focus();
+            inputEl.select();
+
+            document.getElementById('confirm-rename-execute').onclick = () => {
+                const newTitle = inputEl.value.trim();
+                if (newTitle && newTitle !== currentTitle) {
+                    if (storageType === 'local') {
+                        executeLocalRename(fileId, newTitle);
+                    } else {
+                        executeCloudRename(fileId, newTitle);
+                    }
+                }
+                closeZenAlert();
+            };
+        }
+
+        function executeLocalRename(fileId, newTitle) {
+            let db = getLocalDatabase();
+            const item = db.find(i => i.id === fileId);
+            if (item) {
+                item.title = newTitle;
+                localStorage.setItem('zensuite_local_db', JSON.stringify(db));
+                
+                if (currentLocalFileId === fileId) {
+                    docTitle.value = newTitle;
+                }
+                listLocalFiles();
+            }
+        }
+
+        function executeCloudRename(fileId, newTitle) {
+            if (!accessToken) return;
+            saveIndicator.textContent = "• Renaming Cloud Asset...";
+
+            fetch(`https://www.googleapis.com/drive/v3/files/${fileId}`, {
+                method: 'PATCH',
+                headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: newTitle })
+            })
+            .then(() => {
+                saveIndicator.textContent = "• File Renamed";
+                if (currentDriveFileId === fileId) {
+                    docTitle.value = newTitle;
+                }
+                listDriveFiles();
+            })
+            .catch(() => showZenAlert("Cloud Error", "Failed to update filename on Google Drive."));
+        }
+
         // --- CONTROLLED DOCUMENT DELETION ROUTER ---
         function requestDocumentDeletion(fileId, title, storageType) {
             const storageLabel = storageType === 'cloud' ? 'Google Cloud Drive storage directory' : 'browser sandbox partition';
@@ -1450,26 +2198,12 @@ function scrollToCursor() {
             
             zenAlertTitle.textContent = "Confirm Permanent Deletion?";
             zenAlertText.textContent = confirmationText;
+            document.getElementById('alert-interactive-body').innerHTML = "";
             
-            const alertBox = document.querySelector('.alert-box');
-            let actionsRow = document.getElementById('alert-actions-row');
-            
-            if (!actionsRow) {
-                actionsRow = document.createElement('div');
-                actionsRow.id = 'alert-actions-row';
-                actionsRow.style.display = 'flex';
-                actionsRow.style.justifyContent = 'center';
-                actionsRow.style.gap = '12px';
-                actionsRow.style.marginTop = '20px';
-                alertBox.appendChild(actionsRow);
-            }
-            
-            const staticBtn = alertBox.querySelector('.alert-btn:not([id])');
-            if (staticBtn) staticBtn.style.display = 'none';
-            
-            actionsRow.innerHTML = `
+            const actionsWell = document.getElementById('alert-actions-well');
+            actionsWell.innerHTML = `
                 <button class="alert-btn" id="confirm-delete-execute" style="border-color: #ef4444; color: #ef4444;">Permanently Delete</button>
-                <button class="alert-btn" id="cancel-delete-abort">Cancel</button>
+                <button class="alert-btn" onclick="closeZenAlert()">Cancel</button>
             `;
             
             zenAlertOverlay.classList.add('active');
@@ -1480,22 +2214,8 @@ function scrollToCursor() {
                 } else if (storageType === 'cloud') {
                     executeCloudWipe(fileId);
                 }
-                restoreStandardAlertOverlay();
+                closeZenAlert();
             };
-
-            document.getElementById('cancel-delete-abort').onclick = () => {
-                restoreStandardAlertOverlay();
-            };
-        }
-
-        function restoreStandardAlertOverlay() {
-            zenAlertOverlay.classList.remove('active');
-            const actionsRow = document.getElementById('alert-actions-row');
-            if (actionsRow) actionsRow.remove();
-            
-            const alertBox = document.querySelector('.alert-box');
-            const staticBtn = alertBox.querySelector('.alert-btn');
-            if (staticBtn) staticBtn.style.display = 'inline-block';
         }
 
         function executeLocalWipe(fileId) {
@@ -1563,6 +2283,7 @@ function scrollToCursor() {
                             ${currentSuiteMode === 'screenplay' ? '🎬' : '📄'} ${file.title}
                         </span>
                         <div style="display:flex; align-items:center; gap:2px;">
+                            <button class="list-rename-btn" title="Rename Draft">Rename</button>
                             <button class="list-delete-btn" title="Delete Draft">Delete</button>
                             <button class="list-download-btn" title="Download Local File">↓</button>
                         </div>
@@ -1570,6 +2291,11 @@ function scrollToCursor() {
                     
                     item.querySelector('.load-trigger').addEventListener('click', () => {
                         loadLocalFile(file.id);
+                    });
+
+                    item.querySelector('.list-rename-btn').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        requestDocumentRename(file.id, file.title, 'local');
                     });
                     
                     item.querySelector('.list-download-btn').addEventListener('click', (e) => {
@@ -1691,6 +2417,7 @@ function scrollToCursor() {
                         item.innerHTML = `
                             <span class="load-trigger" style="flex-grow:1; display:flex; align-items:center; cursor:pointer;">☁️ ${file.name}</span>
                             <div style="display:flex; align-items:center; gap:2px;">
+                                <button class="list-rename-btn" title="Rename Remote File">Rename</button>
                                 <button class="list-delete-btn" title="Delete Remote File">Delete</button>
                                 <button class="list-download-btn" title="Download Document">↓</button>
                             </div>
@@ -1698,6 +2425,11 @@ function scrollToCursor() {
                         
                         item.querySelector('.load-trigger').addEventListener('click', () => { 
                             fetchDocumentFromDrive(file.id, file.name); 
+                        });
+
+                        item.querySelector('.list-rename-btn').addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            requestDocumentRename(file.id, file.name, 'cloud');
                         });
 
                         item.querySelector('.list-download-btn').addEventListener('click', (e) => {
@@ -1835,29 +2567,30 @@ function scrollToCursor() {
         }
 
         editor.addEventListener('input', () => {
-    updateAnalytics(editor.innerText);
-    
-    clearTimeout(idleTimer);
-    idleTimer = setTimeout(startTypingDistractionHide, 1000);
-    
-    if (currentSuiteMode === 'screenplay') {
-        const selection = window.getSelection();
-        if (selection.rangeCount > 0) {
-            let currentBlock = selection.getRangeAt(0).startContainer;
-            if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
-            while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
-                currentBlock = currentBlock.parentNode;
+            processInlineMarkdownFormatting(); 
+            updateAnalytics(editor.innerText);
+            
+            clearTimeout(idleTimer);
+            idleTimer = setTimeout(startTypingDistractionHide, 1000);
+            
+            if (currentSuiteMode === 'screenplay') {
+                const selection = window.getSelection();
+                if (selection.rangeCount > 0) {
+                    let currentBlock = selection.getRangeAt(0).startContainer;
+                    if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
+                    while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
+                        currentBlock = currentBlock.parentNode;
+                    }
+                    
+                    if (currentBlock && currentBlock.getAttribute('data-element') === 'character') {
+                        highlightFirstCharacterAppearance(currentBlock.innerText);
+                    }
+                }
             }
             
-            if (currentBlock && currentBlock.getAttribute('data-element') === 'character') {
-                highlightFirstCharacterAppearance(currentBlock.innerText);
-            }
-        }
-    }
-    
-    saveDocument();
-    scrollToCursor(); // <--- Add this here!
-});
+            saveDocument();
+            scrollToCursor();
+        });
     </script>
 </body>
 </html>
