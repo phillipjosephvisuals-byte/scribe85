@@ -7,7 +7,8 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+    <!-- Updated Google Fonts link to include weight 700 (Bold) for JetBrains Mono -->
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,300;1,700&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 
     <style>
@@ -765,7 +766,7 @@
             align-items: center; 
             gap: 15px; 
             justify-self: start; 
-        }
+        } 
         
         .header-center-hub {
             display: flex;
@@ -1032,7 +1033,7 @@
         #element-status-tag { color: var(--accent-color); font-weight: bold; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
 
         /* ------------------------------------------------------------------
-           6. RESPONSIVE MOBILE MEDIA QUERIES (Prevent Navigation Bar Crowding)
+           6. RESPONSIVE MOBILE MEDIA QUERIES
         ------------------------------------------------------------------ */
         @media (max-width: 600px) {
             body { font-size: 16px; }
@@ -1046,7 +1047,6 @@
                 gap: 15px;
             }
 
-            /* Responsive Header Layout Fixes */
             header {
                 display: flex;
                 flex-wrap: wrap;
@@ -1062,14 +1062,14 @@
             }
 
             .header-logo-container {
-                width: 75px; /* Compact logo size for mobile screens */
+                width: 75px;
             }
 
             .inline-theme-picker { display: flex; gap: 4px; }
 
             .header-center-hub {
                 order: 3;
-                width: 100%; /* Spans full width underneath left/right clusters */
+                width: 100%;
                 margin-top: 4px;
             }
 
@@ -1084,7 +1084,7 @@
                 gap: 6px;
             }
 
-            #save-indicator { display: none; } /* Hide string on small screen to save horizontal room */
+            #save-indicator { display: none; }
             .guide-trigger-btn { padding: 2px 6px; font-size: 0.65rem; }
 
             main { padding: 0 10px; }
@@ -1097,7 +1097,7 @@
             }
 
             .footer-center { order: 2; }
-            .stats-right { display: none; } /* Hide reading time on mobile screen */
+            .stats-right { display: none; }
         }
     </style>
 </head>
@@ -1845,13 +1845,14 @@
 
         // --- UNIFIED KEYBOARD INPUT INTERCEPTOR ENGINE ---
         editor.addEventListener('keydown', (e) => {
+            const selection = window.getSelection();
+
             // A. NARRATIVE MODE KEYBOARD ENGINE
             if (currentSuiteMode === 'narrative') {
                 const isModifier = e.metaKey || e.ctrlKey;
                 if (isModifier && e.key.toLowerCase() === 'b') { e.preventDefault(); document.execCommand('bold', false, null); saveDocument(); return; }
                 if (isModifier && e.key.toLowerCase() === 'i') { e.preventDefault(); document.execCommand('italic', false, null); saveDocument(); return; }
 
-                const selection = window.getSelection();
                 if (!selection.rangeCount) return;
 
                 let currentBlock = selection.getRangeAt(0).startContainer;
@@ -1866,11 +1867,12 @@
                     currentBlock = editor.firstElementChild;
                 }
 
-                const currentIndent = parseInt(currentBlock.dataset.indent || "0", 10);
+                const currentIndent = parseInt(currentBlock ? (currentBlock.dataset.indent || "0") : "0", 10);
 
                 // Tab -> Increase Indent
                 if (e.key === 'Tab') {
                     e.preventDefault();
+                    if (!currentBlock) return;
                     const newIndent = currentIndent + 1;
                     currentBlock.dataset.indent = newIndent;
                     currentBlock.style.paddingLeft = `${newIndent * 30}px`;
@@ -1879,12 +1881,28 @@
                     return;
                 }
 
-                // Enter -> Indent Carry-over or Un-indenting
+                // Hardened Enter Handler
                 if (e.key === 'Enter') {
                     e.preventDefault();
-                    const textContent = currentBlock.innerText.trim();
+                    
+                    // Safety Catch: Ensure currentBlock is a valid child div inside editor
+                    if (!currentBlock || currentBlock === editor || currentBlock.parentNode !== editor) {
+                        document.execCommand('formatBlock', false, 'div');
+                        currentBlock = selection.rangeCount > 0 ? selection.getRangeAt(0).startContainer : null;
+                        if (currentBlock && currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
+                    }
 
-                    // Empty line enter -> step back
+                    // Fallback if formatting fails
+                    if (!currentBlock || currentBlock === editor) {
+                        const fallbackDiv = document.createElement('div');
+                        fallbackDiv.innerHTML = '<br>';
+                        editor.appendChild(fallbackDiv);
+                        return;
+                    }
+
+                    const textContent = currentBlock.innerText ? currentBlock.innerText.replace(/\u200B/g, "").trim() : "";
+
+                    // Scenario A: Empty line enter -> reduce indentation
                     if (textContent === "" && currentIndent > 0) {
                         const newIndent = currentIndent - 1;
                         currentBlock.dataset.indent = newIndent;
@@ -1894,7 +1912,7 @@
                         return;
                     }
 
-                    // Carrying indent to new line
+                    // Scenario B: Standard Enter -> Carry indentation to new line
                     const nextBlock = document.createElement('div');
                     if (currentIndent > 0) {
                         nextBlock.dataset.indent = currentIndent;
@@ -1902,7 +1920,11 @@
                     }
                     nextBlock.innerHTML = '<br>';
 
-                    currentBlock.parentNode.insertBefore(nextBlock, currentBlock.nextSibling);
+                    if (currentBlock.parentNode) {
+                        currentBlock.parentNode.insertBefore(nextBlock, currentBlock.nextSibling);
+                    } else {
+                        editor.appendChild(nextBlock);
+                    }
 
                     const newRange = document.createRange();
                     newRange.setStart(nextBlock, 0);
@@ -1918,7 +1940,6 @@
             }
 
             // B. SCREENPLAY MODE KEYBOARD ENGINE
-            const selection = window.getSelection();
             if (!selection.rangeCount) return;
 
             let currentBlock = selection.getRangeAt(0).startContainer;
@@ -1927,13 +1948,13 @@
                 currentBlock = currentBlock.parentNode;
             }
 
-            if (currentBlock === editor || !currentBlock.hasAttribute) {
+            if (currentBlock === editor || !currentBlock || !currentBlock.hasAttribute) {
                 document.execCommand('formatBlock', false, 'div');
                 currentBlock = editor.firstElementChild;
                 if (currentBlock) currentBlock.setAttribute('data-element', 'action');
             }
 
-            const currentType = currentBlock.getAttribute('data-element') || 'action';
+            const currentType = currentBlock ? (currentBlock.getAttribute('data-element') || 'action') : 'action';
 
             if (e.key === 'Tab') {
                 e.preventDefault();
@@ -1946,9 +1967,11 @@
                 else if (currentType === 'transition') nextType = 'scene-heading';
                 else if (currentType === 'scene-heading') nextType = 'action';
 
-                currentBlock.setAttribute('data-element', nextType);
-                updateLiveElementTag();
-                saveDocument();
+                if (currentBlock) {
+                    currentBlock.setAttribute('data-element', nextType);
+                    updateLiveElementTag();
+                    saveDocument();
+                }
             }
 
             if (e.key === 'Enter') {
@@ -1966,7 +1989,11 @@
                 nextBlock.setAttribute('data-element', targetType);
                 nextBlock.innerHTML = '<br>';
 
-                currentBlock.parentNode.insertBefore(nextBlock, currentBlock.nextSibling);
+                if (currentBlock && currentBlock.parentNode) {
+                    currentBlock.parentNode.insertBefore(nextBlock, currentBlock.nextSibling);
+                } else {
+                    editor.appendChild(nextBlock);
+                }
 
                 const newRange = document.createRange();
                 newRange.setStart(nextBlock, 0);
