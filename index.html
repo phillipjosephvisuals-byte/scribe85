@@ -7,7 +7,6 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Updated Google Fonts link to include weight 700 (Bold) for JetBrains Mono -->
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,300;1,700&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 
@@ -16,7 +15,7 @@
            1. CORE DESIGN SYSTEM & THEME TOKENS
         ------------------------------------------------------------------ */
         :root {
-            --bg-color: #12141c;       
+            --bg-color: #12141c;      
             --text-color: #e2e8f0;     
             --muted-color: #64748b;    
             --accent-color: #ffffff;   /* Balanced to White by default for Dark Mode */
@@ -479,8 +478,8 @@
             border: 1px solid var(--accent-color); 
             color: var(--text-color); 
             width: 100%;
-            max-width: 500px;
-            height: 540px; 
+            max-width: 520px;
+            height: 580px; 
             border-radius: 8px;
             padding: 25px;
             display: flex;
@@ -574,6 +573,47 @@
         
         #auth-btn { background: var(--text-color); color: var(--bg-color); border-color: var(--text-color); font-weight: bold; margin: 10px 0; width: 100%; }
         #auth-btn:hover { opacity: 0.9; }
+
+        /* EMERGENCY AUTO-BACKUP TOGGLE STYLES */
+        .auto-backup-control-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 15px;
+            font-size: 0.75rem;
+        }
+
+        .auto-backup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .auto-backup-title {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        .auto-backup-options-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+            color: var(--muted-color);
+        }
+
+        .auto-backup-select {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid var(--muted-color);
+            color: var(--text-color);
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            outline: none;
+        }
 
         .document-list-title { font-size: 0.70rem; text-transform: uppercase; color: var(--muted-color); letter-spacing: 1px; margin-bottom: 8px; }
         .limit-subtext { text-transform: none; font-size: 0.70rem; letter-spacing: 0px; color: var(--muted-color); margin-left: 4px; }
@@ -1272,6 +1312,24 @@
             <div class="modal-scroll-well">
                 <div id="panel-local-content" class="tab-panel-view active">
                     <button class="picker-action-btn" id="new-doc-btn">+ Create Fresh Document</button>
+                    
+                    <!-- AUTOMATIC BACKGROUND FILE DOWNLOAD CONTROL BOX -->
+                    <div class="auto-backup-control-box">
+                        <div class="auto-backup-header">
+                            <span class="auto-backup-title">🛡️ Emergency Auto-Backup Downloads</span>
+                            <input type="checkbox" id="auto-backup-toggle" onchange="toggleAutoBackupState(this.checked)">
+                        </div>
+                        <p style="color:var(--muted-color); line-height:1.4;">Automated client-side file downloads to disk protect against browser cache purges and OS updates.</p>
+                        <div class="auto-backup-options-row">
+                            <span>Frequency:</span>
+                            <select id="auto-backup-interval-select" class="auto-backup-select" onchange="updateAutoBackupInterval(this.value)">
+                                <option value="5">Every 5 Minutes</option>
+                                <option value="10" selected>Every 10 Minutes</option>
+                                <option value="15">Every 15 Minutes</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="document-list-title">Recent Local Drafts <span class="limit-subtext" id="local-limit-tag">(limit: 10)</span></div>
                     <div class="document-scroll-list" id="local-docs-target"></div>
                 </div>
@@ -1375,6 +1433,9 @@
 
         // --- GLOBAL RUNTIME STATE ---
         let currentSuiteMode = 'narrative'; // 'narrative' or 'screenplay'
+        let autoBackupIntervalTimer = null;
+        let isAutoBackupEnabled = false;
+        let autoBackupMinutes = 10;
 
         // --- ACCORDION THEME TOGGLE FOR LANDING SCREEN ---
         function toggleThemeAccordion() {
@@ -1598,6 +1659,61 @@
         let accessToken = null;
         let cloudSaveDebounceTimer;
 
+        // --- ROUTE & URL PARAMETER SYNC ENGINE (ISSUE 1 FIX) ---
+        function updateUrlParameters(docId, mode) {
+            const url = new URL(window.location);
+            if (docId) {
+                url.searchParams.set('doc', docId);
+                url.searchParams.set('mode', mode || currentSuiteMode);
+            } else {
+                url.searchParams.delete('doc');
+                url.searchParams.delete('mode');
+            }
+            window.history.replaceState({}, '', url);
+        }
+
+        // --- AUTOMATIC BACKGROUND FILE DOWNLOAD ENGINE (OPTION 1 IMPLEMENTATION) ---
+        function toggleAutoBackupState(enabled) {
+            isAutoBackupEnabled = enabled;
+            localStorage.setItem('zensuite_autobackup_enabled', enabled ? 'true' : 'false');
+            configureAutoBackupTimer();
+        }
+
+        function updateAutoBackupInterval(minutes) {
+            autoBackupMinutes = parseInt(minutes, 10) || 10;
+            localStorage.setItem('zensuite_autobackup_interval', autoBackupMinutes);
+            configureAutoBackupTimer();
+        }
+
+        function configureAutoBackupTimer() {
+            if (autoBackupIntervalTimer) clearInterval(autoBackupIntervalTimer);
+
+            if (isAutoBackupEnabled) {
+                const intervalMs = autoBackupMinutes * 60 * 1000;
+                autoBackupIntervalTimer = setInterval(() => {
+                    executeEmergencyAutoDownload();
+                }, intervalMs);
+            }
+        }
+
+        function executeEmergencyAutoDownload() {
+            if (!workspaceView.classList.contains('active')) return;
+            const content = editor.innerHTML;
+            if (!content || content === 'Start typing here...') return;
+
+            const title = docTitle.value || 'scribe85-backup';
+            exportDocumentToDisk(`${title}_AUTO_BACKUP`, content, currentSuiteMode);
+            saveIndicator.textContent = "• Local Disk Backup Triggered";
+        }
+
+        // Request Persistent Storage to prevent macOS/Chrome Cache Purges
+        async function requestPersistentStorage() {
+            if (navigator.storage && navigator.storage.persist) {
+                const isPersisted = await navigator.storage.persist();
+                console.log(`Persistent storage status: ${isPersisted}`);
+            }
+        }
+
         // --- SYSTEM ALERTS ---
         function showZenAlert(title, text) {
             zenAlertTitle.textContent = title;
@@ -1652,6 +1768,7 @@
         returnHomeBtn.addEventListener('click', (e) => {
             e.preventDefault();
             localStorage.setItem('zensuite_view_state', 'launchpad');
+            updateUrlParameters(null, null);
             
             workspaceView.classList.remove('active');
             launchpadView.classList.add('active');
@@ -1706,6 +1823,7 @@
                 saveDocument();
             }
 
+            updateUrlParameters(currentLocalFileId, currentSuiteMode);
             updateAnalytics(editor.innerText);
             if (currentSuiteMode === 'screenplay') updateLiveElementTag();
             pickerModifierSync();
@@ -1843,7 +1961,7 @@
                 : `${readingTime} min read`;
         }
 
-        // --- UNIFIED KEYBOARD INPUT INTERCEPTOR ENGINE ---
+        // --- UNIFIED KEYBOARD INPUT INTERCEPTOR ENGINE (ISSUE 2 MID-PARAGRAPH RETURN FIX) ---
         editor.addEventListener('keydown', (e) => {
             const selection = window.getSelection();
 
@@ -1855,14 +1973,15 @@
 
                 if (!selection.rangeCount) return;
 
-                let currentBlock = selection.getRangeAt(0).startContainer;
+                const range = selection.getRangeAt(0);
+                let currentBlock = range.startContainer;
                 if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
                 
                 while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
                     currentBlock = currentBlock.parentNode;
                 }
 
-                if (currentBlock === editor) {
+                if (currentBlock === editor || !currentBlock) {
                     document.execCommand('formatBlock', false, 'div');
                     currentBlock = editor.firstElementChild;
                 }
@@ -1881,18 +2000,16 @@
                     return;
                 }
 
-                // Hardened Enter Handler
+                // Hardened Enter Handler (Mid-paragraph & End-line support)
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     
-                    // Safety Catch: Ensure currentBlock is a valid child div inside editor
                     if (!currentBlock || currentBlock === editor || currentBlock.parentNode !== editor) {
                         document.execCommand('formatBlock', false, 'div');
                         currentBlock = selection.rangeCount > 0 ? selection.getRangeAt(0).startContainer : null;
                         if (currentBlock && currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
                     }
 
-                    // Fallback if formatting fails
                     if (!currentBlock || currentBlock === editor) {
                         const fallbackDiv = document.createElement('div');
                         fallbackDiv.innerHTML = '<br>';
@@ -1912,22 +2029,35 @@
                         return;
                     }
 
-                    // Scenario B: Standard Enter -> Carry indentation to new line
-                    const nextBlock = document.createElement('div');
+                    // Scenario B: Mid-Paragraph Split vs End-of-Line Enter
+                    const newBlock = document.createElement('div');
                     if (currentIndent > 0) {
-                        nextBlock.dataset.indent = currentIndent;
-                        nextBlock.style.paddingLeft = `${currentIndent * 30}px`;
+                        newBlock.dataset.indent = currentIndent;
+                        newBlock.style.paddingLeft = `${currentIndent * 30}px`;
                     }
-                    nextBlock.innerHTML = '<br>';
 
-                    if (currentBlock.parentNode) {
-                        currentBlock.parentNode.insertBefore(nextBlock, currentBlock.nextSibling);
+                    // Extract content after cursor position
+                    const tailRange = document.createRange();
+                    tailRange.setStart(range.startContainer, range.startOffset);
+                    tailRange.setEnd(currentBlock, currentBlock.childNodes.length);
+                    
+                    const extractedFragment = tailRange.extractContents();
+
+                    if (extractedFragment.textContent.trim() === "") {
+                        newBlock.innerHTML = '<br>';
                     } else {
-                        editor.appendChild(nextBlock);
+                        newBlock.appendChild(extractedFragment);
                     }
 
+                    if (currentBlock.nextSibling) {
+                        editor.insertBefore(newBlock, currentBlock.nextSibling);
+                    } else {
+                        editor.appendChild(newBlock);
+                    }
+
+                    // Move selection caret to the start of the new block
                     const newRange = document.createRange();
-                    newRange.setStart(nextBlock, 0);
+                    newRange.setStart(newBlock, 0);
                     newRange.collapse(true);
                     selection.removeAllRanges();
                     selection.addRange(newRange);
@@ -1942,7 +2072,8 @@
             // B. SCREENPLAY MODE KEYBOARD ENGINE
             if (!selection.rangeCount) return;
 
-            let currentBlock = selection.getRangeAt(0).startContainer;
+            const range = selection.getRangeAt(0);
+            let currentBlock = range.startContainer;
             if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
             while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
                 currentBlock = currentBlock.parentNode;
@@ -1987,7 +2118,18 @@
 
                 const nextBlock = document.createElement('div');
                 nextBlock.setAttribute('data-element', targetType);
-                nextBlock.innerHTML = '<br>';
+                
+                // Extract mid-line contents if Enter pressed inside a line
+                const tailRange = document.createRange();
+                tailRange.setStart(range.startContainer, range.startOffset);
+                tailRange.setEnd(currentBlock, currentBlock.childNodes.length);
+                const extractedFragment = tailRange.extractContents();
+
+                if (extractedFragment.textContent.trim() === "") {
+                    nextBlock.innerHTML = '<br>';
+                } else {
+                    nextBlock.appendChild(extractedFragment);
+                }
 
                 if (currentBlock && currentBlock.parentNode) {
                     currentBlock.parentNode.insertBefore(nextBlock, currentBlock.nextSibling);
@@ -2279,6 +2421,7 @@
                 docTitle.value = currentSuiteMode === 'screenplay' ? "untitledScript.fountain" : "untitledProse.rtf";
                 currentLocalFileId = "local_" + Date.now();
                 currentDriveFileId = null;
+                updateUrlParameters(null, null);
                 pickerModifierSync();
             }
             listLocalFiles();
@@ -2296,6 +2439,7 @@
                 saveIndicator.textContent = "• Cloud Archive Updated";
                 if (currentDriveFileId === fileId) {
                     currentDriveFileId = null;
+                    updateUrlParameters(null, null);
                     pickerModifierSync();
                 }
                 listDriveFiles();
@@ -2386,6 +2530,7 @@
             localStorage.setItem(`zensuite_current_active_${currentSuiteMode}_id`, fileId);
             localStorage.setItem('zensuite_view_state', 'workspace');
             
+            updateUrlParameters(fileId, currentSuiteMode);
             updateAnalytics(editor.innerText);
             pickerModifierSync();
             if (currentSuiteMode === 'screenplay') updateLiveElementTag();
@@ -2405,22 +2550,48 @@
             }
         }
 
-        // --- GOOGLE OAUTH & STATE HYDRATION ENGINE ---
+        // --- GOOGLE OAUTH & STATE HYDRATION ENGINE (WITH URL REHYDRATION FIX) ---
         window.onload = function() {
+            requestPersistentStorage();
+
             const cachedTheme = localStorage.getItem('zensuite_saved_theme');
             if (cachedTheme) { applyAppTheme(cachedTheme); }
 
-            const savedSuiteMode = localStorage.getItem('zensuite_active_suite_mode');
-            if (savedSuiteMode) {
-                currentSuiteMode = savedSuiteMode;
+            // Hydrate Backup Settings
+            const savedBackupState = localStorage.getItem('zensuite_autobackup_enabled');
+            if (savedBackupState === 'true') {
+                isAutoBackupEnabled = true;
+                document.getElementById('auto-backup-toggle').checked = true;
+            }
+            const savedBackupInterval = localStorage.getItem('zensuite_autobackup_interval');
+            if (savedBackupInterval) {
+                autoBackupMinutes = parseInt(savedBackupInterval, 10);
+                document.getElementById('auto-backup-interval-select').value = autoBackupMinutes;
+            }
+            configureAutoBackupTimer();
+
+            // Check URL Query Parameters First (Fixes State Disappearing on Reload)
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlDocId = urlParams.get('doc');
+            const urlMode = urlParams.get('mode');
+
+            if (urlMode) {
+                currentSuiteMode = urlMode;
                 configureWorkspaceUIPresentation();
+            } else {
+                const savedSuiteMode = localStorage.getItem('zensuite_active_suite_mode');
+                if (savedSuiteMode) {
+                    currentSuiteMode = savedSuiteMode;
+                    configureWorkspaceUIPresentation();
+                }
             }
 
             const savedViewState = localStorage.getItem('zensuite_view_state');
-            if (savedViewState === 'workspace') {
-                const savedActiveId = localStorage.getItem(`zensuite_current_active_${currentSuiteMode}_id`);
-                if (savedActiveId) {
-                    loadLocalFile(savedActiveId);
+            const targetDocId = urlDocId || localStorage.getItem(`zensuite_current_active_${currentSuiteMode}_id`);
+
+            if (savedViewState === 'workspace' || urlDocId) {
+                if (targetDocId) {
+                    loadLocalFile(targetDocId);
                 }
             } else {
                 workspaceView.classList.remove('active');
@@ -2526,6 +2697,7 @@
                 currentLocalFileId = existing ? existing.id : "local_" + Date.now();
 
                 saveDocument(); 
+                updateUrlParameters(currentLocalFileId, currentSuiteMode);
                 pickerModifierSync();
 
                 saveIndicator.textContent = "• Fully Synced Cloud & Local";
@@ -2613,6 +2785,7 @@
 
             saveToLocalDatabase(fileRecord);
             localStorage.setItem(`zensuite_current_active_${currentSuiteMode}_id`, currentLocalFileId);
+            updateUrlParameters(currentLocalFileId, currentSuiteMode);
             
             triggerCloudSave(); 
         }
