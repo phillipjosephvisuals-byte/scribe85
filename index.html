@@ -1218,6 +1218,7 @@
                             <div class="shortcut-item"><code>_text_</code> <span>Type underscores for <i>italics</i></span></div>
                             <div class="shortcut-item"><code>Tab</code> <span>Indent first line (Prose)</span></div>
                             <div class="shortcut-item"><code>Tab x2</code> <span>Indent block (List items)</span></div>
+                            <div class="shortcut-item"><code>Shift + Tab</code> <span>Outdent / Step back</span></div>
                             <div class="shortcut-item"><code>Enter</code> <span>Carries indentation to next line</span></div>
                             <div class="shortcut-item"><code>Enter (empty)</code> <span>De-indents line step-by-step</span></div>
                         </div>
@@ -1259,6 +1260,7 @@
                             <div class="shortcut-item"><code>Tab x2</code> <span>Parenthetical Direction</span></div>
                             <div class="shortcut-item"><code>Tab x3</code> <span>Spoken Dialogue Block</span></div>
                             <div class="shortcut-item"><code>Tab x4</code> <span>Scene Transition (CUT TO:)</span></div>
+                            <div class="shortcut-item"><code>Shift + Tab</code> <span>Reverse element cycle</span></div>
                         </div>
 
                         <div class="formatting-preview-box screenplay-preview">
@@ -1497,6 +1499,7 @@
                             <div class="shortcut-item"><code>_text_</code> <span>Type underscores for <i>italics</i></span></div>
                             <div class="shortcut-item"><code>Tab</code> <span>Indent first line (Prose)</span></div>
                             <div class="shortcut-item"><code>Tab x2</code> <span>Indent block (List items)</span></div>
+                            <div class="shortcut-item"><code>Shift + Tab</code> <span>Outdent / Step back</span></div>
                             <div class="shortcut-item"><code>Enter</code> <span>Carries indentation to next line</span></div>
                             <div class="shortcut-item"><code>Enter (empty)</code> <span>De-indents line step-by-step</span></div>
                         </div>
@@ -1522,6 +1525,7 @@
                             <div class="shortcut-item"><code>Tab x2</code> <span>Parenthetical Direction</span></div>
                             <div class="shortcut-item"><code>Tab x3</code> <span>Spoken Dialogue Block</span></div>
                             <div class="shortcut-item"><code>Tab x4</code> <span>Scene Transition (CUT TO:)</span></div>
+                            <div class="shortcut-item"><code>Shift + Tab</code> <span>Reverse element cycle</span></div>
                         </div>
 
                         <div class="formatting-preview-box screenplay-preview">
@@ -2014,7 +2018,7 @@
             saveDocument();
         });
 
-        // --- UNIFIED KEYBOARD INPUT INTERCEPTOR ENGINE ---
+        // --- UNIFIED KEYBOARD INPUT INTERCEPTOR ENGINE (WITH SHIFT + TAB OUTDENT) ---
         editor.addEventListener('keydown', (e) => {
             const selection = window.getSelection();
 
@@ -2042,26 +2046,47 @@
                 const currentIndent = parseInt(currentBlock ? (currentBlock.dataset.indent || "0") : "0", 10);
                 const hasFirstLineIndent = currentBlock && currentBlock.dataset.firstLineIndent === "true";
 
-                // Tab: 1st press = First-Line Indent | 2nd+ press = Full Block Indent
+                // Tab & Shift + Tab Handling
                 if (e.key === 'Tab') {
                     e.preventDefault();
                     if (!currentBlock) return;
 
-                    const text = currentBlock.innerText.trim();
-                    const isListPattern = /^(\d+[\.\)]|[-*•])\s/.test(text);
-
-                    if (!hasFirstLineIndent && currentIndent === 0 && !isListPattern) {
-                        // First-line indent only
-                        currentBlock.dataset.firstLineIndent = "true";
-                        currentBlock.style.textIndent = "2em";
-                        currentBlock.style.paddingLeft = "0px";
+                    if (e.shiftKey) {
+                        // --- SHIFT + TAB (OUTDENT / REVERSE STEP) ---
+                        if (currentIndent > 1) {
+                            const newIndent = currentIndent - 1;
+                            currentBlock.dataset.indent = newIndent;
+                            currentBlock.style.paddingLeft = `${newIndent * 30}px`;
+                        } else if (currentIndent === 1) {
+                            // Step back to first-line indent
+                            currentBlock.dataset.indent = "0";
+                            currentBlock.style.paddingLeft = "0px";
+                            currentBlock.dataset.firstLineIndent = "true";
+                            currentBlock.style.textIndent = "2em";
+                        } else if (hasFirstLineIndent) {
+                            // Step back to flush left
+                            currentBlock.dataset.firstLineIndent = "false";
+                            currentBlock.style.textIndent = "0px";
+                            currentBlock.style.paddingLeft = "0px";
+                        }
                     } else {
-                        // Switch or step up to block list indent
-                        currentBlock.dataset.firstLineIndent = "false";
-                        currentBlock.style.textIndent = "0px";
-                        const newIndent = currentIndent + 1;
-                        currentBlock.dataset.indent = newIndent;
-                        currentBlock.style.paddingLeft = `${newIndent * 30}px`;
+                        // --- STANDARD TAB (INDENT) ---
+                        const text = currentBlock.innerText.trim();
+                        const isListPattern = /^(\d+[\.\)]|[-*•])\s/.test(text);
+
+                        if (!hasFirstLineIndent && currentIndent === 0 && !isListPattern) {
+                            // 1st Tab on prose: First-line indent only
+                            currentBlock.dataset.firstLineIndent = "true";
+                            currentBlock.style.textIndent = "2em";
+                            currentBlock.style.paddingLeft = "0px";
+                        } else {
+                            // 2nd+ Tab or List Pattern: Switch to block list indent
+                            currentBlock.dataset.firstLineIndent = "false";
+                            currentBlock.style.textIndent = "0px";
+                            const newIndent = currentIndent + 1;
+                            currentBlock.dataset.indent = newIndent;
+                            currentBlock.style.paddingLeft = `${newIndent * 30}px`;
+                        }
                     }
 
                     applyDynamicListSpacing();
@@ -2168,12 +2193,23 @@
                 e.preventDefault();
                 let nextType = 'character';
 
-                if (currentType === 'action') nextType = 'character';
-                else if (currentType === 'character') nextType = 'parenthetical';
-                else if (currentType === 'parenthetical') nextType = 'dialogue';
-                else if (currentType === 'dialogue') nextType = 'transition';
-                else if (currentType === 'transition') nextType = 'scene-heading';
-                else if (currentType === 'scene-heading') nextType = 'action';
+                if (e.shiftKey) {
+                    // Reverse Cycle (Shift + Tab)
+                    if (currentType === 'action') nextType = 'scene-heading';
+                    else if (currentType === 'scene-heading') nextType = 'transition';
+                    else if (currentType === 'transition') nextType = 'dialogue';
+                    else if (currentType === 'dialogue') nextType = 'parenthetical';
+                    else if (currentType === 'parenthetical') nextType = 'character';
+                    else if (currentType === 'character') nextType = 'action';
+                } else {
+                    // Forward Cycle (Tab)
+                    if (currentType === 'action') nextType = 'character';
+                    else if (currentType === 'character') nextType = 'parenthetical';
+                    else if (currentType === 'parenthetical') nextType = 'dialogue';
+                    else if (currentType === 'dialogue') nextType = 'transition';
+                    else if (currentType === 'transition') nextType = 'scene-heading';
+                    else if (currentType === 'scene-heading') nextType = 'action';
+                }
 
                 if (currentBlock) {
                     currentBlock.setAttribute('data-element', nextType);
@@ -2196,7 +2232,6 @@
                 const nextBlock = document.createElement('div');
                 nextBlock.setAttribute('data-element', targetType);
                 
-                // Extract mid-line contents if Enter pressed inside a line
                 const tailRange = document.createRange();
                 tailRange.setStart(range.startContainer, range.startOffset);
                 tailRange.setEnd(currentBlock, currentBlock.childNodes.length);
