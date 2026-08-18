@@ -946,6 +946,7 @@
             outline: none; 
             background: transparent;
             color: var(--text-color); 
+            caret-color: var(--accent-color) !important; /* Forces visible blinking caret */
             font-family: var(--font-mono);
             font-size: 1.1rem; 
             line-height: 1.8; 
@@ -956,10 +957,9 @@
             padding-bottom: 200px;
         }
 
-        /* STRIP GOOGLE DOCS INLINE BLACK TEXT & BACKGROUNDS */
-        .editor, 
+        /* STRIP GOOGLE DOCS INLINE BLACK TEXT & BACKGROUNDS WHILE PRESERVING CARET */
         .editor * {
-            color: var(--text-color) !important;
+            color: var(--text-color);
             background-color: transparent !important;
         }
 
@@ -1500,7 +1500,7 @@
                             <div class="shortcut-item"><code>Tab</code> <span>Indent first line (Prose)</span></div>
                             <div class="shortcut-item"><code>Tab x2</code> <span>Indent block (List items)</span></div>
                             <div class="shortcut-item"><code>Shift + Tab</code> <span>Outdent / Step back</span></div>
-                            <div class="shortcut-item"><code>Enter</code> <span>Carries indentation to next line</span></div>
+                            <div class="shortcut-item"><code>Enter</code> <span>New paragraph (flush left)</span></div>
                             <div class="shortcut-item"><code>Enter (empty)</code> <span>De-indents line step-by-step</span></div>
                         </div>
 
@@ -2018,11 +2018,11 @@
             saveDocument();
         });
 
-        // --- UNIFIED KEYBOARD INPUT INTERCEPTOR ENGINE (WITH SHIFT + TAB OUTDENT) ---
+        // --- UNIFIED KEYBOARD INPUT INTERCEPTOR ENGINE (ISOLATED INDENTS + CARET FIX) ---
         editor.addEventListener('keydown', (e) => {
             const selection = window.getSelection();
 
-            // A. NARRATIVE MODE KEYBOARD ENGINE (FIRST-LINE & BLOCK INDENT SUPPORT)
+            // A. NARRATIVE MODE KEYBOARD ENGINE
             if (currentSuiteMode === 'narrative') {
                 const isModifier = e.metaKey || e.ctrlKey;
                 if (isModifier && e.key.toLowerCase() === 'b') { e.preventDefault(); document.execCommand('bold', false, null); saveDocument(); return; }
@@ -2046,25 +2046,23 @@
                 const currentIndent = parseInt(currentBlock ? (currentBlock.dataset.indent || "0") : "0", 10);
                 const hasFirstLineIndent = currentBlock && currentBlock.dataset.firstLineIndent === "true";
 
-                // Tab & Shift + Tab Handling
+                // Tab & Shift + Tab Handling: Strictly targeted to THIS single block
                 if (e.key === 'Tab') {
                     e.preventDefault();
                     if (!currentBlock) return;
 
                     if (e.shiftKey) {
-                        // --- SHIFT + TAB (OUTDENT / REVERSE STEP) ---
+                        // --- SHIFT + TAB (OUTDENT / STEP BACK) ---
                         if (currentIndent > 1) {
                             const newIndent = currentIndent - 1;
                             currentBlock.dataset.indent = newIndent;
                             currentBlock.style.paddingLeft = `${newIndent * 30}px`;
                         } else if (currentIndent === 1) {
-                            // Step back to first-line indent
                             currentBlock.dataset.indent = "0";
                             currentBlock.style.paddingLeft = "0px";
                             currentBlock.dataset.firstLineIndent = "true";
                             currentBlock.style.textIndent = "2em";
                         } else if (hasFirstLineIndent) {
-                            // Step back to flush left
                             currentBlock.dataset.firstLineIndent = "false";
                             currentBlock.style.textIndent = "0px";
                             currentBlock.style.paddingLeft = "0px";
@@ -2075,12 +2073,12 @@
                         const isListPattern = /^(\d+[\.\)]|[-*•])\s/.test(text);
 
                         if (!hasFirstLineIndent && currentIndent === 0 && !isListPattern) {
-                            // 1st Tab on prose: First-line indent only
+                            // 1st Tab: Apply first line indent strictly to this paragraph
                             currentBlock.dataset.firstLineIndent = "true";
                             currentBlock.style.textIndent = "2em";
                             currentBlock.style.paddingLeft = "0px";
                         } else {
-                            // 2nd+ Tab or List Pattern: Switch to block list indent
+                            // 2nd+ Tab or List: Switch strictly this block to list indent
                             currentBlock.dataset.firstLineIndent = "false";
                             currentBlock.style.textIndent = "0px";
                             const newIndent = currentIndent + 1;
@@ -2094,7 +2092,7 @@
                     return;
                 }
 
-                // Enter Key Management
+                // Enter Key Management: Spawns clean, non-inherited default line
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     
@@ -2130,14 +2128,17 @@
                         }
                     }
 
-                    // Create new line carrying forward existing indentation style
+                    // Create new clean paragraph without automatically copying first-line indent
                     const newBlock = document.createElement('div');
+                    
+                    // Only continue block list indenting if the user was actively inside a multi-tier list
                     if (currentIndent > 0) {
                         newBlock.dataset.indent = currentIndent;
                         newBlock.style.paddingLeft = `${currentIndent * 30}px`;
-                    } else if (hasFirstLineIndent) {
-                        newBlock.dataset.firstLineIndent = "true";
-                        newBlock.style.textIndent = "2em";
+                    } else {
+                        newBlock.dataset.firstLineIndent = "false";
+                        newBlock.style.textIndent = "0px";
+                        newBlock.style.paddingLeft = "0px";
                     }
 
                     // Extract content after cursor position (supports mid-paragraph splits)
