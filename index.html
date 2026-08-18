@@ -971,11 +971,16 @@
         }
 
         /* ------------------------------------------------------------------
-           4.5 NARRATIVE PARAGRAPH SPACING ENGINE
+           4.5 NARRATIVE PARAGRAPH SPACING ENGINE (ISOLATED INDENTATION)
         ------------------------------------------------------------------ */
+        body.mode-narrative .editor {
+            text-indent: 0;
+        }
+
         body.mode-narrative .editor div, 
         body.mode-narrative .editor p {
             margin-bottom: 1.5em;
+            text-indent: 0; /* Prevents global inheritance across paragraphs */
             transition: margin-bottom 0.2s ease, margin-top 0.2s ease;
         }
 
@@ -1219,7 +1224,7 @@
                             <div class="shortcut-item"><code>Tab</code> <span>Indent first line (Prose)</span></div>
                             <div class="shortcut-item"><code>Tab x2</code> <span>Indent block (List items)</span></div>
                             <div class="shortcut-item"><code>Shift + Tab</code> <span>Outdent / Step back</span></div>
-                            <div class="shortcut-item"><code>Enter</code> <span>Carries indentation to next line</span></div>
+                            <div class="shortcut-item"><code>Enter</code> <span>New paragraph (flush left)</span></div>
                             <div class="shortcut-item"><code>Enter (empty)</code> <span>De-indents line step-by-step</span></div>
                         </div>
 
@@ -2022,7 +2027,7 @@
         editor.addEventListener('keydown', (e) => {
             const selection = window.getSelection();
 
-            // A. NARRATIVE MODE KEYBOARD ENGINE
+            // A. NARRATIVE MODE KEYBOARD ENGINE (ISOLATED FIRST-LINE & BLOCK INDENTS)
             if (currentSuiteMode === 'narrative') {
                 const isModifier = e.metaKey || e.ctrlKey;
                 if (isModifier && e.key.toLowerCase() === 'b') { e.preventDefault(); document.execCommand('bold', false, null); saveDocument(); return; }
@@ -2034,22 +2039,31 @@
                 let currentBlock = range.startContainer;
                 if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
                 
+                // Climb up to the direct child div of the editor
                 while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
                     currentBlock = currentBlock.parentNode;
                 }
 
                 if (currentBlock === editor || !currentBlock) {
                     document.execCommand('formatBlock', false, 'div');
-                    currentBlock = editor.firstElementChild;
+                    const updatedSel = window.getSelection();
+                    if (updatedSel && updatedSel.rangeCount) {
+                        currentBlock = updatedSel.getRangeAt(0).startContainer;
+                        if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
+                        while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
+                            currentBlock = currentBlock.parentNode;
+                        }
+                    }
                 }
 
-                const currentIndent = parseInt(currentBlock ? (currentBlock.dataset.indent || "0") : "0", 10);
-                const hasFirstLineIndent = currentBlock && currentBlock.dataset.firstLineIndent === "true";
+                if (!currentBlock || currentBlock === editor) return;
 
-                // Tab & Shift + Tab Handling: Strictly targeted to THIS single block
+                const currentIndent = parseInt(currentBlock.dataset.indent || "0", 10);
+                const hasFirstLineIndent = currentBlock.dataset.firstLineIndent === "true";
+
+                // Tab & Shift + Tab: Strictly target ONLY this active block
                 if (e.key === 'Tab') {
                     e.preventDefault();
-                    if (!currentBlock) return;
 
                     if (e.shiftKey) {
                         // --- SHIFT + TAB (OUTDENT / STEP BACK) ---
@@ -2069,16 +2083,16 @@
                         }
                     } else {
                         // --- STANDARD TAB (INDENT) ---
-                        const text = currentBlock.innerText.trim();
+                        const text = currentBlock.innerText ? currentBlock.innerText.trim() : "";
                         const isListPattern = /^(\d+[\.\)]|[-*•])\s/.test(text);
 
                         if (!hasFirstLineIndent && currentIndent === 0 && !isListPattern) {
-                            // 1st Tab: Apply first line indent strictly to this paragraph
+                            // 1st Tab: First line indent ONLY for this paragraph
                             currentBlock.dataset.firstLineIndent = "true";
                             currentBlock.style.textIndent = "2em";
                             currentBlock.style.paddingLeft = "0px";
                         } else {
-                            // 2nd+ Tab or List: Switch strictly this block to list indent
+                            // 2nd+ Tab or List Item: Multi-tier block indent
                             currentBlock.dataset.firstLineIndent = "false";
                             currentBlock.style.textIndent = "0px";
                             const newIndent = currentIndent + 1;
@@ -2092,22 +2106,9 @@
                     return;
                 }
 
-                // Enter Key Management: Spawns clean, non-inherited default line
+                // Enter Key Management: Spawns completely fresh, flush-left paragraph
                 if (e.key === 'Enter') {
                     e.preventDefault();
-                    
-                    if (!currentBlock || currentBlock === editor || currentBlock.parentNode !== editor) {
-                        document.execCommand('formatBlock', false, 'div');
-                        currentBlock = selection.rangeCount > 0 ? selection.getRangeAt(0).startContainer : null;
-                        if (currentBlock && currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
-                    }
-
-                    if (!currentBlock || currentBlock === editor) {
-                        const fallbackDiv = document.createElement('div');
-                        fallbackDiv.innerHTML = '<br>';
-                        editor.appendChild(fallbackDiv);
-                        return;
-                    }
 
                     const textContent = currentBlock.innerText ? currentBlock.innerText.replace(/\u200B/g, "").trim() : "";
 
@@ -2128,16 +2129,17 @@
                         }
                     }
 
-                    // Create new clean paragraph without automatically copying first-line indent
+                    // Create new clean paragraph (explicitly flush left)
                     const newBlock = document.createElement('div');
-                    
-                    // Only continue block list indenting if the user was actively inside a multi-tier list
+                    newBlock.dataset.firstLineIndent = "false";
+                    newBlock.style.textIndent = "0px";
+
                     if (currentIndent > 0) {
+                        // Carry forward list indent level only if in list mode
                         newBlock.dataset.indent = currentIndent;
                         newBlock.style.paddingLeft = `${currentIndent * 30}px`;
                     } else {
-                        newBlock.dataset.firstLineIndent = "false";
-                        newBlock.style.textIndent = "0px";
+                        newBlock.dataset.indent = "0";
                         newBlock.style.paddingLeft = "0px";
                     }
 
@@ -2159,6 +2161,7 @@
                         editor.appendChild(newBlock);
                     }
 
+                    // Move caret into the new paragraph
                     const newRange = document.createRange();
                     newRange.setStart(newBlock, 0);
                     newRange.collapse(true);
