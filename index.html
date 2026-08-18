@@ -15,7 +15,7 @@
            1. CORE DESIGN SYSTEM & THEME TOKENS
         ------------------------------------------------------------------ */
         :root {
-            --bg-color: #12141c;      
+            --bg-color: #12141c;       
             --text-color: #e2e8f0;     
             --muted-color: #64748b;    
             --accent-color: #ffffff;   /* Balanced to White by default for Dark Mode */
@@ -903,7 +903,7 @@
             width: 260px;
             text-align: center;
             padding-bottom: 2px;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease, text-shadow 0.3s ease;
+            transition: border-bottom-color 0.3s ease, box-shadow 0.3s ease, text-shadow 0.3s ease;
         }
 
         .doc-title:hover, 
@@ -954,6 +954,13 @@
             text-shadow: var(--text-glow); 
             padding-top: 40px;
             padding-bottom: 200px;
+        }
+
+        /* STRIP GOOGLE DOCS INLINE BLACK TEXT & BACKGROUNDS */
+        .editor, 
+        .editor * {
+            color: var(--text-color) !important;
+            background-color: transparent !important;
         }
 
         .editor:empty:before {
@@ -1209,7 +1216,8 @@
                             <div class="shortcut-item"><code>Ctrl + I</code> <span>Italicize selection</span></div>
                             <div class="shortcut-item"><code>*text*</code> <span>Type asterisks for <b>bold</b></span></div>
                             <div class="shortcut-item"><code>_text_</code> <span>Type underscores for <i>italics</i></span></div>
-                            <div class="shortcut-item"><code>Tab</code> <span>Indent paragraph / list item</span></div>
+                            <div class="shortcut-item"><code>Tab</code> <span>Indent first line (Prose)</span></div>
+                            <div class="shortcut-item"><code>Tab x2</code> <span>Indent block (List items)</span></div>
                             <div class="shortcut-item"><code>Enter</code> <span>Carries indentation to next line</span></div>
                             <div class="shortcut-item"><code>Enter (empty)</code> <span>De-indents line step-by-step</span></div>
                         </div>
@@ -1487,7 +1495,8 @@
                             <div class="shortcut-item"><code>Ctrl + I</code> <span>Italicize selection</span></div>
                             <div class="shortcut-item"><code>*text*</code> <span>Type asterisks for <b>bold</b></span></div>
                             <div class="shortcut-item"><code>_text_</code> <span>Type underscores for <i>italics</i></span></div>
-                            <div class="shortcut-item"><code>Tab</code> <span>Indent paragraph / list item</span></div>
+                            <div class="shortcut-item"><code>Tab</code> <span>Indent first line (Prose)</span></div>
+                            <div class="shortcut-item"><code>Tab x2</code> <span>Indent block (List items)</span></div>
                             <div class="shortcut-item"><code>Enter</code> <span>Carries indentation to next line</span></div>
                             <div class="shortcut-item"><code>Enter (empty)</code> <span>De-indents line step-by-step</span></div>
                         </div>
@@ -1659,7 +1668,7 @@
         let accessToken = null;
         let cloudSaveDebounceTimer;
 
-        // --- ROUTE & URL PARAMETER SYNC ENGINE (ISSUE 1 FIX) ---
+        // --- ROUTE & URL PARAMETER SYNC ENGINE ---
         function updateUrlParameters(docId, mode) {
             const url = new URL(window.location);
             if (docId) {
@@ -1672,7 +1681,7 @@
             window.history.replaceState({}, '', url);
         }
 
-        // --- AUTOMATIC BACKGROUND FILE DOWNLOAD ENGINE (OPTION 1 IMPLEMENTATION) ---
+        // --- AUTOMATIC BACKGROUND FILE DOWNLOAD ENGINE ---
         function toggleAutoBackupState(enabled) {
             isAutoBackupEnabled = enabled;
             localStorage.setItem('zensuite_autobackup_enabled', enabled ? 'true' : 'false');
@@ -1961,11 +1970,55 @@
                 : `${readingTime} min read`;
         }
 
-        // --- UNIFIED KEYBOARD INPUT INTERCEPTOR ENGINE (ISSUE 2 MID-PARAGRAPH RETURN FIX) ---
+        // --- CLEAN PASTE SANITIZER (STRIPS GOOGLE DOCS HIDDEN FORMATTING & STYLES) ---
+        editor.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+            if (!text) return;
+
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+            selection.deleteFromDocument();
+
+            const range = selection.getRangeAt(0);
+            const lines = text.split(/\r\n|\r|\n/);
+
+            if (lines.length === 1) {
+                const textNode = document.createTextNode(lines[0]);
+                range.insertNode(textNode);
+                range.setStartAfter(textNode);
+                range.collapse(true);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            } else {
+                const fragment = document.createDocumentFragment();
+                lines.forEach((line) => {
+                    const div = document.createElement('div');
+                    if (currentSuiteMode === 'screenplay') {
+                        div.setAttribute('data-element', 'action');
+                    }
+                    if (line.trim() === '') {
+                        div.innerHTML = '<br>';
+                    } else {
+                        div.textContent = line;
+                    }
+                    fragment.appendChild(div);
+                });
+                range.insertNode(fragment);
+            }
+
+            if (currentSuiteMode === 'narrative') {
+                applyDynamicListSpacing();
+            }
+            updateAnalytics(editor.innerText);
+            saveDocument();
+        });
+
+        // --- UNIFIED KEYBOARD INPUT INTERCEPTOR ENGINE ---
         editor.addEventListener('keydown', (e) => {
             const selection = window.getSelection();
 
-            // A. NARRATIVE MODE KEYBOARD ENGINE
+            // A. NARRATIVE MODE KEYBOARD ENGINE (FIRST-LINE & BLOCK INDENT SUPPORT)
             if (currentSuiteMode === 'narrative') {
                 const isModifier = e.metaKey || e.ctrlKey;
                 if (isModifier && e.key.toLowerCase() === 'b') { e.preventDefault(); document.execCommand('bold', false, null); saveDocument(); return; }
@@ -1987,20 +2040,36 @@
                 }
 
                 const currentIndent = parseInt(currentBlock ? (currentBlock.dataset.indent || "0") : "0", 10);
+                const hasFirstLineIndent = currentBlock && currentBlock.dataset.firstLineIndent === "true";
 
-                // Tab -> Increase Indent
+                // Tab: 1st press = First-Line Indent | 2nd+ press = Full Block Indent
                 if (e.key === 'Tab') {
                     e.preventDefault();
                     if (!currentBlock) return;
-                    const newIndent = currentIndent + 1;
-                    currentBlock.dataset.indent = newIndent;
-                    currentBlock.style.paddingLeft = `${newIndent * 30}px`;
+
+                    const text = currentBlock.innerText.trim();
+                    const isListPattern = /^(\d+[\.\)]|[-*•])\s/.test(text);
+
+                    if (!hasFirstLineIndent && currentIndent === 0 && !isListPattern) {
+                        // First-line indent only
+                        currentBlock.dataset.firstLineIndent = "true";
+                        currentBlock.style.textIndent = "2em";
+                        currentBlock.style.paddingLeft = "0px";
+                    } else {
+                        // Switch or step up to block list indent
+                        currentBlock.dataset.firstLineIndent = "false";
+                        currentBlock.style.textIndent = "0px";
+                        const newIndent = currentIndent + 1;
+                        currentBlock.dataset.indent = newIndent;
+                        currentBlock.style.paddingLeft = `${newIndent * 30}px`;
+                    }
+
                     applyDynamicListSpacing();
                     saveDocument();
                     return;
                 }
 
-                // Hardened Enter Handler (Mid-paragraph & End-line support)
+                // Enter Key Management
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     
@@ -2019,28 +2088,37 @@
 
                     const textContent = currentBlock.innerText ? currentBlock.innerText.replace(/\u200B/g, "").trim() : "";
 
-                    // Scenario A: Empty line enter -> reduce indentation
-                    if (textContent === "" && currentIndent > 0) {
-                        const newIndent = currentIndent - 1;
-                        currentBlock.dataset.indent = newIndent;
-                        currentBlock.style.paddingLeft = newIndent > 0 ? `${newIndent * 30}px` : "0px";
-                        applyDynamicListSpacing();
-                        saveDocument();
-                        return;
+                    // Empty Enter on Indented Line -> Reset step-by-step
+                    if (textContent === "") {
+                        if (currentIndent > 0) {
+                            const newIndent = currentIndent - 1;
+                            currentBlock.dataset.indent = newIndent;
+                            currentBlock.style.paddingLeft = newIndent > 0 ? `${newIndent * 30}px` : "0px";
+                            applyDynamicListSpacing();
+                            saveDocument();
+                            return;
+                        } else if (hasFirstLineIndent) {
+                            currentBlock.dataset.firstLineIndent = "false";
+                            currentBlock.style.textIndent = "0px";
+                            saveDocument();
+                            return;
+                        }
                     }
 
-                    // Scenario B: Mid-Paragraph Split vs End-of-Line Enter
+                    // Create new line carrying forward existing indentation style
                     const newBlock = document.createElement('div');
                     if (currentIndent > 0) {
                         newBlock.dataset.indent = currentIndent;
                         newBlock.style.paddingLeft = `${currentIndent * 30}px`;
+                    } else if (hasFirstLineIndent) {
+                        newBlock.dataset.firstLineIndent = "true";
+                        newBlock.style.textIndent = "2em";
                     }
 
-                    // Extract content after cursor position
+                    // Extract content after cursor position (supports mid-paragraph splits)
                     const tailRange = document.createRange();
                     tailRange.setStart(range.startContainer, range.startOffset);
                     tailRange.setEnd(currentBlock, currentBlock.childNodes.length);
-                    
                     const extractedFragment = tailRange.extractContents();
 
                     if (extractedFragment.textContent.trim() === "") {
@@ -2055,7 +2133,6 @@
                         editor.appendChild(newBlock);
                     }
 
-                    // Move selection caret to the start of the new block
                     const newRange = document.createRange();
                     newRange.setStart(newBlock, 0);
                     newRange.collapse(true);
@@ -2550,7 +2627,7 @@
             }
         }
 
-        // --- GOOGLE OAUTH & STATE HYDRATION ENGINE (WITH URL REHYDRATION FIX) ---
+        // --- GOOGLE OAUTH & STATE HYDRATION ENGINE ---
         window.onload = function() {
             requestPersistentStorage();
 
@@ -2570,7 +2647,7 @@
             }
             configureAutoBackupTimer();
 
-            // Check URL Query Parameters First (Fixes State Disappearing on Reload)
+            // Check URL Query Parameters First
             const urlParams = new URLSearchParams(window.location.search);
             const urlDocId = urlParams.get('doc');
             const urlMode = urlParams.get('mode');
