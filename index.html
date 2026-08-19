@@ -1700,18 +1700,59 @@
             renderCloudTabInterface(); 
         });
 
+        // --- PERSISTENT GOOGLE AUTH & SILENT RE-CONNECT ENGINE ---
+        function togglePersistAuthState(enabled) {
+            localStorage.setItem('zensuite_persist_google_auth', enabled ? 'true' : 'false');
+        }
+
+        function triggerGoogleAuth(forceConsent) {
+            if (!tokenClient) return;
+            const shouldPersist = localStorage.getItem('zensuite_persist_google_auth') !== 'false';
+            const promptMode = forceConsent ? (shouldPersist ? '' : 'consent') : '';
+            tokenClient.requestAccessToken({ prompt: promptMode });
+        }
+
+        function disconnectGoogleAccount() {
+            if (accessToken && typeof google !== 'undefined') {
+                google.accounts.oauth2.revoke(accessToken, () => {
+                    accessToken = null;
+                    localStorage.removeItem('zensuite_google_access_token');
+                    localStorage.removeItem('zensuite_google_token_exp');
+                    pickerModifierSync();
+                    renderCloudTabInterface();
+                    showZenAlert("Disconnected", "Google Drive connection has been unlinked.");
+                });
+            } else {
+                accessToken = null;
+                localStorage.removeItem('zensuite_google_access_token');
+                localStorage.removeItem('zensuite_google_token_exp');
+                pickerModifierSync();
+                renderCloudTabInterface();
+            }
+        }
+
         function renderCloudTabInterface() {
+            const isPersistChecked = localStorage.getItem('zensuite_persist_google_auth') !== 'false';
+
             if (!accessToken) {
                 cloudUiInjectionZone.innerHTML = `
-                    <div style="text-align: center; padding: 20px 10px;">
-                        <p style="font-size:0.85rem; color:var(--muted-color); line-height:1.6; margin-bottom:15px;">
-                            Link your authorized Google account to activate real-time server replication pipelines and unlock limitless document creation tracks.
+                    <div style="text-align: center; padding: 15px 10px;">
+                        <p style="font-size:0.85rem; color:var(--muted-color); line-height:1.6; margin-bottom:12px;">
+                            Link your Google account to activate real-time replication and cloud backups.
                         </p>
-                        <button class="picker-action-btn" id="auth-btn" onclick="if(tokenClient) tokenClient.requestAccessToken({prompt:'consent'});">G Connect Google Drive</button>
+                        <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:15px; font-size:0.75rem; color:var(--muted-color);">
+                            <input type="checkbox" id="persist-auth-toggle" ${isPersistChecked ? 'checked' : ''} onchange="togglePersistAuthState(this.checked)">
+                            <label for="persist-auth-toggle" style="cursor:pointer;">Stay connected across browser sessions</label>
+                        </div>
+                        <button class="picker-action-btn" id="auth-btn" onclick="triggerGoogleAuth(true)">G Connect Google Drive</button>
                     </div>
                 `;
             } else {
                 cloudUiInjectionZone.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding:0 2px;">
+                        <span style="font-size:0.75rem; color:var(--accent-color);">✓ Cloud Connected</span>
+                        <button onclick="disconnectGoogleAccount()" style="background:transparent; border:none; color:var(--muted-color); font-family:var(--font-mono); font-size:0.70rem; cursor:pointer; text-decoration:underline;">Disconnect</button>
+                    </div>
                     <button class="picker-action-btn" id="new-cloud-doc-btn" style="background: rgba(56, 189, 248, 0.1); border-color: var(--accent-color); color: var(--accent-color);">+ Create Fresh Cloud Document</button>
                     <div class="document-list-title">Google Cloud Documents</div>
                     <div class="document-scroll-list" id="cloud-docs-target-node">
@@ -2951,6 +2992,16 @@
                 document.body.classList.remove('distraction-free');
             }
 
+            // Restore Cached Google Auth Token if Valid
+            const shouldPersist = localStorage.getItem('zensuite_persist_google_auth') !== 'false';
+            const cachedToken = localStorage.getItem('zensuite_google_access_token');
+            const tokenExp = parseInt(localStorage.getItem('zensuite_google_token_exp') || '0', 10);
+
+            if (shouldPersist && cachedToken && Date.now() < tokenExp) {
+                accessToken = cachedToken;
+                pickerModifierSync();
+            }
+
             if (typeof google !== 'undefined') {
                 tokenClient = google.accounts.oauth2.initTokenClient({
                     client_id: CLIENT_ID,
@@ -2959,6 +3010,12 @@
                         if (tokenResponse.error !== undefined) return;
                         accessToken = tokenResponse.access_token;
                         
+                        // Cache token for 55 minutes
+                        if (localStorage.getItem('zensuite_persist_google_auth') !== 'false') {
+                            localStorage.setItem('zensuite_google_access_token', accessToken);
+                            localStorage.setItem('zensuite_google_token_exp', Date.now() + (55 * 60 * 1000));
+                        }
+
                         pickerModifierSync();
                         
                         const tabToggleCloud = document.getElementById('tab-toggle-cloud');
@@ -2967,6 +3024,11 @@
                         }
                     },
                 });
+
+                // Silently refresh token in background if session was saved but token expired
+                if (shouldPersist && (!accessToken || Date.now() >= tokenExp) && cachedToken) {
+                    triggerGoogleAuth(false);
+                }
             }
         };
 
