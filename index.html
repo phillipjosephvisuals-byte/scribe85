@@ -788,6 +788,7 @@
             width: 100vw;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
         header {
@@ -929,6 +930,7 @@
             overflow-y: auto; 
             padding: 0px 20px;
             width: 100%;
+            position: relative;
         }
 
         .editor-container { 
@@ -937,6 +939,7 @@
             min-height: 100%; 
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
         .editor {
@@ -968,6 +971,63 @@
             color: var(--muted-color);
             opacity: 0.6;
             pointer-events: none;
+        }
+
+        /* ------------------------------------------------------------------
+           4.2 MARGIN LIST FORMATTING WIDGET
+        ------------------------------------------------------------------ */
+        .margin-list-widget {
+            position: absolute;
+            left: -48px;
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--accent-color);
+            border-radius: 6px;
+            padding: 5px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 50;
+            transition: opacity 0.2s ease;
+            user-select: none;
+        }
+
+        .margin-widget-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--muted-color);
+            cursor: pointer;
+            border-radius: 4px;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .margin-widget-btn:hover {
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+            background: rgba(255, 255, 255, 0.08);
+            text-shadow: var(--text-glow);
+        }
+
+        .margin-widget-btn.active {
+            background: var(--accent-color);
+            color: var(--bg-color);
+            border-color: var(--accent-color);
+            text-shadow: none;
+        }
+
+        .margin-widget-btn svg {
+            width: 15px;
+            height: 15px;
+            fill: currentColor;
         }
 
         /* ------------------------------------------------------------------
@@ -1150,6 +1210,7 @@
 
             .footer-center { order: 2; }
             .stats-right { display: none; }
+            .margin-list-widget { display: none !important; }
         }
     </style>
 </head>
@@ -1224,6 +1285,7 @@
                             <div class="shortcut-item"><code>Tab</code> <span>Indent first line (Prose)</span></div>
                             <div class="shortcut-item"><code>Tab x2</code> <span>Indent block (List items)</span></div>
                             <div class="shortcut-item"><code>Shift + Tab</code> <span>Outdent / Step back</span></div>
+                            <div class="shortcut-item"><code>Highlight</code> <span>Toggle bullet/numbered list</span></div>
                             <div class="shortcut-item"><code>Enter</code> <span>New paragraph (flush left)</span></div>
                             <div class="shortcut-item"><code>Enter (empty)</code> <span>De-indents line step-by-step</span></div>
                         </div>
@@ -1419,8 +1481,32 @@
             </div>
         </header>
 
-        <main>
+        <main id="workspace-main">
             <div class="editor-container">
+                <!-- MARGIN LIST TOGGLE WIDGET -->
+                <div class="margin-list-widget" id="margin-list-widget">
+                    <button class="margin-widget-btn" id="btn-bullet-toggle" title="Toggle Bulleted List">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="4" cy="6" r="2.5"/>
+                            <line x1="10" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2"/>
+                            <circle cx="4" cy="12" r="2.5"/>
+                            <line x1="10" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2"/>
+                            <circle cx="4" cy="18" r="2.5"/>
+                            <line x1="10" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </button>
+                    <button class="margin-widget-btn" id="btn-number-toggle" title="Toggle Numbered List">
+                        <svg viewBox="0 0 24 24">
+                            <text x="1" y="8" font-size="7" font-family="monospace" fill="currentColor">1.</text>
+                            <line x1="10" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2"/>
+                            <text x="1" y="14" font-size="7" font-family="monospace" fill="currentColor">2.</text>
+                            <line x1="10" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2"/>
+                            <text x="1" y="20" font-size="7" font-family="monospace" fill="currentColor">3.</text>
+                            <line x1="10" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </button>
+                </div>
+
                 <div class="editor" contenteditable="true" spellcheck="true" placeholder="Start typing here...">Start typing here...</div>
             </div>
         </main>
@@ -1505,6 +1591,7 @@
                             <div class="shortcut-item"><code>Tab</code> <span>Indent first line (Prose)</span></div>
                             <div class="shortcut-item"><code>Tab x2</code> <span>Indent block (List items)</span></div>
                             <div class="shortcut-item"><code>Shift + Tab</code> <span>Outdent / Step back</span></div>
+                            <div class="shortcut-item"><code>Highlight</code> <span>Toggle bullet/numbered list</span></div>
                             <div class="shortcut-item"><code>Enter</code> <span>New paragraph (flush left)</span></div>
                             <div class="shortcut-item"><code>Enter (empty)</code> <span>De-indents line step-by-step</span></div>
                         </div>
@@ -1648,6 +1735,11 @@
         const zenAlertTitle = document.getElementById('zen-alert-title');
         const zenAlertText = document.getElementById('zen-alert-text');
         const modalContextTitle = document.getElementById('modal-context-title');
+
+        // Margin List Widget Elements
+        const marginListWidget = document.getElementById('margin-list-widget');
+        const btnBulletToggle = document.getElementById('btn-bullet-toggle');
+        const btnNumberToggle = document.getElementById('btn-number-toggle');
 
         // Target Containers
         const localDocsTarget = document.getElementById('local-docs-target');
@@ -1799,6 +1891,7 @@
                 document.body.classList.add('mode-screenplay');
                 modalContextTitle.textContent = "Screenplay Workspace";
                 elementStatusTag.style.display = "inline";
+                marginListWidget.style.display = "none";
             } else {
                 document.body.classList.remove('mode-screenplay');
                 document.body.classList.add('mode-narrative');
@@ -1861,6 +1954,7 @@
 
             if (workspaceView.classList.contains('active')) {
                 document.body.classList.add('distraction-free');
+                marginListWidget.style.display = 'none';
             }
         }
 
@@ -1978,6 +2072,110 @@
                 ? `${Math.ceil(wordCount / 120)} min read` 
                 : `${readingTime} min read`;
         }
+
+        // --- SELECTION MARGIN LIST WIDGET CONTROLLER ---
+        function getSelectedBlocks() {
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return [];
+            const range = selection.getRangeAt(0);
+
+            const allBlocks = Array.from(editor.children);
+            return allBlocks.filter(block => range.intersectsNode(block));
+        }
+
+        function updateMarginListWidget() {
+            if (currentSuiteMode !== 'narrative') {
+                marginListWidget.style.display = 'none';
+                return;
+            }
+
+            const selection = window.getSelection();
+            if (!selection.rangeCount || selection.isCollapsed) {
+                marginListWidget.style.display = 'none';
+                return;
+            }
+
+            const selectedBlocks = getSelectedBlocks();
+            if (selectedBlocks.length === 0) {
+                marginListWidget.style.display = 'none';
+                return;
+            }
+
+            const firstBlock = selectedBlocks[0];
+            const editorRect = editor.getBoundingClientRect();
+            const firstBlockRect = firstBlock.getBoundingClientRect();
+
+            // Position widget strictly vertically aligned with top of the selected block
+            const topOffset = firstBlockRect.top - editorRect.top + editor.scrollTop;
+            marginListWidget.style.top = `${Math.max(0, topOffset)}px`;
+            marginListWidget.style.display = 'flex';
+
+            // Check if all selected blocks currently share a list type
+            const isAllBullets = selectedBlocks.every(b => (b.dataset.listType === 'bullet' || /^•\s/.test(b.innerText.trim())));
+            const isAllNumbers = selectedBlocks.every(b => (b.dataset.listType === 'number' || /^\d+[\.\)]\s/.test(b.innerText.trim())));
+
+            btnBulletToggle.classList.toggle('active', isAllBullets);
+            btnNumberToggle.classList.toggle('active', isAllNumbers);
+        }
+
+        function toggleListFormatting(type) {
+            const selectedBlocks = getSelectedBlocks();
+            if (selectedBlocks.length === 0) return;
+
+            const isAllBullets = selectedBlocks.every(b => (b.dataset.listType === 'bullet' || /^•\s/.test(b.innerText.trim())));
+            const isAllNumbers = selectedBlocks.every(b => (b.dataset.listType === 'number' || /^\d+[\.\)]\s/.test(b.innerText.trim())));
+
+            let turningOff = (type === 'bullet' && isAllBullets) || (type === 'number' && isAllNumbers);
+
+            selectedBlocks.forEach((block, idx) => {
+                let text = block.innerText ? block.innerText.replace(/\u200B/g, "").trim() : "";
+                
+                // Strip existing bullet/number prefixes
+                text = text.replace(/^([•\-\*]|\d+[\.\)])\s+/, "");
+
+                if (turningOff) {
+                    // Revert to clean flush-left prose
+                    block.dataset.listType = "none";
+                    block.dataset.indent = "0";
+                    block.dataset.firstLineIndent = "false";
+                    block.style.paddingLeft = "0px";
+                    block.style.textIndent = "0px";
+                    block.textContent = text === "" ? "" : text;
+                    if (block.textContent === "") block.innerHTML = "<br>";
+                } else {
+                    // Apply list formatting
+                    block.dataset.listType = type;
+                    block.dataset.indent = "1";
+                    block.dataset.firstLineIndent = "false";
+                    block.style.paddingLeft = "30px";
+                    block.style.textIndent = "0px";
+
+                    const prefix = type === 'bullet' ? "• " : `${idx + 1}. `;
+                    block.textContent = `${prefix}${text}`;
+                }
+            });
+
+            applyDynamicListSpacing();
+            updateAnalytics(editor.innerText);
+            saveDocument();
+            updateMarginListWidget();
+        }
+
+        btnBulletToggle.addEventListener('mousedown', (e) => {
+            e.preventDefault(); // Retains active selection range
+            toggleListFormatting('bullet');
+        });
+
+        btnNumberToggle.addEventListener('mousedown', (e) => {
+            e.preventDefault(); // Retains active selection range
+            toggleListFormatting('number');
+        });
+
+        document.addEventListener('selectionchange', () => {
+            if (workspaceView.classList.contains('active')) {
+                updateMarginListWidget();
+            }
+        });
 
         // --- CLEAN PASTE SANITIZER (STRIPS GOOGLE DOCS HIDDEN FORMATTING & STYLES) ---
         editor.addEventListener('paste', (e) => {
@@ -2113,28 +2311,47 @@
                     const textContent = currentBlock.innerText ? currentBlock.innerText.replace(/\u200B/g, "").trim() : "";
 
                     // Empty Enter on Indented Line -> Step-down / Outdent
-                    if (textContent === "") {
+                    if (textContent === "" || /^([•\-\*]|\d+[\.\)])\s*$/.test(textContent)) {
                         if (currentIndent > 0) {
                             const newIndent = currentIndent - 1;
                             currentBlock.dataset.indent = newIndent;
+                            currentBlock.dataset.listType = "none";
                             currentBlock.style.paddingLeft = newIndent > 0 ? `${newIndent * 30}px` : "0px";
+                            currentBlock.innerHTML = "<br>";
                             applyDynamicListSpacing();
                             saveDocument();
                             return;
                         } else if (hasFirstLineIndent) {
                             currentBlock.dataset.firstLineIndent = "false";
                             currentBlock.style.textIndent = "0px";
+                            currentBlock.innerHTML = "<br>";
                             saveDocument();
                             return;
                         }
                     }
 
-                    // Create new clean paragraph (flush left by default)
+                    // Create new clean paragraph
                     const newBlock = document.createElement('div');
                     newBlock.dataset.firstLineIndent = "false";
                     newBlock.style.textIndent = "0px";
 
-                    if (currentIndent > 0) {
+                    const isList = currentBlock.dataset.listType === 'bullet' || currentBlock.dataset.listType === 'number' || /^([•\-\*]|\d+[\.\)])\s/.test(textContent);
+                    let listPrefix = "";
+
+                    if (isList) {
+                        newBlock.dataset.indent = currentIndent > 0 ? currentIndent : "1";
+                        newBlock.style.paddingLeft = `${parseInt(newBlock.dataset.indent, 10) * 30}px`;
+                        
+                        if (currentBlock.dataset.listType === 'number' || /^\d+[\.\)]\s/.test(textContent)) {
+                            newBlock.dataset.listType = "number";
+                            const match = textContent.match(/^(\d+)[\.\)]\s/);
+                            const nextNum = match ? parseInt(match[1], 10) + 1 : 2;
+                            listPrefix = `${nextNum}. `;
+                        } else {
+                            newBlock.dataset.listType = "bullet";
+                            listPrefix = "• ";
+                        }
+                    } else if (currentIndent > 0) {
                         newBlock.dataset.indent = currentIndent;
                         newBlock.style.paddingLeft = `${currentIndent * 30}px`;
                     } else {
@@ -2150,17 +2367,22 @@
                     const extractedFragment = splitRange.extractContents();
 
                     if (!extractedFragment.textContent || extractedFragment.textContent.replace(/\u200B/g, "").trim() === "") {
-                        newBlock.innerHTML = '<br>';
+                        newBlock.innerHTML = listPrefix ? listPrefix : '<br>';
                     } else {
-                        newBlock.appendChild(extractedFragment);
+                        if (listPrefix) {
+                            newBlock.textContent = listPrefix;
+                            newBlock.appendChild(extractedFragment);
+                        } else {
+                            newBlock.appendChild(extractedFragment);
+                        }
                     }
 
-                    // If the remaining original block became empty, ensure it has a line-break placeholder
+                    // If remaining original block became empty, retain line-break placeholder
                     if (currentBlock.innerHTML.trim() === "" || currentBlock.innerText.replace(/\u200B/g, "").trim() === "") {
                         currentBlock.innerHTML = '<br>';
                     }
 
-                    // Insert the new split paragraph immediately after the current one
+                    // Insert new split paragraph immediately after current one
                     if (currentBlock.nextSibling) {
                         editor.insertBefore(newBlock, currentBlock.nextSibling);
                     } else {
@@ -2169,7 +2391,11 @@
 
                     // Position caret at the beginning of the newly split line
                     const newRange = document.createRange();
-                    newRange.setStart(newBlock, 0);
+                    if (listPrefix && newBlock.firstChild) {
+                        newRange.setStart(newBlock.firstChild, listPrefix.length);
+                    } else {
+                        newRange.setStart(newBlock, 0);
+                    }
                     newRange.collapse(true);
                     selection.removeAllRanges();
                     selection.addRange(newRange);
