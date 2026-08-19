@@ -2023,11 +2023,11 @@
             saveDocument();
         });
 
-        // --- UNIFIED KEYBOARD INPUT INTERCEPTOR ENGINE (ISOLATED INDENTS + CARET FIX) ---
+        // --- UNIFIED KEYBOARD INPUT INTERCEPTOR ENGINE ---
         editor.addEventListener('keydown', (e) => {
             const selection = window.getSelection();
 
-            // A. NARRATIVE MODE KEYBOARD ENGINE (ISOLATED FIRST-LINE & BLOCK INDENTS)
+            // A. NARRATIVE MODE KEYBOARD ENGINE (ISOLATED FIRST-LINE & BLOCK INDENTS + SAFE SPLIT)
             if (currentSuiteMode === 'narrative') {
                 const isModifier = e.metaKey || e.ctrlKey;
                 if (isModifier && e.key.toLowerCase() === 'b') { e.preventDefault(); document.execCommand('bold', false, null); saveDocument(); return; }
@@ -2106,13 +2106,13 @@
                     return;
                 }
 
-                // Enter Key Management: Spawns completely fresh, flush-left paragraph
+                // Enter Key Management: Clean mid-paragraph splits and non-inherited fresh lines
                 if (e.key === 'Enter') {
                     e.preventDefault();
 
                     const textContent = currentBlock.innerText ? currentBlock.innerText.replace(/\u200B/g, "").trim() : "";
 
-                    // Empty Enter on Indented Line -> Reset step-by-step
+                    // Empty Enter on Indented Line -> Step-down / Outdent
                     if (textContent === "") {
                         if (currentIndent > 0) {
                             const newIndent = currentIndent - 1;
@@ -2129,13 +2129,12 @@
                         }
                     }
 
-                    // Create new clean paragraph (explicitly flush left)
+                    // Create new clean paragraph (flush left by default)
                     const newBlock = document.createElement('div');
                     newBlock.dataset.firstLineIndent = "false";
                     newBlock.style.textIndent = "0px";
 
                     if (currentIndent > 0) {
-                        // Carry forward list indent level only if in list mode
                         newBlock.dataset.indent = currentIndent;
                         newBlock.style.paddingLeft = `${currentIndent * 30}px`;
                     } else {
@@ -2143,25 +2142,32 @@
                         newBlock.style.paddingLeft = "0px";
                     }
 
-                    // Extract content after cursor position (supports mid-paragraph splits)
-                    const tailRange = document.createRange();
-                    tailRange.setStart(range.startContainer, range.startOffset);
-                    tailRange.setEnd(currentBlock, currentBlock.childNodes.length);
-                    const extractedFragment = tailRange.extractContents();
+                    // Safe Deep Split: Extracts everything from caret to the end of the block
+                    const splitRange = selection.getRangeAt(0).cloneRange();
+                    splitRange.selectNodeContents(currentBlock);
+                    splitRange.setStart(range.startContainer, range.startOffset);
 
-                    if (extractedFragment.textContent.trim() === "") {
+                    const extractedFragment = splitRange.extractContents();
+
+                    if (!extractedFragment.textContent || extractedFragment.textContent.replace(/\u200B/g, "").trim() === "") {
                         newBlock.innerHTML = '<br>';
                     } else {
                         newBlock.appendChild(extractedFragment);
                     }
 
+                    // If the remaining original block became empty, ensure it has a line-break placeholder
+                    if (currentBlock.innerHTML.trim() === "" || currentBlock.innerText.replace(/\u200B/g, "").trim() === "") {
+                        currentBlock.innerHTML = '<br>';
+                    }
+
+                    // Insert the new split paragraph immediately after the current one
                     if (currentBlock.nextSibling) {
                         editor.insertBefore(newBlock, currentBlock.nextSibling);
                     } else {
                         editor.appendChild(newBlock);
                     }
 
-                    // Move caret into the new paragraph
+                    // Position caret at the beginning of the newly split line
                     const newRange = document.createRange();
                     newRange.setStart(newBlock, 0);
                     newRange.collapse(true);
@@ -2175,7 +2181,7 @@
                 return;
             }
 
-            // B. SCREENPLAY MODE KEYBOARD ENGINE
+            // B. SCREENPLAY MODE KEYBOARD ENGINE (WITH SAFE SPLIT & REVERSE CYCLE)
             if (!selection.rangeCount) return;
 
             const range = selection.getRangeAt(0);
@@ -2236,15 +2242,19 @@
                 const nextBlock = document.createElement('div');
                 nextBlock.setAttribute('data-element', targetType);
                 
-                const tailRange = document.createRange();
-                tailRange.setStart(range.startContainer, range.startOffset);
-                tailRange.setEnd(currentBlock, currentBlock.childNodes.length);
-                const extractedFragment = tailRange.extractContents();
+                const splitRange = selection.getRangeAt(0).cloneRange();
+                splitRange.selectNodeContents(currentBlock);
+                splitRange.setStart(range.startContainer, range.startOffset);
+                const extractedFragment = splitRange.extractContents();
 
-                if (extractedFragment.textContent.trim() === "") {
+                if (!extractedFragment.textContent || extractedFragment.textContent.replace(/\u200B/g, "").trim() === "") {
                     nextBlock.innerHTML = '<br>';
                 } else {
                     nextBlock.appendChild(extractedFragment);
+                }
+
+                if (currentBlock.innerHTML.trim() === "" || currentBlock.innerText.replace(/\u200B/g, "").trim() === "") {
+                    currentBlock.innerHTML = '<br>';
                 }
 
                 if (currentBlock && currentBlock.parentNode) {
