@@ -777,6 +777,12 @@
             transform: translateY(8px);
         }
 
+        body.distraction-free .margin-ghost-guide {
+            opacity: 0 !important;
+            pointer-events: none;
+            transform: translateY(-50%) scale(0.98);
+        }
+
         #workspace-view {
             height: 100vh;
             width: 100vw;
@@ -924,7 +930,7 @@
             outline: none; 
             background: transparent;
             color: var(--text-color); 
-            caret-color: var(--accent-color) !important;
+            caret-color: var(--accent-color) !important; /* Forces visible blinking caret */
             font-family: var(--font-mono);
             font-size: 1.1rem; 
             line-height: 1.8; 
@@ -935,6 +941,7 @@
             padding-bottom: 200px;
         }
 
+        /* STRIP GOOGLE DOCS INLINE BLACK TEXT & BACKGROUNDS WHILE PRESERVING CARET */
         .editor * {
             color: var(--text-color);
             background-color: transparent !important;
@@ -1005,85 +1012,87 @@
         }
 
         /* ------------------------------------------------------------------
-           4.3 RIGHT MARGIN GHOST SHORTCUT GUIDES
+           4.3 RIGHT MARGIN GHOST SHORTCUT GUIDE CARD
         ------------------------------------------------------------------ */
         .margin-ghost-guide {
-            position: absolute;
-            right: -260px;
-            top: 40px;
+            position: fixed;
+            top: 50%;
+            /* Perfectly centered within the right margin */
+            right: max(16px, calc((100vw - var(--canvas-width)) / 4 - 110px));
             width: 220px;
-            padding: 16px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            transform: translateY(-50%) scale(1);
+            transform-origin: center right;
+            background: rgba(255, 255, 255, 0.015);
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 8px;
-            font-size: 0.72rem;
-            color: var(--muted-color);
-            opacity: 0.28;
-            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, background 0.4s ease;
-            pointer-events: auto;
+            padding: 16px 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(3px);
+            z-index: 15;
+            opacity: 0.22;
+            cursor: default;
             user-select: none;
-            backdrop-filter: blur(2px);
-            z-index: 20;
-            display: none;
-        }
-
-        .margin-ghost-guide.active-mode {
-            display: block;
+            transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+                        transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+                        border-color 0.35s ease, 
+                        background 0.35s ease, 
+                        box-shadow 0.35s ease;
         }
 
         .margin-ghost-guide:hover {
             opacity: 1 !important;
-            transform: scale(1.03);
+            transform: translateY(-50%) scale(1.03);
             border-color: var(--accent-color);
             background: rgba(0, 0, 0, 0.65);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
-            color: var(--text-color);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8), 0 0 12px rgba(255, 255, 255, 0.05);
         }
 
-        .margin-ghost-guide .guide-title {
-            font-size: 0.65rem;
+        .ghost-guide-title {
+            font-size: 0.70rem;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             color: var(--accent-color);
-            font-weight: bold;
             margin-bottom: 12px;
             text-shadow: var(--text-glow);
             text-align: center;
+            font-weight: bold;
+            opacity: 0.9;
         }
 
-        .margin-ghost-guide .guide-list {
+        .ghost-guide-list {
             display: flex;
             flex-direction: column;
             gap: 7px;
+            font-size: 0.73rem;
+            line-height: 1.4;
         }
 
-        .margin-ghost-guide .guide-row {
+        .ghost-guide-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 8px;
+            gap: 6px;
         }
 
-        .margin-ghost-guide .guide-row code {
+        .ghost-guide-row span {
+            color: var(--muted-color);
+            font-size: 0.71rem;
+            transition: color 0.3s ease;
+        }
+
+        .margin-ghost-guide:hover .ghost-guide-row span {
+            color: var(--text-color);
+        }
+
+        .ghost-guide-row code {
             font-family: var(--font-mono);
             color: var(--accent-color);
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.06);
             padding: 1px 5px;
             border-radius: 3px;
             font-size: 0.68rem;
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             white-space: nowrap;
-        }
-
-        .margin-ghost-guide .guide-row span {
-            color: var(--muted-color);
-            font-size: 0.68rem;
-            text-align: right;
-            white-space: nowrap;
-        }
-
-        .margin-ghost-guide:hover .guide-row span {
-            color: var(--text-color);
         }
 
         /* ------------------------------------------------------------------
@@ -1096,7 +1105,7 @@
         body.mode-narrative .editor div, 
         body.mode-narrative .editor p {
             margin-bottom: 1.5em;
-            text-indent: 0;
+            text-indent: 0; /* Prevents global inheritance across paragraphs */
             transition: margin-bottom 0.2s ease, margin-top 0.2s ease;
         }
 
@@ -1201,9 +1210,10 @@
         #element-status-tag { color: var(--accent-color); font-weight: bold; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
 
         /* ------------------------------------------------------------------
-           6. RESPONSIVE MOBILE MEDIA QUERIES
+           6. RESPONSIVE MOBILE & DESKTOP MARGIN MEDIA QUERIES
         ------------------------------------------------------------------ */
-        @media (max-width: 1200px) {
+        @media (max-width: 1180px) {
+            /* Hide floating margin guide when screen space is too compact */
             .margin-ghost-guide { display: none !important; }
         }
 
@@ -1528,6 +1538,14 @@
             </div>
         </header>
 
+        <!-- RIGHT MARGIN GHOST SHORTCUT GUIDE CARD (FIXED ON SCREEN) -->
+        <div class="margin-ghost-guide chrome-element" id="margin-ghost-guide">
+            <div class="ghost-guide-title" id="ghost-guide-title">Narrative Shortcuts</div>
+            <div class="ghost-guide-list" id="ghost-guide-list">
+                <!-- Dynamically populated based on mode -->
+            </div>
+        </div>
+
         <main id="workspace-main">
             <div class="editor-container">
                 <!-- MARGIN LIST TOGGLE WIDGET -->
@@ -1552,37 +1570,6 @@
                             <line x1="10" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2"/>
                         </svg>
                     </button>
-                </div>
-
-                <!-- RIGHT MARGIN GHOST GUIDE: NARRATIVE 85 -->
-                <div class="margin-ghost-guide chrome-element" id="ghost-guide-narrative">
-                    <div class="guide-title">Narrative Guide</div>
-                    <div class="guide-list">
-                        <div class="guide-row"><code>Ctrl+B</code> <span>Bold selection</span></div>
-                        <div class="guide-row"><code>Ctrl+I</code> <span>Italicize</span></div>
-                        <div class="guide-row"><code>*text*</code> <span>Type bold</span></div>
-                        <div class="guide-row"><code>_text_</code> <span>Type italics</span></div>
-                        <div class="guide-row"><code>Tab</code> <span>Indent 1st line</span></div>
-                        <div class="guide-row"><code>Tab x2</code> <span>Indent block</span></div>
-                        <div class="guide-row"><code>Shift+Tab</code> <span>Outdent line</span></div>
-                        <div class="guide-row"><code>Enter</code> <span>New paragraph</span></div>
-                        <div class="guide-row"><code>Enter (empty)</code> <span>Step down</span></div>
-                    </div>
-                </div>
-
-                <!-- RIGHT MARGIN GHOST GUIDE: SCREENPLAY 85 -->
-                <div class="margin-ghost-guide chrome-element" id="ghost-guide-screenplay">
-                    <div class="guide-title">Screenplay Guide</div>
-                    <div class="guide-list">
-                        <div class="guide-row"><code>Tab x0</code> <span>Scene Heading</span></div>
-                        <div class="guide-row"><code>Tab x0</code> <span>Action</span></div>
-                        <div class="guide-row"><code>Tab x1</code> <span>Character</span></div>
-                        <div class="guide-row"><code>Tab x2</code> <span>Parenthetical</span></div>
-                        <div class="guide-row"><code>Tab x3</code> <span>Dialogue</span></div>
-                        <div class="guide-row"><code>Tab x4</code> <span>Transition</span></div>
-                        <div class="guide-row"><code>Shift+Tab</code> <span>Reverse cycle</span></div>
-                        <div class="guide-row"><code>Enter</code> <span>Context flow</span></div>
-                    </div>
                 </div>
 
                 <div class="editor" contenteditable="true" spellcheck="true" placeholder="Start typing here...">Start typing here...</div>
@@ -1649,6 +1636,39 @@
             cardScreenplay.classList.remove('expanded');
             cardNarrative.classList.remove('hidden');
             cardScreenplay.classList.remove('hidden');
+        }
+
+        // --- GHOST SHORTCUT GUIDE CARD RENDERER ---
+        function renderGhostMarginGuide() {
+            const titleEl = document.getElementById('ghost-guide-title');
+            const listEl = document.getElementById('ghost-guide-list');
+
+            if (currentSuiteMode === 'narrative') {
+                titleEl.textContent = "Narrative Guide";
+                listEl.innerHTML = `
+                    <div class="ghost-guide-row"><span>Bold selection</span><code>Ctrl + B</code></div>
+                    <div class="ghost-guide-row"><span>Italicize</span><code>Ctrl + I</code></div>
+                    <div class="ghost-guide-row"><span>Bold syntax</span><code>*text*</code></div>
+                    <div class="ghost-guide-row"><span>Italics syntax</span><code>_text_</code></div>
+                    <div class="ghost-guide-row"><span>Indent 1st line</span><code>Tab</code></div>
+                    <div class="ghost-guide-row"><span>Indent list block</span><code>Tab x2</code></div>
+                    <div class="ghost-guide-row"><span>Outdent</span><code>Shift+Tab</code></div>
+                    <div class="ghost-guide-row"><span>List buttons</span><code>Highlight</code></div>
+                    <div class="ghost-guide-row"><span>Reset indent</span><code>Enter x2</code></div>
+                `;
+            } else {
+                titleEl.textContent = "Screenplay Guide";
+                listEl.innerHTML = `
+                    <div class="ghost-guide-row"><span>Slugline</span><code>Tab x0</code></div>
+                    <div class="ghost-guide-row"><span>Action</span><code>Tab x0</code></div>
+                    <div class="ghost-guide-row"><span>Character</span><code>Tab x1</code></div>
+                    <div class="ghost-guide-row"><span>Parenthetical</span><code>Tab x2</code></div>
+                    <div class="ghost-guide-row"><span>Dialogue</span><code>Tab x3</code></div>
+                    <div class="ghost-guide-row"><span>Transition</span><code>Tab x4</code></div>
+                    <div class="ghost-guide-row"><span>Reverse cycle</span><code>Shift+Tab</code></div>
+                    <div class="ghost-guide-row"><span>Auto-advance</span><code>Enter</code></div>
+                `;
+            }
         }
 
         // Open Document Picker Modal
@@ -1770,10 +1790,6 @@
         const marginListWidget = document.getElementById('margin-list-widget');
         const btnBulletToggle = document.getElementById('btn-bullet-toggle');
         const btnNumberToggle = document.getElementById('btn-number-toggle');
-
-        // Margin Ghost Guide Elements
-        const ghostGuideNarrative = document.getElementById('ghost-guide-narrative');
-        const ghostGuideScreenplay = document.getElementById('ghost-guide-screenplay');
 
         // Target Containers
         const localDocsTarget = document.getElementById('local-docs-target');
@@ -1926,18 +1942,13 @@
                 modalContextTitle.textContent = "Screenplay Workspace";
                 elementStatusTag.style.display = "inline";
                 marginListWidget.style.display = "none";
-                
-                ghostGuideNarrative.classList.remove('active-mode');
-                ghostGuideScreenplay.classList.add('active-mode');
             } else {
                 document.body.classList.remove('mode-screenplay');
                 document.body.classList.add('mode-narrative');
                 modalContextTitle.textContent = "Narrative Workspace";
                 elementStatusTag.style.display = "none";
-
-                ghostGuideScreenplay.classList.remove('active-mode');
-                ghostGuideNarrative.classList.add('active-mode');
             }
+            renderGhostMarginGuide();
         }
 
         // --- CENTRAL UNIFIED TRACK CONTROLLER SYSTEM ---
@@ -1978,6 +1989,7 @@
             updateAnalytics(editor.innerText);
             if (currentSuiteMode === 'screenplay') updateLiveElementTag();
             pickerModifierSync();
+            renderGhostMarginGuide();
             
             pickerModal.style.display = 'none';
             launchpadView.classList.remove('active');
@@ -2926,6 +2938,7 @@
             updateAnalytics(editor.innerText);
             pickerModifierSync();
             if (currentSuiteMode === 'screenplay') updateLiveElementTag();
+            renderGhostMarginGuide();
             
             pickerModal.style.display = 'none';
             launchpadView.classList.remove('active');
