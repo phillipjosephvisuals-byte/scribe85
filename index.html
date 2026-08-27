@@ -1039,6 +1039,11 @@
                         box-shadow 0.35s ease;
         }
 
+        /* Hide ghost guide when launchpad is active */
+        #launchpad-view.active ~ #workspace-view .margin-ghost-guide {
+            display: none !important;
+        }
+
         .margin-ghost-guide:hover {
             opacity: 1 !important;
             transform: translateY(-50%) scale(1.03);
@@ -1538,7 +1543,7 @@
             </div>
         </header>
 
-        <!-- RIGHT MARGIN GHOST SHORTCUT GUIDE CARD (FIXED ON SCREEN) -->
+        <!-- RIGHT MARGIN GHOST SHORTCUT GUIDE CARD (INSIDE WORKSPACE VIEW) -->
         <div class="margin-ghost-guide chrome-element" id="margin-ghost-guide">
             <div class="ghost-guide-title" id="ghost-guide-title">Narrative Shortcuts</div>
             <div class="ghost-guide-list" id="ghost-guide-list">
