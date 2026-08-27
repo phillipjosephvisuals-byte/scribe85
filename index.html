@@ -230,7 +230,8 @@
             color: var(--accent-color);
             margin-bottom: 16px;
             opacity: 0.9;
-            transition: color 0.4s ease, transform 0.3s ease;
+            transition: color 0.4s ease, transform 0.3s ease, filter 0.3s ease;
+            filter: drop-shadow(var(--text-glow));
         }
 
         .suite-card:hover .suite-card-icon-frame {
@@ -241,8 +242,8 @@
         .suite-card-icon-frame svg {
             width: 100%;
             height: 100%;
-            stroke: currentColor;
-            fill: none;
+            color: var(--accent-color);
+            transition: color 0.4s ease;
         }
 
         .suite-card h2 {
@@ -855,7 +856,6 @@
         .margin-ghost-guide {
             position: fixed;
             top: 50%;
-            /* Centered within the right margin */
             right: max(16px, calc((100vw - var(--canvas-width)) / 4 - 110px));
             width: 220px;
             transform: translateY(-50%) scale(1);
@@ -1172,23 +1172,16 @@
             <!-- NARRATIVE CARD -->
             <div class="suite-card" id="card-narrative">
                 <div class="suite-card-icon-frame">
-                    <!-- Pen and Paper Sketch Translation: Narrative Prose Lines + Indented Bullet Items -->
-                    <svg viewBox="0 0 64 64" stroke-width="2.2" stroke-linecap="round">
-                        <!-- Paragraph 1 Lines -->
-                        <line x1="8" y1="10" x2="56" y2="10" stroke-width="2.5" />
-                        <line x1="8" y1="17" x2="56" y2="17" stroke-width="2.0" />
-                        <line x1="8" y1="24" x2="56" y2="24" stroke-width="2.0" />
-                        <line x1="8" y1="31" x2="38" y2="31" stroke-width="2.0" />
-                        
-                        <!-- Indented List Block -->
-                        <circle cx="20" cy="39" r="1.5" fill="currentColor" />
-                        <line x1="26" y1="39" x2="52" y2="39" stroke-width="1.8" />
-                        
-                        <circle cx="20" cy="46" r="1.5" fill="currentColor" />
-                        <line x1="26" y1="46" x2="52" y2="46" stroke-width="1.8" />
-                        
-                        <!-- Trailing Paragraph -->
-                        <line x1="8" y1="54" x2="56" y2="54" stroke-width="2.2" />
+                    <!-- Custom SVG: Fountain Pen Nib Concept -->
+                    <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                        <!-- Top Collar Bar -->
+                        <line x1="26" y1="9" x2="38" y2="9" />
+                        <!-- Outer Nib Contour -->
+                        <path d="M25 16 H39 L47 31 L32 55 L17 31 Z" />
+                        <!-- Breather Hole -->
+                        <circle cx="32" cy="34" r="3.2" />
+                        <!-- Slit Channel -->
+                        <line x1="32" y1="37.2" x2="32" y2="55" />
                     </svg>
                 </div>
 
@@ -1203,24 +1196,20 @@
             <!-- SCREENPLAY CARD -->
             <div class="suite-card" id="card-screenplay">
                 <div class="suite-card-icon-frame">
-                    <!-- Pen and Paper Sketch Translation: Screenplay Header Box, Action, Character, Dialogue, Transition -->
-                    <svg viewBox="0 0 64 64" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                        <!-- Scene Heading Slugline Block (Heavy Box) -->
-                        <rect x="8" y="8" width="48" height="7" rx="1.5" fill="currentColor" />
-                        
-                        <!-- Action Description Lines -->
-                        <line x1="8" y1="21" x2="56" y2="21" stroke-width="2.0" />
-                        <line x1="8" y1="27" x2="48" y2="27" stroke-width="2.0" />
-                        
-                        <!-- Character Name (Centered Heavy) -->
-                        <rect x="22" y="34" width="20" height="5" rx="1" fill="currentColor" />
-                        
-                        <!-- Dialogue Block (Centered narrower) -->
-                        <line x1="16" y1="44" x2="48" y2="44" stroke-width="2.0" />
-                        <line x1="20" y1="50" x2="44" y2="50" stroke-width="2.0" />
-                        
-                        <!-- Transition (Right Aligned) -->
-                        <line x1="42" y1="57" x2="56" y2="57" stroke-width="2.5" />
+                    <!-- Custom SVG: Production Clapperboard Concept -->
+                    <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                        <!-- Lower Slate Base -->
+                        <path d="M16 29 H48 C50.2 29 52 30.8 52 33 V47 C52 49.2 50.2 51 48 51 H16 C13.8 51 12 49.2 12 47 V33 C12 30.8 13.8 29 16 29 Z" />
+                        <!-- Production Text Slits -->
+                        <line x1="22" y1="38" x2="36" y2="38" stroke-width="2.4" />
+                        <line x1="22" y1="44" x2="32" y2="44" stroke-width="2.4" />
+                        <!-- Angled Top Clapper Stick -->
+                        <g transform="rotate(-18 12 29)">
+                            <rect x="12" y="22" width="40" height="7" rx="1.5" />
+                            <line x1="22" y1="22" x2="16" y2="29" />
+                            <line x1="32" y1="22" x2="26" y2="29" />
+                            <line x1="42" y1="22" x2="36" y2="29" />
+                        </g>
                     </svg>
                 </div>
 
@@ -1309,28 +1298,166 @@
                                 <path d="M393.885,723.142L441.885,723.142L441.885,753.142L407.325,753.142L407.325,759.142L441.885,759.142L441.885,771.142L393.885,771.142L393.885,723.142ZM407.325,735.142L407.325,741.142L428.445,741.142L428.445,735.142L407.325,735.142Z" style="fill-rule:nonzero;"/>
                                 <path d="M477.885,704.643C477.885,701.605 480.348,699.142 483.385,699.142C495.99,699.142 525.885,699.142 525.885,699.142L525.885,729.142L519.885,735.142L525.885,741.142L525.885,765.642C525.885,768.68 523.422,771.142 520.385,771.142C507.78,771.142 477.885,771.142 477.885,771.142L477.885,741.142L483.885,735.142L477.885,729.142L477.885,704.643ZM491.325,711.142L491.325,729.142L512.445,729.142L512.445,711.142L491.325,711.142ZM491.325,741.142L491.325,759.142L512.445,759.142L512.445,741.142L491.325,741.142Z" style="fill-rule:nonzero;"/>
                                 <path d="M537.885,699.142L585.885,699.142L585.885,705.642C585.885,707.101 585.305,708.5 584.274,709.531C583.242,710.563 581.843,711.142 580.385,711.142C570.632,711.142 551.325,711.142 551.325,711.142L551.325,729.142L576.885,729.142L585.885,738.142L585.885,762.142L576.885,771.142L537.885,771.142L537.885,764.643C537.885,763.184 538.464,761.785 539.496,760.753C540.528,759.722 541.927,759.142 543.385,759.142C553.138,759.142 572.445,759.142 572.445,759.142L572.445,741.142L537.885,741.142L537.885,699.142Z" style="fill-rule:nonzero;"/>
-                            </g>
+                        </g>
+                    </g>
+                </svg>
+            </div>
+            <p>Distraction-free storytelling.</p>
+        </div>
+
+        <!-- Collapsible Header Theme Picker Unit -->
+        <div class="collapsible-theme-hub" id="theme-accordion-hub">
+            <button class="theme-accordion-toggle" onclick="toggleThemeAccordion()">
+                <div class="theme-square-group">
+                    <div class="theme-square sq-dark" title="Classic Dark"></div>
+                    <div class="theme-square sq-amber" title="Amber CRT"></div>
+                </div>
+                <span class="theme-toggle-label">themes</span>
+                <div class="theme-square-group">
+                    <div class="theme-square sq-matrix" title="Matrix Green"></div>
+                    <div class="theme-square sq-cobalt" title="Retro Cobalt"></div>
+                </div>
+            </button>
+
+            <div class="theme-selection-panel">
+                <div class="theme-card t-dark" onclick="applyAppTheme('dark')">Classic Dark</div>
+                <div class="theme-card t-amber" onclick="applyAppTheme('amber')">Amber CRT</div>
+                <div class="theme-card t-matrix" onclick="applyAppTheme('matrix')">Matrix Green</div>
+                <div class="theme-card t-cobalt" onclick="applyAppTheme('cobalt')">Retro Cobalt</div>
+            </div>
+        </div>
+        
+        <!-- STREAMLINED SUITE CARDS CONTAINER -->
+        <div class="suite-options">
+            
+            <!-- NARRATIVE CARD -->
+            <div class="suite-card" id="card-narrative">
+                <div class="suite-card-icon-frame">
+                    <!-- Pen Nib Vector -->
+                    <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="26" y1="9" x2="38" y2="9" />
+                        <path d="M25 16 H39 L47 31 L32 55 L17 31 Z" />
+                        <circle cx="32" cy="34" r="3.2" />
+                        <line x1="32" y1="37.2" x2="32" y2="55" />
+                    </svg>
+                </div>
+
+                <h2>Narrative 85</h2>
+                <p class="card-desc">An unencumbered environment tailored for essays, prose, and long-form storytelling. Features smart paragraph spacing, multi-tier list indentation, and automated RTF formatting exports.</p>
+
+                <div class="write-btn-wrapper">
+                    <button class="suite-write-btn" onclick="triggerSuiteWrite('narrative', event)">write</button>
+                </div>
+            </div>
+            
+            <!-- SCREENPLAY CARD -->
+            <div class="suite-card" id="card-screenplay">
+                <div class="suite-card-icon-frame">
+                    <!-- Clapperboard Vector -->
+                    <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 29 H48 C50.2 29 52 30.8 52 33 V47 C52 49.2 50.2 51 48 51 H16 C13.8 51 12 49.2 12 47 V33 C12 30.8 13.8 29 16 29 Z" />
+                        <line x1="22" y1="38" x2="36" y2="38" stroke-width="2.4" />
+                        <line x1="22" y1="44" x2="32" y2="44" stroke-width="2.4" />
+                        <g transform="rotate(-18 12 29)">
+                            <rect x="12" y="22" width="40" height="7" rx="1.5" />
+                            <line x1="22" y1="22" x2="16" y2="29" />
+                            <line x1="32" y1="22" x2="26" y2="29" />
+                            <line x1="42" y1="22" x2="36" y2="29" />
                         </g>
                     </svg>
-                </button>
-                <div class="inline-theme-picker">
-                    <div class="theme-square sq-dark" title="Classic Dark" onclick="applyAppTheme('dark')"></div>
-                    <div class="theme-square sq-amber" title="Amber CRT" onclick="applyAppTheme('amber')"></div>
-                    <div class="theme-square sq-matrix" title="Matrix Green" onclick="applyAppTheme('matrix')"></div>
-                    <div class="theme-square sq-cobalt" title="Retro Cobalt" onclick="applyAppTheme('cobalt')"></div>
+                </div>
+
+                <h2>Screenplay 85</h2>
+                <p class="card-desc">A rigid screenplay layout engine adhering to industry standard formatting. Effortlessly flows through sluglines, action, characters, and dialogue using automatic Tab and Enter key mechanics.</p>
+
+                <div class="write-btn-wrapper">
+                    <button class="suite-write-btn" onclick="triggerSuiteWrite('screenplay', event)">write</button>
                 </div>
             </div>
 
-            <div class="header-center-hub">
-                <input type="text" class="doc-title" value="untitledProse.rtf" spellcheck="false" title="Click to rename document">
+        </div>
+
+        <span style="font-size: 0.65rem; color: var(--muted-color); margin-top: 75px; opacity: 0.6; letter-spacing: 0.5px; text-transform: uppercase;">
+            &copy; 2026 Phillip Joseph Villarreal. All Rights Reserved.
+        </span>
+    </div>
+
+    <!-- DOCUMENT PICKER MODAL -->
+    <div id="picker-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 id="modal-context-title">Narrative Workspace</h3>
+            
+            <div class="modal-tabs-bar">
+                <button class="modal-tab-btn active" id="tab-toggle-local">Local Storage</button>
+                <button class="modal-tab-btn" id="tab-toggle-cloud">Cloud Integration</button>
             </div>
 
-            <div class="sync-status">
-                <span id="save-indicator">• Auto-saved</span>
-                <div id="sync-dot" class="sync-dot"></div>
-                <span id="cloud-status">Cloud: Local Only</span>
+            <div class="modal-scroll-well">
+                <div id="panel-local-content" class="tab-panel-view active">
+                    <button class="picker-action-btn" id="new-doc-btn">+ Create Fresh Document</button>
+                    
+                    <!-- REFINED AUTO-BACKUP CONTROL BOX -->
+                    <div class="auto-backup-control-box">
+                        <div class="auto-backup-header">
+                            <span class="auto-backup-title">Auto-Backup Downloads</span>
+                            <input type="checkbox" id="auto-backup-toggle" onchange="toggleAutoBackupState(this.checked)">
+                        </div>
+                        <p style="color:var(--muted-color); line-height:1.4;">Automated client-side file downloads to disk protect against browser cache purges and OS updates.</p>
+                        <div class="auto-backup-options-row">
+                            <span>Frequency:</span>
+                            <select id="auto-backup-interval-select" class="auto-backup-select" onchange="updateAutoBackupInterval(this.value)">
+                                <option value="5">Every 5 Minutes</option>
+                                <option value="10" selected>Every 10 Minutes</option>
+                                <option value="15">Every 15 Minutes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="document-list-title">Recent Local Drafts <span class="limit-subtext" id="local-limit-tag">(limit: 10)</span></div>
+                    <div class="document-scroll-list" id="local-docs-target"></div>
+                </div>
+
+                <div id="panel-cloud-content" class="tab-panel-view">
+                    <div id="cloud-ui-injection-zone"></div>
+                </div>
             </div>
-        </header>
+            
+            <button class="modal-close-btn" id="close-picker-btn">← Back to scribe85</button>
+        </div>
+    </div>
+
+    <div id="zen-alert-overlay" class="alert-overlay">
+        <div class="alert-box">
+            <h4 id="zen-alert-title">System Alert</h4>
+            <p id="zen-alert-text">Notification parameters.</p>
+            <div id="alert-interactive-body"></div>
+            <div id="alert-actions-well">
+                <button class="alert-btn" onclick="closeZenAlert()">Acknowledge</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="workspace-view" class="app-view">
+        <header class="chrome-element">
+            <div class="doc-left">
+                <button class="header-logo-container" id="return-home-btn" title="Return to scribe85 Launchpad">
+                   <svg width="100%" height="100%" viewBox="0 0 2102 340" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+                        <g transform="matrix(4.16667,0,0,4.16667,-875.209,-2882.7)">
+                            <g transform="matrix(1.13216,0,0,1.13216,51.044,-99.6933)">
+                                <path d="M140.445,728.643C140.445,725.605 142.908,723.142 145.945,723.142C158.55,723.142 188.445,723.142 188.445,723.142L188.445,735.142L153.885,735.142L153.885,741.142L188.445,741.142L188.445,765.642C188.445,768.68 185.982,771.142 182.945,771.142C170.34,771.142 140.445,771.142 140.445,771.142L140.445,759.142L175.005,759.142L175.005,753.142L140.445,753.142L140.445,728.643Z" style="fill-rule:nonzero;"/>
+                                <path d="M200.445,723.142L248.445,723.142L248.445,735.142L213.885,735.142L213.885,759.142L248.445,759.142L248.445,771.142L200.445,771.142L200.445,723.142Z" style="fill-rule:nonzero;"/>
+                                <path d="M260.445,723.142L296.445,723.142L296.445,735.142L273.885,735.142L273.885,771.142L260.445,771.142L260.445,723.142Z" style="fill-rule:nonzero;"/>
+                                <path d="M308.445,723.142L321.885,723.142L321.885,771.142L308.445,771.142L308.445,723.142ZM308.445,699.142L321.885,699.142L321.885,711.142L308.445,711.142L308.445,699.142Z" style="fill-rule:nonzero;"/>
+                                <path d="M333.885,699.142L347.325,699.142L347.325,723.142L376.385,723.142C377.843,723.142 379.242,723.722 380.274,724.753C381.305,725.785 381.885,727.184 381.885,728.643C381.885,741.247 381.885,771.142 381.885,771.142L354.885,771.142L347.325,763.582L347.325,771.142L333.885,771.142L333.885,699.142ZM347.325,735.142L347.325,759.142L368.445,759.142L368.445,735.142L347.325,735.142Z" style="fill-rule:nonzero;"/>
+                                <path d="M393.885,723.142L441.885,723.142L441.885,753.142L407.325,753.142L407.325,759.142L441.885,759.142L441.885,771.142L393.885,771.142L393.885,723.142ZM407.325,735.142L407.325,741.142L428.445,741.142L428.445,735.142L407.325,735.142Z" style="fill-rule:nonzero;"/>
+                                <path d="M477.885,704.643C477.885,701.605 480.348,699.142 483.385,699.142C495.99,699.142 525.885,699.142 525.885,699.142L525.885,729.142L519.885,735.142L525.885,741.142L525.885,765.642C525.885,768.68 523.422,771.142 520.385,771.142C507.78,771.142 477.885,771.142 477.885,771.142L477.885,741.142L483.885,735.142L477.885,729.142L477.885,704.643ZM491.325,711.142L491.325,729.142L512.445,729.142L512.445,711.142L491.325,711.142ZM491.325,741.142L491.325,759.142L512.445,759.142L512.445,741.142L491.325,741.142Z" style="fill-rule:nonzero;"/>
+                                <path d="M537.885,699.142L585.885,699.142L585.885,705.642C585.885,707.101 585.305,708.5 584.274,709.531C583.242,710.563 581.843,711.142 580.385,711.142C570.632,711.142 551.325,711.142 551.325,711.142L551.325,729.142L576.885,729.142L585.885,738.142L585.885,762.142L576.885,771.142L537.885,771.142L537.885,764.643C537.885,763.184 538.464,761.785 539.496,760.753C540.528,759.722 541.927,759.142 543.385,759.142C553.138,759.142 572.445,759.142 572.445,759.142L572.445,741.142L537.885,741.142L537.885,699.142Z" style="fill-rule:nonzero;"/>
+                        </g>
+                    </g>
+                </svg>
+            </div>
+            <p>Distraction-free storytelling.</p>
+        </div>
 
         <!-- RIGHT MARGIN GHOST SHORTCUT GUIDE CARD (INSIDE WORKSPACE VIEW) -->
         <div class="margin-ghost-guide chrome-element" id="margin-ghost-guide">
