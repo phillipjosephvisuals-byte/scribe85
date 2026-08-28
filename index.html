@@ -1970,41 +1970,139 @@
             }
         });
 
-        // --- CLEAN PASTE SANITIZER (STRIPS GOOGLE DOCS HIDDEN FORMATTING & STYLES) ---
+        // --- CLEAN PASTE SANITIZER: REMOVES EXTERNAL FONTS/COLORS/EFFECTS WHILE PRESERVING STRUCTURE ---
         editor.addEventListener('paste', (e) => {
             e.preventDefault();
-            const text = (e.clipboardData || window.clipboardData).getData('text/plain');
-            if (!text) return;
+            const clipboard = e.clipboardData || window.clipboardData;
+            const plainText = clipboard.getData('text/plain');
+            const htmlText = clipboard.getData('text/html');
 
             const selection = window.getSelection();
             if (!selection.rangeCount) return;
             selection.deleteFromDocument();
-
             const range = selection.getRangeAt(0);
-            const lines = text.split(/\r\n|\r|\n/);
 
-            if (lines.length === 1) {
-                const textNode = document.createTextNode(lines[0]);
-                range.insertNode(textNode);
-                range.setStartAfter(textNode);
-                range.collapse(true);
-                selection.removeAllRanges();
-                selection.addRange(range);
-            } else {
+            // Clean inline elements recursively, retaining only semantic <b> and <i> tags
+            function sanitizeInlineNodes(node) {
                 const fragment = document.createDocumentFragment();
-                lines.forEach((line) => {
-                    const div = document.createElement('div');
-                    if (currentSuiteMode === 'screenplay') {
-                        div.setAttribute('data-element', 'action');
+                Array.from(node.childNodes).forEach(child => {
+                    if (child.nodeType === Node.TEXT_NODE) {
+                        fragment.appendChild(document.createTextNode(child.textContent));
+                    } else if (child.nodeType === Node.ELEMENT_NODE) {
+                        const tag = child.tagName.toLowerCase();
+                        if (tag === 'b' || tag === 'strong') {
+                            const b = document.createElement('b');
+                            b.appendChild(sanitizeInlineNodes(child));
+                            fragment.appendChild(b);
+                        } else if (tag === 'i' || tag === 'em') {
+                            const i = document.createElement('i');
+                            i.appendChild(sanitizeInlineNodes(child));
+                            fragment.appendChild(i);
+                        } else if (tag === 'br') {
+                            fragment.appendChild(document.createElement('br'));
+                        } else {
+                            fragment.appendChild(sanitizeInlineNodes(child));
+                        }
                     }
-                    if (line.trim() === '') {
+                });
+                return fragment;
+            }
+
+            if (htmlText) {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = htmlText;
+
+                // Strip Microsoft / Google Docs conditional header tags & style blocks
+                tempDiv.querySelectorAll('style, script, meta, link, xml').forEach(el => el.remove());
+
+                const blockElements = tempDiv.querySelectorAll('p, div, li, h1, h2, h3, h4, h5, h6, tr, blockquote');
+                const fragment = document.createDocumentFragment();
+
+                if (blockElements.length > 0) {
+                    blockElements.forEach(block => {
+                        const div = document.createElement('div');
+                        if (currentSuiteMode === 'screenplay') {
+                            div.setAttribute('data-element', 'action');
+                        }
+
+                        // Inspect incoming indentation style (e.g., from word processors)
+                        const stylePadding = parseInt(block.style.paddingLeft || block.style.marginLeft || "0", 10);
+                        const computedIndent = Math.min(Math.floor(stylePadding / 24), 5);
+                        
+                        if (computedIndent > 0 && currentSuiteMode === 'narrative') {
+                            div.dataset.indent = computedIndent;
+                            div.style.paddingLeft = `${computedIndent * 30}px`;
+                        }
+
+                        // Detect list item prefixes
+                        const rawText = block.innerText ? block.innerText.trim() : "";
+                        if (/^•\s/.test(rawText) || block.tagName.toLowerCase() === 'li') {
+                            div.dataset.listType = "bullet";
+                        } else if (/^\d+[\.\)]\s/.test(rawText)) {
+                            div.dataset.listType = "number";
+                        }
+
+                        const sanitizedContent = sanitizeInlineNodes(block);
+                        if (!sanitizedContent.textContent.trim()) {
+                            div.innerHTML = '<br>';
+                        } else {
+                            div.appendChild(sanitizedContent);
+                        }
+
+                        fragment.appendChild(div);
+                    });
+                } else {
+                    const div = document.createElement('div');
+                    if (currentSuiteMode === 'screenplay') div.setAttribute('data-element', 'action');
+                    const sanitizedContent = sanitizeInlineNodes(tempDiv);
+                    if (!sanitizedContent.textContent.trim()) {
                         div.innerHTML = '<br>';
                     } else {
-                        div.textContent = line;
+                        div.appendChild(sanitizedContent);
                     }
                     fragment.appendChild(div);
-                });
+                }
+
                 range.insertNode(fragment);
+            } else if (plainText) {
+                const lines = plainText.split(/\r\n|\r|\n/);
+                if (lines.length === 1) {
+                    const textNode = document.createTextNode(lines[0]);
+                    range.insertNode(textNode);
+                    range.setStartAfter(textNode);
+                    range.collapse(true);
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                } else {
+                    const fragment = document.createDocumentFragment();
+                    lines.forEach((line) => {
+                        const div = document.createElement('div');
+                        if (currentSuiteMode === 'screenplay') {
+                            div.setAttribute('data-element', 'action');
+                        }
+                        
+                        // Detect and apply leading tab indentation
+                        const leadingTabs = (line.match(/^(\t|\s{4})+/) || [""])[0];
+                        const indentLevel = leadingTabs ? Math.floor(leadingTabs.length / (leadingTabs.includes('\t') ? 1 : 4)) : 0;
+                        const cleanLine = line.replace(/^(\t|\s{4})+/, "");
+
+                        if (indentLevel > 0 && currentSuiteMode === 'narrative') {
+                            div.dataset.indent = indentLevel;
+                            div.style.paddingLeft = `${indentLevel * 30}px`;
+                        }
+
+                        if (/^•\s/.test(cleanLine)) div.dataset.listType = "bullet";
+                        if (/^\d+[\.\)]\s/.test(cleanLine)) div.dataset.listType = "number";
+
+                        if (cleanLine.trim() === '') {
+                            div.innerHTML = '<br>';
+                        } else {
+                            div.textContent = cleanLine;
+                        }
+                        fragment.appendChild(div);
+                    });
+                    range.insertNode(fragment);
+                }
             }
 
             if (currentSuiteMode === 'narrative') {
@@ -2012,6 +2110,36 @@
             }
             updateAnalytics(editor.innerText);
             saveDocument();
+        });
+
+        // --- NORMALIZED CLIPBOARD EXPORT: STRIPS GLOW EFFECTS AND THEME COLORS ON COPY ---
+        editor.addEventListener('copy', (e) => {
+            const selection = window.getSelection();
+            if (!selection.rangeCount || selection.isCollapsed) return;
+
+            const clonedRange = selection.getRangeAt(0).cloneContents();
+            const tempDiv = document.createElement('div');
+            tempDiv.appendChild(clonedRange);
+
+            // Clean DOM fragment to ensure exported rich text is standard black without screen theme glows
+            function cleanseStylesForClipboard(element) {
+                Array.from(element.children).forEach(child => {
+                    child.style.color = '#000000';
+                    child.style.textShadow = 'none';
+                    child.style.filter = 'none';
+                    child.style.backgroundColor = 'transparent';
+                    cleanseStylesForClipboard(child);
+                });
+            }
+
+            cleanseStylesForClipboard(tempDiv);
+
+            const plainText = selection.toString().replace(/\u200B/g, "");
+            const sanitizedHtml = `<div style="color: #000000 !important; background-color: transparent !important; text-shadow: none !important;">${tempDiv.innerHTML.replace(/\u200B/g, "")}</div>`;
+
+            e.clipboardData.setData('text/plain', plainText);
+            e.clipboardData.setData('text/html', sanitizedHtml);
+            e.preventDefault();
         });
 
         // --- UNIFIED KEYBOARD INPUT INTERCEPTOR ENGINE ---
