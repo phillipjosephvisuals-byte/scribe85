@@ -2103,160 +2103,167 @@
         });
 
         // --- ROBUST PARAGRAPH & INDENT PRESERVING PASTE SANITIZER ---
-        editor.addEventListener('paste', (e) => {
-            e.preventDefault();
-            const clipboard = e.clipboardData || window.clipboardData;
-            const plainText = clipboard.getData('text/plain');
-            const htmlText = clipboard.getData('text/html');
+editor.addEventListener('paste', (e) => {
+    e.preventDefault();
+    const clipboard = e.clipboardData || window.clipboardData;
+    const plainText = clipboard.getData('text/plain');
+    const htmlText = clipboard.getData('text/html');
 
-            const selection = window.getSelection();
-            if (!selection.rangeCount) return;
-            selection.deleteFromDocument();
-            const range = selection.getRangeAt(0);
+    const selection = window.getSelection();
+    if (!selection.rangeCount) return;
+    selection.deleteFromDocument();
+    const range = selection.getRangeAt(0);
 
-            function sanitizeInlineNodes(node) {
-                const fragment = document.createDocumentFragment();
-                Array.from(node.childNodes).forEach(child => {
-                    if (child.nodeType === Node.TEXT_NODE) {
-                        fragment.appendChild(document.createTextNode(child.textContent));
-                    } else if (child.nodeType === Node.ELEMENT_NODE) {
-                        const tag = child.tagName.toLowerCase();
-                        if (tag === 'b' || tag === 'strong') {
-                            const b = document.createElement('b');
-                            b.appendChild(sanitizeInlineNodes(child));
-                            fragment.appendChild(b);
-                        } else if (tag === 'i' || tag === 'em') {
-                            const i = document.createElement('i');
-                            i.appendChild(sanitizeInlineNodes(child));
-                            fragment.appendChild(i);
-                        } else if (tag === 'br') {
-                            fragment.appendChild(document.createElement('br'));
-                        } else {
-                            fragment.appendChild(sanitizeInlineNodes(child));
-                        }
-                    }
-                });
-                return fragment;
-            }
-
-            if (htmlText) {
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = htmlText;
-                tempDiv.querySelectorAll('style, script, meta, link, xml').forEach(el => el.remove());
-
-                const blockElements = tempDiv.querySelectorAll('p, div, li, h1, h2, h3, h4, h5, h6, tr, blockquote');
-                const fragment = document.createDocumentFragment();
-
-                if (blockElements.length > 0) {
-                    blockElements.forEach(block => {
-                        const div = document.createElement('div');
-                        if (currentSuiteMode === 'screenplay') {
-                            div.setAttribute('data-element', 'action');
-                        }
-
-                        // Check incoming styles for block & first-line indentation
-                        let computedIndent = 0;
-                        const pLeft = parseInt(block.style.paddingLeft || "0", 10);
-                        const mLeft = parseInt(block.style.marginLeft || "0", 10);
-                        const textIndent = parseInt(block.style.textIndent || "0", 10);
-                        const isFirstLineIndented = textIndent > 0 || block.dataset.firstLineIndent === "true";
-
-                        if (pLeft > 0) computedIndent = Math.round(pLeft / 30);
-                        else if (mLeft > 0) computedIndent = Math.round(mLeft / 30);
-
-                        if (block.dataset && block.dataset.indent) {
-                            computedIndent = parseInt(block.dataset.indent, 10);
-                        }
-
-                        if (currentSuiteMode === 'narrative') {
-                            if (computedIndent > 0) {
-                                div.dataset.indent = computedIndent;
-                                div.style.paddingLeft = `${computedIndent * 30}px`;
-                            }
-                            if (isFirstLineIndented) {
-                                div.dataset.firstLineIndent = "true";
-                                div.style.textIndent = "2em";
-                            }
-                        }
-
-                        const rawText = block.innerText ? block.innerText.trim() : "";
-                        if (/^•\s/.test(rawText) || block.tagName.toLowerCase() === 'li') {
-                            div.dataset.listType = "bullet";
-                        } else if (/^\d+[\.\)]\s/.test(rawText)) {
-                            div.dataset.listType = "number";
-                        }
-
-                        const sanitizedContent = sanitizeInlineNodes(block);
-                        if (!sanitizedContent.textContent.trim()) {
-                            div.innerHTML = '<br>';
-                        } else {
-                            div.appendChild(sanitizedContent);
-                        }
-
-                        fragment.appendChild(div);
-                    });
+    function sanitizeInlineNodes(node) {
+        const fragment = document.createDocumentFragment();
+        Array.from(node.childNodes).forEach(child => {
+            if (child.nodeType === Node.TEXT_NODE) {
+                fragment.appendChild(document.createTextNode(child.textContent));
+            } else if (child.nodeType === Node.ELEMENT_NODE) {
+                const tag = child.tagName.toLowerCase();
+                if (tag === 'b' || tag === 'strong') {
+                    const b = document.createElement('b');
+                    b.appendChild(sanitizeInlineNodes(child));
+                    fragment.appendChild(b);
+                } else if (tag === 'i' || tag === 'em') {
+                    const i = document.createElement('i');
+                    i.appendChild(sanitizeInlineNodes(child));
+                    fragment.appendChild(i);
+                } else if (tag === 'br') {
+                    fragment.appendChild(document.createElement('br'));
                 } else {
-                    const div = document.createElement('div');
-                    if (currentSuiteMode === 'screenplay') div.setAttribute('data-element', 'action');
-                    const sanitizedContent = sanitizeInlineNodes(tempDiv);
-                    if (!sanitizedContent.textContent.trim()) {
-                        div.innerHTML = '<br>';
-                    } else {
-                        div.appendChild(sanitizedContent);
-                    }
-                    fragment.appendChild(div);
+                    fragment.appendChild(sanitizeInlineNodes(child));
+                }
+            }
+        });
+        return fragment;
+    }
+
+    if (htmlText) {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = htmlText;
+        tempDiv.querySelectorAll('style, script, meta, link, xml').forEach(el => el.remove());
+
+        // Select top-level content containers only to prevent parent + child duplication
+        const blockSelector = 'p, div, li, h1, h2, h3, h4, h5, h6, tr, blockquote';
+        let rawBlocks = Array.from(tempDiv.querySelectorAll(blockSelector));
+        
+        // Filter out any parent block that contains other selectable blocks inside it
+        let distinctBlocks = rawBlocks.filter(block => {
+            return !block.querySelector(blockSelector);
+        });
+
+        const fragment = document.createDocumentFragment();
+
+        if (distinctBlocks.length > 0) {
+            distinctBlocks.forEach(block => {
+                const div = document.createElement('div');
+                if (currentSuiteMode === 'screenplay') {
+                    div.setAttribute('data-element', 'action');
                 }
 
-                range.insertNode(fragment);
-            } else if (plainText) {
-                const lines = plainText.split(/\r\n|\r|\n/);
-                const fragment = document.createDocumentFragment();
+                let computedIndent = 0;
+                const pLeft = parseInt(block.style.paddingLeft || "0", 10);
+                const mLeft = parseInt(block.style.marginLeft || "0", 10);
+                const textIndent = parseInt(block.style.textIndent || "0", 10);
+                const isFirstLineIndented = textIndent > 0 || block.dataset.firstLineIndent === "true";
 
-                lines.forEach((line) => {
-                    const div = document.createElement('div');
-                    if (currentSuiteMode === 'screenplay') {
-                        div.setAttribute('data-element', 'action');
+                if (pLeft > 0) computedIndent = Math.round(pLeft / 30);
+                else if (mLeft > 0) computedIndent = Math.round(mLeft / 30);
+
+                if (block.dataset && block.dataset.indent) {
+                    computedIndent = parseInt(block.dataset.indent, 10);
+                }
+
+                if (currentSuiteMode === 'narrative') {
+                    if (computedIndent > 0) {
+                        div.dataset.indent = computedIndent;
+                        div.style.paddingLeft = `${computedIndent * 30}px`;
                     }
-                    
-                    const tabMatch = line.match(/^(\t+)/);
-                    const spaceMatch = line.match(/^( {4,})/);
-                    let indentLevel = 0;
-
-                    if (tabMatch) {
-                        indentLevel = tabMatch[1].length;
-                    } else if (spaceMatch) {
-                        indentLevel = Math.floor(spaceMatch[1].length / 4);
-                    }
-
-                    const cleanLine = line.replace(/^(\t+| {4,})/, "");
-
-                    if (indentLevel === 1 && currentSuiteMode === 'narrative') {
+                    if (isFirstLineIndented) {
                         div.dataset.firstLineIndent = "true";
                         div.style.textIndent = "2em";
-                    } else if (indentLevel > 1 && currentSuiteMode === 'narrative') {
-                        div.dataset.indent = indentLevel;
-                        div.style.paddingLeft = `${indentLevel * 30}px`;
                     }
+                }
 
-                    if (/^•\s/.test(cleanLine)) div.dataset.listType = "bullet";
-                    if (/^\d+[\.\)]\s/.test(cleanLine)) div.dataset.listType = "number";
+                const rawText = block.innerText ? block.innerText.trim() : "";
+                if (/^•\s/.test(rawText) || block.tagName.toLowerCase() === 'li') {
+                    div.dataset.listType = "bullet";
+                } else if (/^\d+[\.\)]\s/.test(rawText)) {
+                    div.dataset.listType = "number";
+                }
 
-                    if (cleanLine.trim() === '') {
-                        div.innerHTML = '<br>';
-                    } else {
-                        div.textContent = cleanLine;
-                    }
-                    fragment.appendChild(div);
-                });
-                range.insertNode(fragment);
+                const sanitizedContent = sanitizeInlineNodes(block);
+                if (!sanitizedContent.textContent.trim()) {
+                    div.innerHTML = '<br>';
+                } else {
+                    div.appendChild(sanitizedContent);
+                }
+
+                fragment.appendChild(div);
+            });
+        } else {
+            const div = document.createElement('div');
+            if (currentSuiteMode === 'screenplay') div.setAttribute('data-element', 'action');
+            const sanitizedContent = sanitizeInlineNodes(tempDiv);
+            if (!sanitizedContent.textContent.trim()) {
+                div.innerHTML = '<br>';
+            } else {
+                div.appendChild(sanitizedContent);
+            }
+            fragment.appendChild(div);
+        }
+
+        range.insertNode(fragment);
+    } else if (plainText) {
+        const lines = plainText.split(/\r\n|\r|\n/);
+        const fragment = document.createDocumentFragment();
+
+        lines.forEach((line) => {
+            const div = document.createElement('div');
+            if (currentSuiteMode === 'screenplay') {
+                div.setAttribute('data-element', 'action');
+            }
+            
+            const tabMatch = line.match(/^(\t+)/);
+            const spaceMatch = line.match(/^( {4,})/);
+            let indentLevel = 0;
+
+            if (tabMatch) {
+                indentLevel = tabMatch[1].length;
+            } else if (spaceMatch) {
+                indentLevel = Math.floor(spaceMatch[1].length / 4);
             }
 
-            if (currentSuiteMode === 'narrative') {
-                applyDynamicListSpacing();
+            const cleanLine = line.replace(/^(\t+| {4,})/, "");
+
+            if (indentLevel === 1 && currentSuiteMode === 'narrative') {
+                div.dataset.firstLineIndent = "true";
+                div.style.textIndent = "2em";
+            } else if (indentLevel > 1 && currentSuiteMode === 'narrative') {
+                div.dataset.indent = indentLevel;
+                div.style.paddingLeft = `${indentLevel * 30}px`;
             }
-            updateAnalytics(editor.innerText);
-            saveDocument();
+
+            if (/^•\s/.test(cleanLine)) div.dataset.listType = "bullet";
+            if (/^\d+[\.\)]\s/.test(cleanLine)) div.dataset.listType = "number";
+
+            if (cleanLine.trim() === '') {
+                div.innerHTML = '<br>';
+            } else {
+                div.textContent = cleanLine;
+            }
+            fragment.appendChild(div);
         });
+        range.insertNode(fragment);
+    }
+
+    if (currentSuiteMode === 'narrative') {
+        applyDynamicListSpacing();
+    }
+    updateAnalytics(editor.innerText);
+    saveDocument();
+});
 
         // --- NORMALIZED CLIPBOARD EXPORT (EXACT SELECTION PRESERVATION) ---
 editor.addEventListener('copy', (e) => {
