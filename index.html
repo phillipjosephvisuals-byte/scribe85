@@ -176,7 +176,7 @@
             text-align: center;
             border: 1px solid rgba(255, 255, 255, 0.04);
             background: rgba(255, 255, 255, 0.01);
-            transition: all 0.2s ease;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
         
         .t-dark { background: #12141c; color: #e2e8f0; border-color: rgba(255,255,255,0.1); }
@@ -184,7 +184,11 @@
         .t-matrix { background: #000500; color: #33ff33; border-color: #33ff33; text-shadow: 0 0 2px #33ff33; }
         .t-cobalt { background: #000080; color: #ffffff; border-color: rgba(255,255,255,0.2); }
 
-        .theme-card:hover { transform: translateY(-2px); }
+        /* Subtle inward shrink effect for theme buttons */
+        .theme-card:hover { 
+            transform: scale(0.96); 
+            border-color: var(--accent-color);
+        }
 
         /* ------------------------------------------------------------------
            CLEAN STREAMLINED SUITE CARDS
@@ -238,7 +242,7 @@
 
         .suite-card-icon-frame svg {
             width: 100%;
-            height: 100%;
+            height: auto;
             color: var(--accent-color);
             transition: color 0.4s ease;
         }
@@ -715,6 +719,18 @@
         #save-indicator {
             font-size: 0.75rem;
             color: var(--muted-color);
+            transition: color 0.3s ease;
+        }
+
+        /* Timeout slow-blinking indicator */
+        #save-indicator.sync-offline {
+            color: #ef4444;
+            animation: pulseSyncText 2.5s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulseSyncText {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; }
         }
 
         .theme-square {
@@ -762,6 +778,10 @@
         }
 
         .sync-dot.connected { background-color: var(--accent-color); }
+        .sync-dot.offline { 
+            background-color: #ef4444; 
+            animation: pulseSyncText 2.5s infinite alternate ease-in-out;
+        }
 
         main {
             flex-grow: 1;
@@ -978,7 +998,7 @@
             text-align: center;
             font-family: var(--font-mono);
             user-select: none;
-            animation: pulseAlert 2.5s infinite alternate;
+            animation: pulseAlert 2.5s infinite alternate ease-in-out;
         }
 
         @keyframes pulseAlert {
@@ -1034,15 +1054,14 @@
         /* ------------------------------------------------------------------
            4.5 NARRATIVE & SCREENPLAY FORMATTING
         ------------------------------------------------------------------ */
-        body.mode-narrative .editor {
-            text-indent: 0;
-        }
-
         body.mode-narrative .editor div, 
         body.mode-narrative .editor p {
             margin-bottom: 1.5em;
-            text-indent: 0;
             transition: margin-bottom 0.2s ease, margin-top 0.2s ease;
+        }
+
+        body.mode-narrative .editor div[data-first-line-indent="true"] {
+            text-indent: 2em;
         }
 
         body.mode-narrative .editor br {
@@ -1302,7 +1321,7 @@
                         <input type="file" id="manual-file-input" style="display: none;" accept=".rtf,.fountain,.txt,.html">
                     </div>
 
-                    <!-- AUTO-BACKUP BOX (MOVED UNDER UPLOAD BOX) -->
+                    <!-- AUTO-BACKUP BOX -->
                     <div class="auto-backup-control-box">
                         <div class="auto-backup-header">
                             <span class="auto-backup-title">Auto-Backup Downloads</span>
@@ -1370,7 +1389,7 @@
                 </div>
             </div>
 
-            <!-- RESTORED DOCUMENT TITLE INPUT -->
+            <!-- DOCUMENT TITLE INPUT -->
             <div class="header-center-hub">
                 <input type="text" class="doc-title" spellcheck="false" placeholder="untitled">
             </div>
@@ -1431,7 +1450,7 @@
             </div>
 
             <div class="footer-center">
-                <button class="footer-files-btn" onclick="openPickerModal(event)">↓ Download / Files</button>
+                <button class="footer-files-btn" onclick="openPickerModal(event)">Files</button>
             </div>
 
             <div class="stats-right">
@@ -1643,10 +1662,16 @@
         // --- SESSION EXPIRATION & LEFT MARGIN NOTIFICATION SYSTEM ---
         function showLeftMarginAlert() {
             leftMarginAlert.style.display = 'flex';
+            saveIndicator.textContent = "• cloud not synced";
+            saveIndicator.classList.add('sync-offline');
+            syncDot.classList.remove('connected');
+            syncDot.classList.add('offline');
         }
 
         function hideLeftMarginAlert() {
             leftMarginAlert.style.display = 'none';
+            saveIndicator.classList.remove('sync-offline');
+            syncDot.classList.remove('offline');
         }
 
         function executeManualDownloadBackup() {
@@ -1660,7 +1685,6 @@
             localStorage.removeItem('zensuite_google_access_token');
             localStorage.removeItem('zensuite_google_token_exp');
             pickerModifierSync();
-            saveIndicator.textContent = "• Cloud Session Expired";
             showLeftMarginAlert();
         }
 
@@ -2130,23 +2154,29 @@
                             div.setAttribute('data-element', 'action');
                         }
 
-                        // Check incoming styles for explicit indentation
+                        // Check incoming styles for block & first-line indentation
                         let computedIndent = 0;
                         const pLeft = parseInt(block.style.paddingLeft || "0", 10);
                         const mLeft = parseInt(block.style.marginLeft || "0", 10);
                         const textIndent = parseInt(block.style.textIndent || "0", 10);
+                        const isFirstLineIndented = textIndent > 0 || block.dataset.firstLineIndent === "true";
 
                         if (pLeft > 0) computedIndent = Math.round(pLeft / 30);
                         else if (mLeft > 0) computedIndent = Math.round(mLeft / 30);
-                        else if (textIndent > 0) computedIndent = 1;
 
                         if (block.dataset && block.dataset.indent) {
                             computedIndent = parseInt(block.dataset.indent, 10);
                         }
 
-                        if (computedIndent > 0 && currentSuiteMode === 'narrative') {
-                            div.dataset.indent = computedIndent;
-                            div.style.paddingLeft = `${computedIndent * 30}px`;
+                        if (currentSuiteMode === 'narrative') {
+                            if (computedIndent > 0) {
+                                div.dataset.indent = computedIndent;
+                                div.style.paddingLeft = `${computedIndent * 30}px`;
+                            }
+                            if (isFirstLineIndented) {
+                                div.dataset.firstLineIndent = "true";
+                                div.style.textIndent = "2em";
+                            }
                         }
 
                         const rawText = block.innerText ? block.innerText.trim() : "";
@@ -2200,7 +2230,10 @@
 
                     const cleanLine = line.replace(/^(\t+| {4,})/, "");
 
-                    if (indentLevel > 0 && currentSuiteMode === 'narrative') {
+                    if (indentLevel === 1 && currentSuiteMode === 'narrative') {
+                        div.dataset.firstLineIndent = "true";
+                        div.style.textIndent = "2em";
+                    } else if (indentLevel > 1 && currentSuiteMode === 'narrative') {
                         div.dataset.indent = indentLevel;
                         div.style.paddingLeft = `${indentLevel * 30}px`;
                     }
@@ -2225,7 +2258,7 @@
             saveDocument();
         });
 
-        // --- NORMALIZED CLIPBOARD EXPORT (PRESERVES RETURNS & INDENTS) ---
+        // --- NORMALIZED CLIPBOARD EXPORT (PRESERVES RETURNS, INDENTS & FIRST-LINE INDENTS) ---
         editor.addEventListener('copy', (e) => {
             const selection = window.getSelection();
             if (!selection.rangeCount || selection.isCollapsed) return;
@@ -2238,7 +2271,14 @@
                 selectedBlocks.forEach(block => {
                     let text = block.innerText ? block.innerText.replace(/\u200B/g, "") : "";
                     const indent = parseInt(block.dataset.indent || "0", 10);
-                    const indentPrefix = "\t".repeat(indent);
+                    const isFirstLineIndent = block.dataset.firstLineIndent === "true";
+                    
+                    let indentPrefix = "";
+                    if (isFirstLineIndent) {
+                        indentPrefix = "\t";
+                    } else if (indent > 0) {
+                        indentPrefix = "\t".repeat(indent);
+                    }
                     
                     plainTextLines.push(indentPrefix + text);
 
@@ -2247,6 +2287,9 @@
                     clone.style.textShadow = 'none';
                     clone.style.filter = 'none';
                     clone.style.backgroundColor = 'transparent';
+                    if (isFirstLineIndent) {
+                        clone.style.textIndent = "2em";
+                    }
                     if (indent > 0) {
                         clone.style.paddingLeft = `${indent * 30}px`;
                     }
@@ -2338,7 +2381,6 @@
 
         // --- LOCAL DRAFT LIST RENDERER ---
         function listLocalFiles() {
-            // Include all drafts for this suite mode regardless of Google Drive connection state
             const db = getLocalDatabase().filter(item => item.suiteMode === currentSuiteMode);
             localDocsTarget.innerHTML = '';
 
@@ -2727,8 +2769,10 @@
                         const stylePadding = parseInt(node.style.paddingLeft || "0", 10);
                         const indentFromStyle = Math.round(stylePadding / 30);
                         const indentLevel = Math.max(indentAttr, indentFromStyle);
+                        const hasFirstLineIndent = node.dataset.firstLineIndent === "true" || node.style.textIndent === "2em";
 
                         const indentTwips = indentLevel * 720; 
+                        const firstLineTwips = hasFirstLineIndent ? 720 : 0;
 
                         let spaceBeforeTwips = 0;
                         if (node.style.marginTop === "1.25em") {
@@ -2740,7 +2784,7 @@
                             spaceAfterTwips = 100; 
                         }
 
-                        return `\\par\\pard\\f0\\fs24\\sb${spaceBeforeTwips}\\sa${spaceAfterTwips}\\li${indentTwips} ${inner}`;
+                        return `\\par\\pard\\f0\\fs24\\sb${spaceBeforeTwips}\\sa${spaceAfterTwips}\\li${indentTwips}\\fi${firstLineTwips} ${inner}`;
                     }
 
                     return inner;
@@ -2997,10 +3041,10 @@
 
         function pickerModifierSync() {
             if (currentDriveFileId && accessToken) {
-                syncDot.classList.add('connected');
+                syncDot.className = 'sync-dot connected';
                 if (cloudStatus) cloudStatus.textContent = "Cloud: Connected";
             } else {
-                syncDot.classList.remove('connected');
+                syncDot.className = 'sync-dot';
                 if (cloudStatus) cloudStatus.textContent = accessToken ? "Cloud: Ready" : "Cloud: Local Only";
             }
         }
