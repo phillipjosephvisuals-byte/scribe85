@@ -2258,54 +2258,75 @@
             saveDocument();
         });
 
-        // --- NORMALIZED CLIPBOARD EXPORT (PRESERVES RETURNS, INDENTS & FIRST-LINE INDENTS) ---
-        editor.addEventListener('copy', (e) => {
-            const selection = window.getSelection();
-            if (!selection.rangeCount || selection.isCollapsed) return;
+        // --- NORMALIZED CLIPBOARD EXPORT (EXACT SELECTION PRESERVATION) ---
+editor.addEventListener('copy', (e) => {
+  const selection = window.getSelection();
+  if (!selection.rangeCount || selection.isCollapsed) return;
 
-            const selectedBlocks = getSelectedBlocks();
-            let plainTextLines = [];
-            let htmlFragments = [];
+  const range = selection.getRangeAt(0);
+  const selectedBlocks = getSelectedBlocks();
 
-            if (selectedBlocks.length > 0) {
-                selectedBlocks.forEach(block => {
-                    let text = block.innerText ? block.innerText.replace(/\u200B/g, "") : "";
-                    const indent = parseInt(block.dataset.indent || "0", 10);
-                    const isFirstLineIndent = block.dataset.firstLineIndent === "true";
-                    
-                    let indentPrefix = "";
-                    if (isFirstLineIndent) {
-                        indentPrefix = "\t";
-                    } else if (indent > 0) {
-                        indentPrefix = "\t".repeat(indent);
-                    }
-                    
-                    plainTextLines.push(indentPrefix + text);
+  let plainTextLines = [];
+  let htmlFragments = [];
 
-                    const clone = block.cloneNode(true);
-                    clone.style.color = '#000000';
-                    clone.style.textShadow = 'none';
-                    clone.style.filter = 'none';
-                    clone.style.backgroundColor = 'transparent';
-                    if (isFirstLineIndent) {
-                        clone.style.textIndent = "2em";
-                    }
-                    if (indent > 0) {
-                        clone.style.paddingLeft = `${indent * 30}px`;
-                    }
-                    htmlFragments.push(clone.outerHTML);
-                });
-            } else {
-                plainTextLines.push(selection.toString().replace(/\u200B/g, ""));
-            }
+  if (selectedBlocks.length > 0) {
+    selectedBlocks.forEach((block, index) => {
+      // Create a range scoped specifically to the intersection of this block and user selection
+      const blockRange = document.createRange();
+      blockRange.selectNodeContents(block);
 
-            const plainText = plainTextLines.join('\n\n');
-            const sanitizedHtml = `<div style="color: #000000 !important; background-color: transparent !important; text-shadow: none !important;">${htmlFragments.join('')}</div>`;
+      if (index === 0) {
+        // First block: start at selection start
+        blockRange.setStart(range.startContainer, range.startOffset);
+      }
+      if (index === selectedBlocks.length - 1) {
+        // Last block: end at selection end
+        blockRange.setEnd(range.endContainer, range.endOffset);
+      }
 
-            e.clipboardData.setData('text/plain', plainText);
-            e.clipboardData.setData('text/html', sanitizedHtml);
-            e.preventDefault();
-        });
+      // Extract only the highlighted DOM/Text fragment
+      const fragment = blockRange.cloneContents();
+      const tempDiv = document.createElement('div');
+      tempDiv.appendChild(fragment);
+
+      let text = tempDiv.innerText ? tempDiv.innerText.replace(/\u200B/g, '') : '';
+      if (!text && !tempDiv.innerHTML) return;
+
+      const indent = parseInt(block.dataset.indent || '0', 10);
+      const isFirstLineIndent = block.dataset.firstLineIndent === 'true';
+
+      let indentPrefix = '';
+      if (isFirstLineIndent && index === 0) {
+        indentPrefix = '\t';
+      } else if (indent > 0) {
+        indentPrefix = '\t'.repeat(indent);
+      }
+
+      plainTextLines.push(indentPrefix + text);
+
+      // Construct clean HTML wrapper with retained indentation styling
+      const clone = document.createElement('div');
+      clone.style.color = '#000000';
+      clone.style.textShadow = 'none';
+      clone.style.filter = 'none';
+      clone.style.backgroundColor = 'transparent';
+      if (isFirstLineIndent) clone.style.textIndent = '2em';
+      if (indent > 0) clone.style.paddingLeft = `${indent * 30}px`;
+      clone.innerHTML = tempDiv.innerHTML;
+
+      htmlFragments.push(clone.outerHTML);
+    });
+  } else {
+    plainTextLines.push(selection.toString().replace(/\u200B/g, ''));
+  }
+
+  const plainText = plainTextLines.join('\n\n');
+  const sanitizedHtml = `<div style="color: #000000 !important; background-color: transparent !important; text-shadow: none !important;">${htmlFragments.join('')}</div>`;
+
+  e.clipboardData.setData('text/plain', plainText);
+  e.clipboardData.setData('text/html', sanitizedHtml);
+  e.preventDefault();
+});
 
         // --- FILE RESTORATION DRAG-AND-DROP & INPUT HANDLERS ---
         restoreDropZone.addEventListener('click', () => {
