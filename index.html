@@ -18,7 +18,7 @@
             --bg-color: #12141c;       
             --text-color: #e2e8f0;     
             --muted-color: #64748b;    
-            --accent-color: #ffffff;   /* Balanced to White by default for Dark Mode */
+            --accent-color: #ffffff;
             --text-glow: 0 0 8px rgba(255,255,255,0.6);
             --font-mono: 'JetBrains Mono', monospace;
             --font-script: 'Courier Prime', monospace;
@@ -109,9 +109,6 @@
             margin-top: 2px;
         }
 
-        /* ------------------------------------------------------------------
-           COLLAPSIBLE LAUNCHPAD THEME SELECTION WRAPPER
-        ------------------------------------------------------------------ */
         .collapsible-theme-hub {
             display: flex;
             flex-direction: column;
@@ -407,7 +404,6 @@
         #auth-btn { background: var(--text-color); color: var(--bg-color); border-color: var(--text-color); font-weight: bold; margin: 10px 0; width: 100%; }
         #auth-btn:hover { opacity: 0.9; }
 
-        /* DROP ZONE TO RESTORE FILES */
         .restore-drop-zone {
             border: 1.5px dashed var(--muted-color);
             border-radius: 6px;
@@ -431,7 +427,6 @@
             color: var(--text-color);
         }
 
-        /* CLEAN AUTO-BACKUP TOGGLE STYLES */
         .auto-backup-control-box {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -668,9 +663,15 @@
         .doc-left { 
             display: flex; 
             align-items: center; 
-            gap: 15px; 
+            gap: 18px; 
             justify-self: start; 
         } 
+
+        .inline-theme-picker {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
         
         .header-center-hub {
             display: flex;
@@ -716,17 +717,12 @@
             color: var(--muted-color);
         }
 
-        .inline-theme-picker {
-            display: flex;
-            gap: 6px;
-        }
-
         .theme-square {
-            width: 12px;
-            height: 12px;
+            width: 13px;
+            height: 13px;
             border-radius: 2px;
             cursor: pointer;
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             transition: transform 0.15s ease, border-color 0.15s ease;
         }
         
@@ -804,7 +800,6 @@
             padding-bottom: 200px;
         }
 
-        /* STRIP INLINE BLACK TEXT & BACKGROUNDS */
         .editor * {
             color: var(--text-color);
             background-color: transparent !important;
@@ -962,7 +957,7 @@
         }
 
         /* ------------------------------------------------------------------
-           4.4 LEFT MARGIN EXPIRATION WARNING CARD (ALWAYS VISIBLE IN THEATER)
+           4.4 LEFT MARGIN EXPIRATION WARNING CARD
         ------------------------------------------------------------------ */
         .left-margin-alert-card {
             position: fixed;
@@ -1037,7 +1032,7 @@
         }
 
         /* ------------------------------------------------------------------
-           4.5 NARRATIVE PARAGRAPH SPACING ENGINE (ISOLATED INDENTATION)
+           4.5 NARRATIVE & SCREENPLAY FORMATTING
         ------------------------------------------------------------------ */
         body.mode-narrative .editor {
             text-indent: 0;
@@ -1054,9 +1049,6 @@
             margin-bottom: 0.75em;
         }
 
-        /* ------------------------------------------------------------------
-           5. RIGID SCREENPLAY FORMATTING RIGGING
-        ------------------------------------------------------------------ */
         body.mode-screenplay .editor {
             font-family: var(--font-script);
             font-size: 1rem;
@@ -1151,7 +1143,7 @@
         #element-status-tag { color: var(--accent-color); font-weight: bold; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
 
         /* ------------------------------------------------------------------
-           6. RESPONSIVE MOBILE & DESKTOP MARGIN MEDIA QUERIES
+           6. RESPONSIVE MEDIA QUERIES
         ------------------------------------------------------------------ */
         @media (max-width: 1180px) {
             .margin-ghost-guide { display: none !important; }
@@ -1160,7 +1152,6 @@
 
         @media (max-width: 600px) {
             body { font-size: 16px; }
-
             .brand-header { padding: 0 15px; margin-top: 20px; }
             .brand-header h1 { font-size: 1.8rem; }
             .suite-options { flex-direction: column; gap: 15px; }
@@ -1211,6 +1202,7 @@
 </head>
 <body>
 
+    <!-- LAUNCHPAD VIEW -->
     <div id="launchpad-view" class="app-view active">
         <div class="brand-header">
             <div class="brand-logo-frame">
@@ -1304,13 +1296,13 @@
                     <div class="document-list-title">Recent Local Drafts <span class="limit-subtext" id="local-limit-tag">(limit: 10)</span></div>
                     <div class="document-scroll-list" id="local-docs-target"></div>
 
-                    <!-- CLEAN ONE-LINE DROP ZONE TO RESTORE FILES -->
+                    <!-- DROP ZONE -->
                     <div class="restore-drop-zone" id="restore-drop-zone">
                         Drop saved scribe85 files (.rtf, .fountain, .txt) to restore
                         <input type="file" id="manual-file-input" style="display: none;" accept=".rtf,.fountain,.txt,.html">
                     </div>
 
-                    <!-- AUTO-BACKUP CONTROL BOX MOVED BELOW DROP ZONE -->
+                    <!-- AUTO-BACKUP BOX (MOVED UNDER UPLOAD BOX) -->
                     <div class="auto-backup-control-box">
                         <div class="auto-backup-header">
                             <span class="auto-backup-title">Auto-Backup Downloads</span>
@@ -1348,6 +1340,7 @@
         </div>
     </div>
 
+    <!-- WORKSPACE VIEW -->
     <div id="workspace-view" class="app-view">
         <header class="chrome-element">
             <div class="doc-left">
@@ -1363,23 +1356,23 @@
                                 <path d="M393.885,723.142L441.885,723.142L441.885,753.142L407.325,753.142L407.325,759.142L441.885,759.142L441.885,771.142L393.885,771.142L393.885,723.142ZM407.325,735.142L407.325,741.142L428.445,741.142L428.445,735.142L407.325,735.142Z" style="fill-rule:nonzero;"/>
                                 <path d="M477.885,704.643C477.885,701.605 480.348,699.142 483.385,699.142C495.99,699.142 525.885,699.142 525.885,699.142L525.885,729.142L519.885,735.142L525.885,741.142L525.885,765.642C525.885,768.68 523.422,771.142 520.385,771.142C507.78,771.142 477.885,771.142 477.885,771.142L477.885,741.142L483.885,735.142L477.885,729.142L477.885,704.643ZM491.325,711.142L491.325,729.142L512.445,729.142L512.445,711.142L491.325,711.142ZM491.325,741.142L491.325,759.142L512.445,759.142L512.445,741.142L491.325,741.142Z" style="fill-rule:nonzero;"/>
                                 <path d="M537.885,699.142L585.885,699.142L585.885,705.642C585.885,707.101 585.305,708.5 584.274,709.531C583.242,710.563 581.843,711.142 580.385,711.142C570.632,711.142 551.325,711.142 551.325,711.142L551.325,729.142L576.885,729.142L585.885,738.142L585.885,762.142L576.885,771.142L537.885,771.142L537.885,764.643C537.885,763.184 538.464,761.785 539.496,760.753C540.528,759.722 541.927,759.142 543.385,759.142C553.138,759.142 572.445,759.142 572.445,759.142L572.445,741.142L537.885,741.142L537.885,699.142Z" style="fill-rule:nonzero;"/>
+                            </g>
                         </g>
-                    </g>
-                </svg>
+                    </svg>
+                </button>
+
+                <!-- THEME SQUARES GROUPED ON THE LEFT -->
+                <div class="inline-theme-picker">
+                    <div class="theme-square sq-dark" title="Classic Dark" onclick="applyAppTheme('dark')"></div>
+                    <div class="theme-square sq-amber" title="Amber CRT" onclick="applyAppTheme('amber')"></div>
+                    <div class="theme-square sq-matrix" title="Matrix Green" onclick="applyAppTheme('matrix')"></div>
+                    <div class="theme-square sq-cobalt" title="Retro Cobalt" onclick="applyAppTheme('cobalt')"></div>
+                </div>
             </div>
 
-            <div class="collapsible-theme-hub" id="theme-accordion-hub-workspace">
-                <button class="theme-accordion-toggle" onclick="toggleThemeAccordion()">
-                    <div class="theme-square-group">
-                        <div class="theme-square sq-dark" title="Classic Dark"></div>
-                        <div class="theme-square sq-amber" title="Amber CRT"></div>
-                    </div>
-                    <span class="theme-toggle-label">themes</span>
-                    <div class="theme-square-group">
-                        <div class="theme-square sq-matrix" title="Matrix Green"></div>
-                        <div class="theme-square sq-cobalt" title="Retro Cobalt"></div>
-                    </div>
-                </button>
+            <!-- RESTORED DOCUMENT TITLE INPUT -->
+            <div class="header-center-hub">
+                <input type="text" class="doc-title" spellcheck="false" placeholder="untitled">
             </div>
 
             <div class="sync-status">
@@ -1388,7 +1381,7 @@
             </div>
         </header>
 
-        <!-- LEFT MARGIN EXPIRATION WARNING (PERSISTENT & VISIBLE IN THEATER MODE) -->
+        <!-- LEFT MARGIN EXPIRATION WARNING -->
         <div class="left-margin-alert-card" id="left-margin-alert">
             <div class="left-margin-alert-title">⚠️ Cloud Sync Offline</div>
             <div class="left-margin-alert-desc">Your Google Drive session has expired. Save a backup copy to your disk to safeguard your edits.</div>
@@ -2137,9 +2130,20 @@
                             div.setAttribute('data-element', 'action');
                         }
 
-                        const stylePadding = parseInt(block.style.paddingLeft || block.style.marginLeft || "0", 10);
-                        const computedIndent = Math.min(Math.floor(stylePadding / 24), 5);
-                        
+                        // Check incoming styles for explicit indentation
+                        let computedIndent = 0;
+                        const pLeft = parseInt(block.style.paddingLeft || "0", 10);
+                        const mLeft = parseInt(block.style.marginLeft || "0", 10);
+                        const textIndent = parseInt(block.style.textIndent || "0", 10);
+
+                        if (pLeft > 0) computedIndent = Math.round(pLeft / 30);
+                        else if (mLeft > 0) computedIndent = Math.round(mLeft / 30);
+                        else if (textIndent > 0) computedIndent = 1;
+
+                        if (block.dataset && block.dataset.indent) {
+                            computedIndent = parseInt(block.dataset.indent, 10);
+                        }
+
                         if (computedIndent > 0 && currentSuiteMode === 'narrative') {
                             div.dataset.indent = computedIndent;
                             div.style.paddingLeft = `${computedIndent * 30}px`;
@@ -2184,9 +2188,17 @@
                         div.setAttribute('data-element', 'action');
                     }
                     
-                    const leadingTabs = (line.match(/^(\t|\s{4})+/) || [""])[0];
-                    const indentLevel = leadingTabs ? Math.floor(leadingTabs.length / (leadingTabs.includes('\t') ? 1 : 4)) : 0;
-                    const cleanLine = line.replace(/^(\t|\s{4})+/, "");
+                    const tabMatch = line.match(/^(\t+)/);
+                    const spaceMatch = line.match(/^( {4,})/);
+                    let indentLevel = 0;
+
+                    if (tabMatch) {
+                        indentLevel = tabMatch[1].length;
+                    } else if (spaceMatch) {
+                        indentLevel = Math.floor(spaceMatch[1].length / 4);
+                    }
+
+                    const cleanLine = line.replace(/^(\t+| {4,})/, "");
 
                     if (indentLevel > 0 && currentSuiteMode === 'narrative') {
                         div.dataset.indent = indentLevel;
@@ -2326,7 +2338,8 @@
 
         // --- LOCAL DRAFT LIST RENDERER ---
         function listLocalFiles() {
-            const db = getLocalDatabase().filter(item => item.suiteMode === currentSuiteMode && !item.driveId);
+            // Include all drafts for this suite mode regardless of Google Drive connection state
+            const db = getLocalDatabase().filter(item => item.suiteMode === currentSuiteMode);
             localDocsTarget.innerHTML = '';
 
             if (db.length > 0) {
