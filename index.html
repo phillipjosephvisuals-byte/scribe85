@@ -318,7 +318,7 @@
             color: var(--text-color); 
             width: 100%;
             max-width: 520px;
-            height: 600px; 
+            height: 620px; 
             border-radius: 8px;
             padding: 25px;
             display: flex;
@@ -411,14 +411,14 @@
         .restore-drop-zone {
             border: 1.5px dashed var(--muted-color);
             border-radius: 6px;
-            padding: 12px 10px;
+            padding: 12px 14px;
             text-align: center;
             background: rgba(255, 255, 255, 0.01);
             color: var(--muted-color);
             font-size: 0.74rem;
             cursor: pointer;
             margin-top: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 14px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -437,7 +437,7 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 6px;
             padding: 12px;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             font-size: 0.75rem;
         }
 
@@ -1304,13 +1304,13 @@
                     <div class="document-list-title">Recent Local Drafts <span class="limit-subtext" id="local-limit-tag">(limit: 10)</span></div>
                     <div class="document-scroll-list" id="local-docs-target"></div>
 
-                    <!-- DROP ZONE TO RESTORE FILES -->
-                    <div class="restore-drop-zone" id="restore-drop-zone" title="Drop file to restore">
-                        Drop saved scribe85 file (.rtf, .fountain, .txt) here to restore
+                    <!-- CLEAN ONE-LINE DROP ZONE TO RESTORE FILES -->
+                    <div class="restore-drop-zone" id="restore-drop-zone">
+                        Drop saved scribe85 files (.rtf, .fountain, .txt) to restore
                         <input type="file" id="manual-file-input" style="display: none;" accept=".rtf,.fountain,.txt,.html">
                     </div>
 
-                    <!-- AUTO-BACKUP CONTROL BOX (MOVED BENEATH DROP ZONE) -->
+                    <!-- AUTO-BACKUP CONTROL BOX MOVED BELOW DROP ZONE -->
                     <div class="auto-backup-control-box">
                         <div class="auto-backup-header">
                             <span class="auto-backup-title">Auto-Backup Downloads</span>
@@ -1367,1940 +1367,1939 @@
                     </g>
                 </svg>
             </div>
-            <p>Distraction-free storytelling.</p>
-        </div>
 
-        <div class="collapsible-theme-hub" id="theme-accordion-hub-workspace">
-            <button class="theme-accordion-toggle" onclick="toggleThemeAccordion()">
-                <div class="theme-square-group">
-                    <div class="theme-square sq-dark" title="Classic Dark"></div>
-                    <div class="theme-square sq-amber" title="Amber CRT"></div>
-                </div>
-                <span class="theme-toggle-label">themes</span>
-                <div class="theme-square-group">
-                    <div class="theme-square sq-matrix" title="Matrix Green"></div>
-                    <div class="theme-square sq-cobalt" title="Retro Cobalt"></div>
-                </div>
-            </button>
-        </div>
-
-        <div class="sync-status">
-            <div class="sync-dot" id="sync-dot"></div>
-            <span id="save-indicator">Ready</span>
-        </div>
-    </header>
-
-    <!-- LEFT MARGIN EXPIRATION WARNING (PERSISTENT & VISIBLE IN THEATER MODE) -->
-    <div class="left-margin-alert-card" id="left-margin-alert">
-        <div class="left-margin-alert-title">⚠️ Cloud Sync Offline</div>
-        <div class="left-margin-alert-desc">Your Google Drive session has expired. Save a backup copy to your disk to safeguard your edits.</div>
-        <button class="left-margin-download-btn" onclick="executeManualDownloadBackup()">↓ Download Document</button>
-        <button class="left-margin-reconnect-btn" onclick="triggerGoogleAuth(true)">Reconnect Drive</button>
-    </div>
-
-    <!-- RIGHT MARGIN GHOST SHORTCUT GUIDE CARD -->
-    <div class="margin-ghost-guide chrome-element" id="margin-ghost-guide">
-        <div class="ghost-guide-title" id="ghost-guide-title">Narrative Shortcuts</div>
-        <div class="ghost-guide-list" id="ghost-guide-list"></div>
-    </div>
-
-    <main id="workspace-main">
-        <div class="editor-container">
-            <div class="margin-list-widget" id="margin-list-widget">
-                <button class="margin-widget-btn" id="btn-bullet-toggle" title="Toggle Bulleted List">
-                    <svg viewBox="0 0 24 24">
-                        <circle cx="4" cy="6" r="2.5"/>
-                        <line x1="10" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2"/>
-                        <circle cx="4" cy="12" r="2.5"/>
-                        <line x1="10" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2"/>
-                        <circle cx="4" cy="18" r="2.5"/>
-                        <line x1="10" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2"/>
-                    </svg>
-                </button>
-                <button class="margin-widget-btn" id="btn-number-toggle" title="Toggle Numbered List">
-                    <svg viewBox="0 0 24 24">
-                        <text x="1" y="8" font-size="7" font-family="monospace" fill="currentColor">1.</text>
-                        <line x1="10" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2"/>
-                        <text x="1" y="14" font-size="7" font-family="monospace" fill="currentColor">2.</text>
-                        <line x1="10" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2"/>
-                        <text x="1" y="20" font-size="7" font-family="monospace" fill="currentColor">3.</text>
-                        <line x1="10" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2"/>
-                    </svg>
+            <div class="collapsible-theme-hub" id="theme-accordion-hub-workspace">
+                <button class="theme-accordion-toggle" onclick="toggleThemeAccordion()">
+                    <div class="theme-square-group">
+                        <div class="theme-square sq-dark" title="Classic Dark"></div>
+                        <div class="theme-square sq-amber" title="Amber CRT"></div>
+                    </div>
+                    <span class="theme-toggle-label">themes</span>
+                    <div class="theme-square-group">
+                        <div class="theme-square sq-matrix" title="Matrix Green"></div>
+                        <div class="theme-square sq-cobalt" title="Retro Cobalt"></div>
+                    </div>
                 </button>
             </div>
 
-            <div class="editor" contenteditable="true" spellcheck="true" placeholder="Start typing here...">Start typing here...</div>
+            <div class="sync-status">
+                <div class="sync-dot" id="sync-dot"></div>
+                <span id="save-indicator">Ready</span>
+            </div>
+        </header>
+
+        <!-- LEFT MARGIN EXPIRATION WARNING (PERSISTENT & VISIBLE IN THEATER MODE) -->
+        <div class="left-margin-alert-card" id="left-margin-alert">
+            <div class="left-margin-alert-title">⚠️ Cloud Sync Offline</div>
+            <div class="left-margin-alert-desc">Your Google Drive session has expired. Save a backup copy to your disk to safeguard your edits.</div>
+            <button class="left-margin-download-btn" onclick="executeManualDownloadBackup()">↓ Download Document</button>
+            <button class="left-margin-reconnect-btn" onclick="triggerGoogleAuth(true)">Reconnect Drive</button>
         </div>
-    </main>
 
-    <footer class="chrome-element">
-        <div class="stats-left">
-            <span>Words: <strong id="word-count">0</strong></span>
-            <span>Characters: <strong id="char-count">0</strong></span>
+        <!-- RIGHT MARGIN GHOST SHORTCUT GUIDE CARD -->
+        <div class="margin-ghost-guide chrome-element" id="margin-ghost-guide">
+            <div class="ghost-guide-title" id="ghost-guide-title">Narrative Shortcuts</div>
+            <div class="ghost-guide-list" id="ghost-guide-list"></div>
         </div>
 
-        <div class="footer-center">
-            <button class="footer-files-btn" onclick="openPickerModal(event)">↓ Download / Files</button>
-        </div>
+        <main id="workspace-main">
+            <div class="editor-container">
+                <div class="margin-list-widget" id="margin-list-widget">
+                    <button class="margin-widget-btn" id="btn-bullet-toggle" title="Toggle Bulleted List">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="4" cy="6" r="2.5"/>
+                            <line x1="10" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2"/>
+                            <circle cx="4" cy="12" r="2.5"/>
+                            <line x1="10" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2"/>
+                            <circle cx="4" cy="18" r="2.5"/>
+                            <line x1="10" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </button>
+                    <button class="margin-widget-btn" id="btn-number-toggle" title="Toggle Numbered List">
+                        <svg viewBox="0 0 24 24">
+                            <text x="1" y="8" font-size="7" font-family="monospace" fill="currentColor">1.</text>
+                            <line x1="10" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2"/>
+                            <text x="1" y="14" font-size="7" font-family="monospace" fill="currentColor">2.</text>
+                            <line x1="10" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2"/>
+                            <text x="1" y="20" font-size="7" font-family="monospace" fill="currentColor">3.</text>
+                            <line x1="10" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </button>
+                </div>
 
-        <div class="stats-right">
-            <span id="element-status-tag" style="display: none; margin-right: 15px;">Element: Action</span>
-            <span id="read-time">0 min read</span>
-        </div>
-    </footer>
-</div>
+                <div class="editor" contenteditable="true" spellcheck="true" placeholder="Start typing here...">Start typing here...</div>
+            </div>
+        </main>
 
-<script>
-    const CLIENT_ID = '819668101637-b1s5v7l35g6tu0oqt9j71argnr925phc.apps.googleusercontent.com';
-    const SCOPES = 'https://www.googleapis.com/auth/drive.file';
+        <footer class="chrome-element">
+            <div class="stats-left">
+                <span>Words: <strong id="word-count">0</strong></span>
+                <span>Characters: <strong id="char-count">0</strong></span>
+            </div>
 
-    // --- GLOBAL RUNTIME STATE ---
-    let currentSuiteMode = 'narrative';
-    let autoBackupIntervalTimer = null;
-    let isAutoBackupEnabled = false;
-    let autoBackupMinutes = 10;
-    let tokenRenewalTimer = null;
+            <div class="footer-center">
+                <button class="footer-files-btn" onclick="openPickerModal(event)">↓ Download / Files</button>
+            </div>
 
-    function toggleThemeAccordion() {
-        const hub = document.getElementById('theme-accordion-hub');
-        hub.classList.toggle('expanded');
-    }
+            <div class="stats-right">
+                <span id="element-status-tag" style="display: none; margin-right: 15px;">Element: Action</span>
+                <span id="read-time">0 min read</span>
+            </div>
+        </footer>
+    </div>
 
-    function renderGhostMarginGuide() {
-        const titleEl = document.getElementById('ghost-guide-title');
-        const listEl = document.getElementById('ghost-guide-list');
+    <script>
+        const CLIENT_ID = '819668101637-b1s5v7l35g6tu0oqt9j71argnr925phc.apps.googleusercontent.com';
+        const SCOPES = 'https://www.googleapis.com/auth/drive.file';
 
-        if (currentSuiteMode === 'narrative') {
-            titleEl.textContent = "Narrative Guide";
-            listEl.innerHTML = `
-                <div class="ghost-guide-row"><span>Bold selection</span><code>Ctrl + B</code></div>
-                <div class="ghost-guide-row"><span>Italicize</span><code>Ctrl + I</code></div>
-                <div class="ghost-guide-row"><span>Bold syntax</span><code>*text*</code></div>
-                <div class="ghost-guide-row"><span>Italics syntax</span><code>_text_</code></div>
-                <div class="ghost-guide-row"><span>Indent 1st line</span><code>Tab</code></div>
-                <div class="ghost-guide-row"><span>Indent list block</span><code>Tab x2</code></div>
-                <div class="ghost-guide-row"><span>Outdent</span><code>Shift+Tab</code></div>
-                <div class="ghost-guide-row"><span>List buttons</span><code>Highlight</code></div>
-                <div class="ghost-guide-row"><span>Reset indent</span><code>Enter x2</code></div>
-            `;
-        } else {
-            titleEl.textContent = "Screenplay Guide";
-            listEl.innerHTML = `
-                <div class="ghost-guide-row"><span>Slugline</span><code>Tab x0</code></div>
-                <div class="ghost-guide-row"><span>Action</span><code>Tab x0</code></div>
-                <div class="ghost-guide-row"><span>Character</span><code>Tab x1</code></div>
-                <div class="ghost-guide-row"><span>Parenthetical</span><code>Tab x2</code></div>
-                <div class="ghost-guide-row"><span>Dialogue</span><code>Tab x3</code></div>
-                <div class="ghost-guide-row"><span>Transition</span><code>Tab x4</code></div>
-                <div class="ghost-guide-row"><span>Reverse cycle</span><code>Shift+Tab</code></div>
-                <div class="ghost-guide-row"><span>Auto-advance</span><code>Enter</code></div>
-            `;
+        // --- GLOBAL RUNTIME STATE ---
+        let currentSuiteMode = 'narrative';
+        let autoBackupIntervalTimer = null;
+        let isAutoBackupEnabled = false;
+        let autoBackupMinutes = 10;
+        let tokenRenewalTimer = null;
+
+        function toggleThemeAccordion() {
+            const hub = document.getElementById('theme-accordion-hub');
+            hub.classList.toggle('expanded');
         }
-    }
 
-    function openPickerModal(event) {
-        if (event) event.preventDefault();
-        configureWorkspaceUIPresentation();
-        listLocalFiles(); 
-        if (accessToken) { listDriveFiles(); }
-        pickerModal.style.display = 'flex';
-    }
+        function renderGhostMarginGuide() {
+            const titleEl = document.getElementById('ghost-guide-title');
+            const listEl = document.getElementById('ghost-guide-list');
 
-    function triggerSuiteWrite(mode, event) {
-        if (event) event.stopPropagation();
-        currentSuiteMode = mode;
-        openPickerModal(event);
-    }
+            if (currentSuiteMode === 'narrative') {
+                titleEl.textContent = "Narrative Guide";
+                listEl.innerHTML = `
+                    <div class="ghost-guide-row"><span>Bold selection</span><code>Ctrl + B</code></div>
+                    <div class="ghost-guide-row"><span>Italicize</span><code>Ctrl + I</code></div>
+                    <div class="ghost-guide-row"><span>Bold syntax</span><code>*text*</code></div>
+                    <div class="ghost-guide-row"><span>Italics syntax</span><code>_text_</code></div>
+                    <div class="ghost-guide-row"><span>Indent 1st line</span><code>Tab</code></div>
+                    <div class="ghost-guide-row"><span>Indent list block</span><code>Tab x2</code></div>
+                    <div class="ghost-guide-row"><span>Outdent</span><code>Shift+Tab</code></div>
+                    <div class="ghost-guide-row"><span>List buttons</span><code>Highlight</code></div>
+                    <div class="ghost-guide-row"><span>Reset indent</span><code>Enter x2</code></div>
+                `;
+            } else {
+                titleEl.textContent = "Screenplay Guide";
+                listEl.innerHTML = `
+                    <div class="ghost-guide-row"><span>Slugline</span><code>Tab x0</code></div>
+                    <div class="ghost-guide-row"><span>Action</span><code>Tab x0</code></div>
+                    <div class="ghost-guide-row"><span>Character</span><code>Tab x1</code></div>
+                    <div class="ghost-guide-row"><span>Parenthetical</span><code>Tab x2</code></div>
+                    <div class="ghost-guide-row"><span>Dialogue</span><code>Tab x3</code></div>
+                    <div class="ghost-guide-row"><span>Transition</span><code>Tab x4</code></div>
+                    <div class="ghost-guide-row"><span>Reverse cycle</span><code>Shift+Tab</code></div>
+                    <div class="ghost-guide-row"><span>Auto-advance</span><code>Enter</code></div>
+                `;
+            }
+        }
 
-    // --- TAB SELECTION SWAPPING HANDLERS ---
-    const tabToggleLocal = document.getElementById('tab-toggle-local');
-    const tabToggleCloud = document.getElementById('tab-toggle-cloud');
-    const panelLocalContent = document.getElementById('panel-local-content');
-    const panelCloudContent = document.getElementById('panel-cloud-content');
-    const cloudUiInjectionZone = document.getElementById('cloud-ui-injection-zone');
+        function openPickerModal(event) {
+            if (event) event.preventDefault();
+            configureWorkspaceUIPresentation();
+            listLocalFiles(); 
+            if (accessToken) { listDriveFiles(); }
+            pickerModal.style.display = 'flex';
+        }
 
-    tabToggleLocal.addEventListener('click', () => {
-        tabToggleCloud.classList.remove('active');
-        tabToggleLocal.classList.add('active');
-        panelCloudContent.classList.remove('active');
-        panelLocalContent.classList.add('active');
-        listLocalFiles(); 
-    });
+        function triggerSuiteWrite(mode, event) {
+            if (event) event.stopPropagation();
+            currentSuiteMode = mode;
+            openPickerModal(event);
+        }
 
-    tabToggleCloud.addEventListener('click', () => {
-        tabToggleLocal.classList.remove('active');
-        tabToggleCloud.classList.add('active');
-        panelLocalContent.classList.remove('active');
-        panelCloudContent.classList.add('active');
-        renderCloudTabInterface(); 
-    });
+        // --- TAB SELECTION SWAPPING HANDLERS ---
+        const tabToggleLocal = document.getElementById('tab-toggle-local');
+        const tabToggleCloud = document.getElementById('tab-toggle-cloud');
+        const panelLocalContent = document.getElementById('panel-local-content');
+        const panelCloudContent = document.getElementById('panel-cloud-content');
+        const cloudUiInjectionZone = document.getElementById('cloud-ui-injection-zone');
 
-    // --- PERSISTENT GOOGLE AUTH & SILENT RE-CONNECT ENGINE ---
-    function togglePersistAuthState(enabled) {
-        localStorage.setItem('zensuite_persist_google_auth', enabled ? 'true' : 'false');
-    }
+        tabToggleLocal.addEventListener('click', () => {
+            tabToggleCloud.classList.remove('active');
+            tabToggleLocal.classList.add('active');
+            panelCloudContent.classList.remove('active');
+            panelLocalContent.classList.add('active');
+            listLocalFiles(); 
+        });
 
-    function triggerGoogleAuth(forceConsent) {
-        if (!tokenClient) return;
-        const shouldPersist = localStorage.getItem('zensuite_persist_google_auth') !== 'false';
-        const promptMode = forceConsent ? (shouldPersist ? '' : 'consent') : '';
-        tokenClient.requestAccessToken({ prompt: promptMode });
-    }
+        tabToggleCloud.addEventListener('click', () => {
+            tabToggleLocal.classList.remove('active');
+            tabToggleCloud.classList.add('active');
+            panelLocalContent.classList.remove('active');
+            panelCloudContent.classList.add('active');
+            renderCloudTabInterface(); 
+        });
 
-    function disconnectGoogleAccount() {
-        hideLeftMarginAlert();
-        if (accessToken && typeof google !== 'undefined') {
-            google.accounts.oauth2.revoke(accessToken, () => {
+        // --- PERSISTENT GOOGLE AUTH & SILENT RE-CONNECT ENGINE ---
+        function togglePersistAuthState(enabled) {
+            localStorage.setItem('zensuite_persist_google_auth', enabled ? 'true' : 'false');
+        }
+
+        function triggerGoogleAuth(forceConsent) {
+            if (!tokenClient) return;
+            const shouldPersist = localStorage.getItem('zensuite_persist_google_auth') !== 'false';
+            const promptMode = forceConsent ? (shouldPersist ? '' : 'consent') : '';
+            tokenClient.requestAccessToken({ prompt: promptMode });
+        }
+
+        function disconnectGoogleAccount() {
+            hideLeftMarginAlert();
+            if (accessToken && typeof google !== 'undefined') {
+                google.accounts.oauth2.revoke(accessToken, () => {
+                    accessToken = null;
+                    localStorage.removeItem('zensuite_google_access_token');
+                    localStorage.removeItem('zensuite_google_token_exp');
+                    pickerModifierSync();
+                    renderCloudTabInterface();
+                    showZenAlert("Disconnected", "Google Drive connection has been unlinked.");
+                });
+            } else {
                 accessToken = null;
                 localStorage.removeItem('zensuite_google_access_token');
                 localStorage.removeItem('zensuite_google_token_exp');
                 pickerModifierSync();
                 renderCloudTabInterface();
-                showZenAlert("Disconnected", "Google Drive connection has been unlinked.");
-            });
-        } else {
+            }
+        }
+
+        function renderCloudTabInterface() {
+            const isPersistChecked = localStorage.getItem('zensuite_persist_google_auth') !== 'false';
+
+            if (!accessToken) {
+                cloudUiInjectionZone.innerHTML = `
+                    <div style="text-align: center; padding: 15px 10px;">
+                        <p style="font-size:0.85rem; color:var(--muted-color); line-height:1.6; margin-bottom:12px;">
+                            Link your Google account to activate real-time replication and cloud backups.
+                        </p>
+                        <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:15px; font-size:0.75rem; color:var(--muted-color);">
+                            <input type="checkbox" id="persist-auth-toggle" ${isPersistChecked ? 'checked' : ''} onchange="togglePersistAuthState(this.checked)">
+                            <label for="persist-auth-toggle" style="cursor:pointer;">Stay connected across browser sessions</label>
+                        </div>
+                        <button class="picker-action-btn" id="auth-btn" onclick="triggerGoogleAuth(true)">G Connect Google Drive</button>
+                    </div>
+                `;
+            } else {
+                cloudUiInjectionZone.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding:0 2px;">
+                        <span style="font-size:0.75rem; color:var(--accent-color);">✓ Cloud Connected</span>
+                        <button onclick="disconnectGoogleAccount()" style="background:transparent; border:none; color:var(--muted-color); font-family:var(--font-mono); font-size:0.70rem; cursor:pointer; text-decoration:underline;">Disconnect</button>
+                    </div>
+                    <button class="picker-action-btn" id="new-cloud-doc-btn" style="background: rgba(56, 189, 248, 0.1); border-color: var(--accent-color); color: var(--accent-color);">+ Create Fresh Cloud Document</button>
+                    <div class="document-list-title">Google Cloud Documents</div>
+                    <div class="document-scroll-list" id="cloud-docs-target-node">
+                        <div style="font-size:0.8rem; color:var(--muted-color); padding: 10px;">Querying remote directories...</div>
+                    </div>
+                `;
+                
+                document.getElementById('new-cloud-doc-btn').addEventListener('click', () => {
+                    initializeDocumentTrack('cloud');
+                });
+                
+                listDriveFiles();
+            }
+        }
+        
+        // View Elements
+        const launchpadView = document.getElementById('launchpad-view');
+        const workspaceView = document.getElementById('workspace-view');
+        const pickerModal = document.getElementById('picker-modal');
+        const zenAlertOverlay = document.getElementById('zen-alert-overlay');
+        const zenAlertTitle = document.getElementById('zen-alert-title');
+        const zenAlertText = document.getElementById('zen-alert-text');
+        const modalContextTitle = document.getElementById('modal-context-title');
+        const leftMarginAlert = document.getElementById('left-margin-alert');
+
+        // Margin List Widget Elements
+        const marginListWidget = document.getElementById('margin-list-widget');
+        const btnBulletToggle = document.getElementById('btn-bullet-toggle');
+        const btnNumberToggle = document.getElementById('btn-number-toggle');
+
+        // Target Containers
+        const localDocsTarget = document.getElementById('local-docs-target');
+        const restoreDropZone = document.getElementById('restore-drop-zone');
+        const manualFileInput = document.getElementById('manual-file-input');
+
+        // Buttons
+        const closePickerBtn = document.getElementById('close-picker-btn');
+        const newDocBtn = document.getElementById('new-doc-btn');
+        const returnHomeBtn = document.getElementById('return-home-btn');
+
+        // Core App Selectors
+        const editor = document.querySelector('.editor');
+        const docTitle = document.querySelector('.doc-title');
+        const wordCountEl = document.getElementById('word-count');
+        const charCountEl = document.getElementById('char-count');
+        const readTimeEl = document.getElementById('read-time');
+        const elementStatusTag = document.getElementById('element-status-tag');
+        
+        const syncDot = document.getElementById('sync-dot');
+        const cloudStatus = document.getElementById('cloud-status');
+        const saveIndicator = document.getElementById('save-indicator');
+
+        // State Anchors
+        let currentLocalFileId = null; 
+        let currentDriveFileId = null; 
+        let idleTimer;
+        let tokenClient;
+        let accessToken = null;
+        let cloudSaveDebounceTimer;
+
+        // --- SESSION EXPIRATION & LEFT MARGIN NOTIFICATION SYSTEM ---
+        function showLeftMarginAlert() {
+            leftMarginAlert.style.display = 'flex';
+        }
+
+        function hideLeftMarginAlert() {
+            leftMarginAlert.style.display = 'none';
+        }
+
+        function executeManualDownloadBackup() {
+            const content = editor.innerHTML;
+            const title = docTitle ? docTitle.value : 'scribe85-backup';
+            exportDocumentToDisk(title, content, currentSuiteMode);
+        }
+
+        function handleAuthError() {
             accessToken = null;
             localStorage.removeItem('zensuite_google_access_token');
             localStorage.removeItem('zensuite_google_token_exp');
             pickerModifierSync();
-            renderCloudTabInterface();
+            saveIndicator.textContent = "• Cloud Session Expired";
+            showLeftMarginAlert();
         }
-    }
 
-    function renderCloudTabInterface() {
-        const isPersistChecked = localStorage.getItem('zensuite_persist_google_auth') !== 'false';
+        function scheduleTokenRenewal(expiresInMs) {
+            if (tokenRenewalTimer) clearTimeout(tokenRenewalTimer);
+            const refreshLeadTimeMs = Math.max(expiresInMs - (5 * 60 * 1000), 10000);
 
-        if (!accessToken) {
-            cloudUiInjectionZone.innerHTML = `
-                <div style="text-align: center; padding: 15px 10px;">
-                    <p style="font-size:0.85rem; color:var(--muted-color); line-height:1.6; margin-bottom:12px;">
-                        Link your Google account to activate real-time replication and cloud backups.
-                    </p>
-                    <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:15px; font-size:0.75rem; color:var(--muted-color);">
-                        <input type="checkbox" id="persist-auth-toggle" ${isPersistChecked ? 'checked' : ''} onchange="togglePersistAuthState(this.checked)">
-                        <label for="persist-auth-toggle" style="cursor:pointer;">Stay connected across browser sessions</label>
-                    </div>
-                    <button class="picker-action-btn" id="auth-btn" onclick="triggerGoogleAuth(true)">G Connect Google Drive</button>
-                </div>
-            `;
-        } else {
-            cloudUiInjectionZone.innerHTML = `
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding:0 2px;">
-                    <span style="font-size:0.75rem; color:var(--accent-color);">✓ Cloud Connected</span>
-                    <button onclick="disconnectGoogleAccount()" style="background:transparent; border:none; color:var(--muted-color); font-family:var(--font-mono); font-size:0.70rem; cursor:pointer; text-decoration:underline;">Disconnect</button>
-                </div>
-                <button class="picker-action-btn" id="new-cloud-doc-btn" style="background: rgba(56, 189, 248, 0.1); border-color: var(--accent-color); color: var(--accent-color);">+ Create Fresh Cloud Document</button>
-                <div class="document-list-title">Google Cloud Documents</div>
-                <div class="document-scroll-list" id="cloud-docs-target-node">
-                    <div style="font-size:0.8rem; color:var(--muted-color); padding: 10px;">Querying remote directories...</div>
-                </div>
-            `;
-            
-            document.getElementById('new-cloud-doc-btn').addEventListener('click', () => {
-                initializeDocumentTrack('cloud');
-            });
-            
-            listDriveFiles();
+            tokenRenewalTimer = setTimeout(() => {
+                trySilentTokenRefresh();
+            }, refreshLeadTimeMs);
         }
-    }
-    
-    // View Elements
-    const launchpadView = document.getElementById('launchpad-view');
-    const workspaceView = document.getElementById('workspace-view');
-    const pickerModal = document.getElementById('picker-modal');
-    const zenAlertOverlay = document.getElementById('zen-alert-overlay');
-    const zenAlertTitle = document.getElementById('zen-alert-title');
-    const zenAlertText = document.getElementById('zen-alert-text');
-    const modalContextTitle = document.getElementById('modal-context-title');
-    const leftMarginAlert = document.getElementById('left-margin-alert');
 
-    // Margin List Widget Elements
-    const marginListWidget = document.getElementById('margin-list-widget');
-    const btnBulletToggle = document.getElementById('btn-bullet-toggle');
-    const btnNumberToggle = document.getElementById('btn-number-toggle');
-
-    // Target Containers
-    const localDocsTarget = document.getElementById('local-docs-target');
-    const restoreDropZone = document.getElementById('restore-drop-zone');
-    const manualFileInput = document.getElementById('manual-file-input');
-
-    // Buttons
-    const closePickerBtn = document.getElementById('close-picker-btn');
-    const newDocBtn = document.getElementById('new-doc-btn');
-    const returnHomeBtn = document.getElementById('return-home-btn');
-
-    // Core App Selectors
-    const editor = document.querySelector('.editor');
-    const docTitle = document.querySelector('.doc-title');
-    const wordCountEl = document.getElementById('word-count');
-    const charCountEl = document.getElementById('char-count');
-    const readTimeEl = document.getElementById('read-time');
-    const elementStatusTag = document.getElementById('element-status-tag');
-    
-    const syncDot = document.getElementById('sync-dot');
-    const cloudStatus = document.getElementById('cloud-status');
-    const saveIndicator = document.getElementById('save-indicator');
-
-    // State Anchors
-    let currentLocalFileId = null; 
-    let currentDriveFileId = null; 
-    let idleTimer;
-    let tokenClient;
-    let accessToken = null;
-    let cloudSaveDebounceTimer;
-
-    // --- SESSION EXPIRATION & LEFT MARGIN NOTIFICATION SYSTEM ---
-    function showLeftMarginAlert() {
-        leftMarginAlert.style.display = 'flex';
-    }
-
-    function hideLeftMarginAlert() {
-        leftMarginAlert.style.display = 'none';
-    }
-
-    function executeManualDownloadBackup() {
-        const content = editor.innerHTML;
-        const title = docTitle ? docTitle.value : 'scribe85-backup';
-        exportDocumentToDisk(title, content, currentSuiteMode);
-    }
-
-    function handleAuthError() {
-        accessToken = null;
-        localStorage.removeItem('zensuite_google_access_token');
-        localStorage.removeItem('zensuite_google_token_exp');
-        pickerModifierSync();
-        saveIndicator.textContent = "• Cloud Session Expired";
-        showLeftMarginAlert();
-    }
-
-    function scheduleTokenRenewal(expiresInMs) {
-        if (tokenRenewalTimer) clearTimeout(tokenRenewalTimer);
-        const refreshLeadTimeMs = Math.max(expiresInMs - (5 * 60 * 1000), 10000);
-
-        tokenRenewalTimer = setTimeout(() => {
-            trySilentTokenRefresh();
-        }, refreshLeadTimeMs);
-    }
-
-    function trySilentTokenRefresh() {
-        if (!tokenClient) return;
-        try {
-            tokenClient.requestAccessToken({ prompt: '' });
-        } catch (err) {
-            handleAuthError();
-        }
-    }
-
-    // --- ROUTE & URL PARAMETER SYNC ENGINE ---
-    function updateUrlParameters(docId, mode) {
-        const url = new URL(window.location);
-        if (docId) {
-            url.searchParams.set('doc', docId);
-            url.searchParams.set('mode', mode || currentSuiteMode);
-        } else {
-            url.searchParams.delete('doc');
-            url.searchParams.delete('mode');
-        }
-        window.history.replaceState({}, '', url);
-    }
-
-    // --- AUTOMATIC BACKGROUND FILE DOWNLOAD ENGINE ---
-    function toggleAutoBackupState(enabled) {
-        isAutoBackupEnabled = enabled;
-        localStorage.setItem('zensuite_autobackup_enabled', enabled ? 'true' : 'false');
-        configureAutoBackupTimer();
-    }
-
-    function updateAutoBackupInterval(minutes) {
-        autoBackupMinutes = parseInt(minutes, 10) || 10;
-        localStorage.setItem('zensuite_autobackup_interval', autoBackupMinutes);
-        configureAutoBackupTimer();
-    }
-
-    function configureAutoBackupTimer() {
-        if (autoBackupIntervalTimer) clearInterval(autoBackupIntervalTimer);
-
-        if (isAutoBackupEnabled) {
-            const intervalMs = autoBackupMinutes * 60 * 1000;
-            autoBackupIntervalTimer = setInterval(() => {
-                executeEmergencyAutoDownload();
-            }, intervalMs);
-        }
-    }
-
-    function executeEmergencyAutoDownload() {
-        if (!workspaceView.classList.contains('active')) return;
-        const content = editor.innerHTML;
-        if (!content || content === 'Start typing here...') return;
-
-        const title = docTitle ? docTitle.value : 'scribe85-backup';
-        exportDocumentToDisk(`${title}_AUTO_BACKUP`, content, currentSuiteMode);
-        saveIndicator.textContent = "• Local Disk Backup Triggered";
-    }
-
-    async function requestPersistentStorage() {
-        if (navigator.storage && navigator.storage.persist) {
-            await navigator.storage.persist();
-        }
-    }
-
-    function showZenAlert(title, text) {
-        zenAlertTitle.textContent = title;
-        zenAlertText.textContent = text;
-        document.getElementById('alert-interactive-body').innerHTML = "";
-        document.getElementById('alert-actions-well').innerHTML = `<button class="alert-btn" onclick="closeZenAlert()">Acknowledge</button>`;
-        zenAlertOverlay.classList.add('active');
-    }
-
-    function closeZenAlert() {
-        zenAlertOverlay.classList.remove('active');
-    }
-
-    // --- APP THEMING ENGINE ---
-    function applyAppTheme(themeName) {
-        const root = document.documentElement;
-        
-        if (themeName === 'dark') {
-            root.style.setProperty('--bg-color', '#12141c');
-            root.style.setProperty('--text-color', '#ffffff');     
-            root.style.setProperty('--muted-color', '#94a3b8');    
-            root.style.setProperty('--accent-color', '#ffffff');   
-            root.style.setProperty('--text-glow', '0 0 8px rgba(255,255,255,0.6)');
-        } 
-        else if (themeName === 'amber') {
-            root.style.setProperty('--bg-color', '#0a0800');
-            root.style.setProperty('--text-color', '#ffb000');
-            root.style.setProperty('--muted-color', '#8a6000');
-            root.style.setProperty('--accent-color', '#ffb000');
-            root.style.setProperty('--text-glow', '0 0 8px rgba(255,176,0,0.6)');
-        } 
-        else if (themeName === 'matrix') {
-            root.style.setProperty('--bg-color', '#000500');
-            root.style.setProperty('--text-color', '#33ff33');
-            root.style.setProperty('--muted-color', '#008800');
-            root.style.setProperty('--accent-color', '#33ff33');
-            root.style.setProperty('--text-glow', '0 0 8px rgba(51,255,51,0.6)');
-        } 
-        else if (themeName === 'cobalt') {
-            root.style.setProperty('--bg-color', '#000080');
-            root.style.setProperty('--text-color', '#ffffff');
-            root.style.setProperty('--muted-color', '#8a9be0');
-            root.style.setProperty('--accent-color', '#ffffff');   
-            root.style.setProperty('--text-glow', '0 0 8px rgba(255,255,255,0.6)');
-        }
-        localStorage.setItem('zensuite_saved_theme', themeName);
-    }
-
-    // --- ROUTING & VIEW CONTROLS ---
-    closePickerBtn.addEventListener('click', () => { pickerModal.style.display = 'none'; });
-
-    returnHomeBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        localStorage.setItem('zensuite_view_state', 'launchpad');
-        updateUrlParameters(null, null);
-        
-        workspaceView.classList.remove('active');
-        launchpadView.classList.add('active');
-        document.body.classList.remove('distraction-free');
-    });
-
-    function configureWorkspaceUIPresentation() {
-        if (currentSuiteMode === 'screenplay') {
-            document.body.classList.remove('mode-narrative');
-            document.body.classList.add('mode-screenplay');
-            modalContextTitle.textContent = "Screenplay Workspace";
-            elementStatusTag.style.display = "inline";
-            marginListWidget.style.display = "none";
-        } else {
-            document.body.classList.remove('mode-screenplay');
-            document.body.classList.add('mode-narrative');
-            modalContextTitle.textContent = "Narrative Workspace";
-            elementStatusTag.style.display = "none";
-        }
-        renderGhostMarginGuide();
-    }
-
-    // --- CENTRAL UNIFIED TRACK CONTROLLER SYSTEM ---
-    function initializeDocumentTrack(originTab) {
-        if (originTab === 'local') {
-            const currentLocalCount = getLocalDatabase().filter(item => item.suiteMode === currentSuiteMode).length;
-            if (currentLocalCount >= 10) {
-                showZenAlert(
-                    "⚠️ Local Storage Limit Reached", 
-                    "You have filled your 10 offline slots for this workspace app. Connect to Google Drive to activate boundless document tracking layers!"
-                );
-                return;
+        function trySilentTokenRefresh() {
+            if (!tokenClient) return;
+            try {
+                tokenClient.requestAccessToken({ prompt: '' });
+            } catch (err) {
+                handleAuthError();
             }
         }
 
-        if (currentSuiteMode === 'screenplay') {
-            editor.innerHTML = '<div data-element="scene-heading">INT. NEW SCENE - DAY</div>';
-            if (docTitle) docTitle.value = "untitledScript.fountain";
-        } else {
-            editor.innerHTML = '<div>Start typing here...</div>';
-            if (docTitle) docTitle.value = "untitledProse.rtf"; 
+        // --- ROUTE & URL PARAMETER SYNC ENGINE ---
+        function updateUrlParameters(docId, mode) {
+            const url = new URL(window.location);
+            if (docId) {
+                url.searchParams.set('doc', docId);
+                url.searchParams.set('mode', mode || currentSuiteMode);
+            } else {
+                url.searchParams.delete('doc');
+                url.searchParams.delete('mode');
+            }
+            window.history.replaceState({}, '', url);
         }
 
-        currentLocalFileId = "local_" + Date.now();
-
-        localStorage.setItem('zensuite_active_suite_mode', currentSuiteMode);
-        localStorage.setItem('zensuite_view_state', 'workspace');
-
-        if (originTab === 'cloud' && accessToken) {
-            saveIndicator.textContent = "• Allocating Cloud Node...";
-            createDriveFile(); 
-        } else {
-            currentDriveFileId = null;
-            saveDocument();
+        // --- AUTOMATIC BACKGROUND FILE DOWNLOAD ENGINE ---
+        function toggleAutoBackupState(enabled) {
+            isAutoBackupEnabled = enabled;
+            localStorage.setItem('zensuite_autobackup_enabled', enabled ? 'true' : 'false');
+            configureAutoBackupTimer();
         }
 
-        updateUrlParameters(currentLocalFileId, currentSuiteMode);
-        updateAnalytics(editor.innerText);
-        if (currentSuiteMode === 'screenplay') updateLiveElementTag();
-        pickerModifierSync();
-        renderGhostMarginGuide();
-        
-        pickerModal.style.display = 'none';
-        launchpadView.classList.remove('active');
-        workspaceView.classList.add('active');
-    }
-
-    newDocBtn.addEventListener('click', () => {
-        initializeDocumentTrack('local');
-    });
-
-    // --- THEATER MODE DISTRACTION-FREE TYPING EFFECT ---
-    function startTypingDistractionHide() {
-        if (document.activeElement === docTitle) return;
-
-        if (workspaceView.classList.contains('active')) {
-            document.body.classList.add('distraction-free');
-            marginListWidget.style.display = 'none';
+        function updateAutoBackupInterval(minutes) {
+            autoBackupMinutes = parseInt(minutes, 10) || 10;
+            localStorage.setItem('zensuite_autobackup_interval', autoBackupMinutes);
+            configureAutoBackupTimer();
         }
-    }
 
-    function showUIChromeOnInteraction() {
-        document.body.classList.remove('distraction-free');
-        clearTimeout(idleTimer);
-        idleTimer = setTimeout(startTypingDistractionHide, 1000); 
-    }
+        function configureAutoBackupTimer() {
+            if (autoBackupIntervalTimer) clearInterval(autoBackupIntervalTimer);
 
-    window.addEventListener('mousemove', showUIChromeOnInteraction);
+            if (isAutoBackupEnabled) {
+                const intervalMs = autoBackupMinutes * 60 * 1000;
+                autoBackupIntervalTimer = setInterval(() => {
+                    executeEmergencyAutoDownload();
+                }, intervalMs);
+            }
+        }
 
-    function applyDynamicListSpacing() {
-        const blocks = Array.from(editor.children);
-        
-        blocks.forEach((block, index) => {
-            const indent = parseInt(block.dataset.indent || "0", 10);
-            const prevBlock = blocks[index - 1];
-            const nextBlock = blocks[index + 1];
+        function executeEmergencyAutoDownload() {
+            if (!workspaceView.classList.contains('active')) return;
+            const content = editor.innerHTML;
+            if (!content || content === 'Start typing here...') return;
+
+            const title = docTitle ? docTitle.value : 'scribe85-backup';
+            exportDocumentToDisk(`${title}_AUTO_BACKUP`, content, currentSuiteMode);
+            saveIndicator.textContent = "• Local Disk Backup Triggered";
+        }
+
+        async function requestPersistentStorage() {
+            if (navigator.storage && navigator.storage.persist) {
+                await navigator.storage.persist();
+            }
+        }
+
+        function showZenAlert(title, text) {
+            zenAlertTitle.textContent = title;
+            zenAlertText.textContent = text;
+            document.getElementById('alert-interactive-body').innerHTML = "";
+            document.getElementById('alert-actions-well').innerHTML = `<button class="alert-btn" onclick="closeZenAlert()">Acknowledge</button>`;
+            zenAlertOverlay.classList.add('active');
+        }
+
+        function closeZenAlert() {
+            zenAlertOverlay.classList.remove('active');
+        }
+
+        // --- APP THEMING ENGINE ---
+        function applyAppTheme(themeName) {
+            const root = document.documentElement;
             
-            const prevIndent = prevBlock ? parseInt(prevBlock.dataset.indent || "0", 10) : 0;
-            const nextIndent = nextBlock ? parseInt(nextBlock.dataset.indent || "0", 10) : 0;
+            if (themeName === 'dark') {
+                root.style.setProperty('--bg-color', '#12141c');
+                root.style.setProperty('--text-color', '#ffffff');     
+                root.style.setProperty('--muted-color', '#94a3b8');    
+                root.style.setProperty('--accent-color', '#ffffff');   
+                root.style.setProperty('--text-glow', '0 0 8px rgba(255,255,255,0.6)');
+            } 
+            else if (themeName === 'amber') {
+                root.style.setProperty('--bg-color', '#0a0800');
+                root.style.setProperty('--text-color', '#ffb000');
+                root.style.setProperty('--muted-color', '#8a6000');
+                root.style.setProperty('--accent-color', '#ffb000');
+                root.style.setProperty('--text-glow', '0 0 8px rgba(255,176,0,0.6)');
+            } 
+            else if (themeName === 'matrix') {
+                root.style.setProperty('--bg-color', '#000500');
+                root.style.setProperty('--text-color', '#33ff33');
+                root.style.setProperty('--muted-color', '#008800');
+                root.style.setProperty('--accent-color', '#33ff33');
+                root.style.setProperty('--text-glow', '0 0 8px rgba(51,255,51,0.6)');
+            } 
+            else if (themeName === 'cobalt') {
+                root.style.setProperty('--bg-color', '#000080');
+                root.style.setProperty('--text-color', '#ffffff');
+                root.style.setProperty('--muted-color', '#8a9be0');
+                root.style.setProperty('--accent-color', '#ffffff');   
+                root.style.setProperty('--text-glow', '0 0 8px rgba(255,255,255,0.6)');
+            }
+            localStorage.setItem('zensuite_saved_theme', themeName);
+        }
 
-            if (indent > 0) {
-                if (prevIndent === 0) {
-                    block.style.marginTop = "1.25em";
+        // --- ROUTING & VIEW CONTROLS ---
+        closePickerBtn.addEventListener('click', () => { pickerModal.style.display = 'none'; });
+
+        returnHomeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.setItem('zensuite_view_state', 'launchpad');
+            updateUrlParameters(null, null);
+            
+            workspaceView.classList.remove('active');
+            launchpadView.classList.add('active');
+            document.body.classList.remove('distraction-free');
+        });
+
+        function configureWorkspaceUIPresentation() {
+            if (currentSuiteMode === 'screenplay') {
+                document.body.classList.remove('mode-narrative');
+                document.body.classList.add('mode-screenplay');
+                modalContextTitle.textContent = "Screenplay Workspace";
+                elementStatusTag.style.display = "inline";
+                marginListWidget.style.display = "none";
+            } else {
+                document.body.classList.remove('mode-screenplay');
+                document.body.classList.add('mode-narrative');
+                modalContextTitle.textContent = "Narrative Workspace";
+                elementStatusTag.style.display = "none";
+            }
+            renderGhostMarginGuide();
+        }
+
+        // --- CENTRAL UNIFIED TRACK CONTROLLER SYSTEM ---
+        function initializeDocumentTrack(originTab) {
+            if (originTab === 'local') {
+                const currentLocalCount = getLocalDatabase().filter(item => item.suiteMode === currentSuiteMode).length;
+                if (currentLocalCount >= 10) {
+                    showZenAlert(
+                        "⚠️ Local Storage Limit Reached", 
+                        "You have filled your 10 offline slots for this workspace app. Connect to Google Drive to activate boundless document tracking layers!"
+                    );
+                    return;
+                }
+            }
+
+            if (currentSuiteMode === 'screenplay') {
+                editor.innerHTML = '<div data-element="scene-heading">INT. NEW SCENE - DAY</div>';
+                if (docTitle) docTitle.value = "untitledScript.fountain";
+            } else {
+                editor.innerHTML = '<div>Start typing here...</div>';
+                if (docTitle) docTitle.value = "untitledProse.rtf"; 
+            }
+
+            currentLocalFileId = "local_" + Date.now();
+
+            localStorage.setItem('zensuite_active_suite_mode', currentSuiteMode);
+            localStorage.setItem('zensuite_view_state', 'workspace');
+
+            if (originTab === 'cloud' && accessToken) {
+                saveIndicator.textContent = "• Allocating Cloud Node...";
+                createDriveFile(); 
+            } else {
+                currentDriveFileId = null;
+                saveDocument();
+            }
+
+            updateUrlParameters(currentLocalFileId, currentSuiteMode);
+            updateAnalytics(editor.innerText);
+            if (currentSuiteMode === 'screenplay') updateLiveElementTag();
+            pickerModifierSync();
+            renderGhostMarginGuide();
+            
+            pickerModal.style.display = 'none';
+            launchpadView.classList.remove('active');
+            workspaceView.classList.add('active');
+        }
+
+        newDocBtn.addEventListener('click', () => {
+            initializeDocumentTrack('local');
+        });
+
+        // --- THEATER MODE DISTRACTION-FREE TYPING EFFECT ---
+        function startTypingDistractionHide() {
+            if (document.activeElement === docTitle) return;
+
+            if (workspaceView.classList.contains('active')) {
+                document.body.classList.add('distraction-free');
+                marginListWidget.style.display = 'none';
+            }
+        }
+
+        function showUIChromeOnInteraction() {
+            document.body.classList.remove('distraction-free');
+            clearTimeout(idleTimer);
+            idleTimer = setTimeout(startTypingDistractionHide, 1000); 
+        }
+
+        window.addEventListener('mousemove', showUIChromeOnInteraction);
+
+        function applyDynamicListSpacing() {
+            const blocks = Array.from(editor.children);
+            
+            blocks.forEach((block, index) => {
+                const indent = parseInt(block.dataset.indent || "0", 10);
+                const prevBlock = blocks[index - 1];
+                const nextBlock = blocks[index + 1];
+                
+                const prevIndent = prevBlock ? parseInt(prevBlock.dataset.indent || "0", 10) : 0;
+                const nextIndent = nextBlock ? parseInt(nextBlock.dataset.indent || "0", 10) : 0;
+
+                if (indent > 0) {
+                    if (prevIndent === 0) {
+                        block.style.marginTop = "1.25em";
+                    } else {
+                        block.style.marginTop = "";
+                    }
+
+                    if (nextBlock && nextIndent === indent) {
+                        block.style.marginBottom = "0.7em";
+                    } else {
+                        block.style.marginBottom = "1.5em";
+                    }
                 } else {
                     block.style.marginTop = "";
-                }
-
-                if (nextBlock && nextIndent === indent) {
-                    block.style.marginBottom = "0.7em";
-                } else {
-                    block.style.marginBottom = "1.5em";
-                }
-            } else {
-                block.style.marginTop = "";
-                block.style.marginBottom = ""; 
-            }
-        });
-    }
-
-    // --- INLINE MARKDOWN AUTO-CONVERTER ---
-    function processInlineMarkdownFormatting() {
-        const selection = window.getSelection();
-        if (!selection.rangeCount) return;
-
-        let currentBlock = selection.getRangeAt(0).startContainer;
-        if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
-
-        if (!currentBlock || currentBlock === editor) return;
-
-        let html = currentBlock.innerHTML;
-        let modified = false;
-
-        const boldRegex = /(?<!\w)\*([^*]+)\*(?!\w)/g;
-        if (boldRegex.test(html)) {
-            currentBlock.innerHTML = html.replace(boldRegex, '<b>$1</b>&#8203;');
-            modified = true;
-        }
-
-        const italicRegex = /(?<!\w)_([^_]+)_(?!\w)/g;
-        if (italicRegex.test(currentBlock.innerHTML)) {
-            currentBlock.innerHTML = currentBlock.innerHTML.replace(italicRegex, '<i>$1</i>&#8203;');
-            modified = true;
-        }
-
-        if (modified) {
-            placeCaretAfterFormatting(currentBlock);
-        }
-    }
-
-    function placeCaretAfterFormatting(container) {
-        const selection = window.getSelection();
-        const range = document.createRange();
-        
-        let lastChild = container.lastChild;
-        if (!lastChild) return;
-
-        if (lastChild.nodeType === Node.ELEMENT_NODE && (lastChild.tagName === 'B' || lastChild.tagName === 'I')) {
-            const zwsp = document.createTextNode('\u200B');
-            container.appendChild(zwsp);
-            lastChild = zwsp;
-        }
-
-        if (lastChild.nodeType === Node.TEXT_NODE) {
-            range.setStart(lastChild, lastChild.length);
-            range.collapse(true);
-        } else {
-            range.selectNodeContents(lastChild);
-            range.collapse(false);
-        }
-
-        selection.removeAllRanges();
-        selection.addRange(range);
-    }
-
-    // --- ANALYTICS ENGINE ---
-    function updateAnalytics(text) {
-        const cleanText = text.replace(/\u200B/g, "");
-        
-        const charCount = cleanText.length;
-        charCountEl.textContent = charCount.toLocaleString();
-
-        const words = cleanText.trim().split(/\s+/).filter(word => word.length > 0);
-        const wordCount = words.length;
-        wordCountEl.textContent = wordCount.toLocaleString();
-
-        const readingTime = Math.ceil(wordCount / 200);
-        readTimeEl.textContent = currentSuiteMode === 'screenplay' 
-            ? `${Math.ceil(wordCount / 120)} min read` 
-            : `${readingTime} min read`;
-    }
-
-    // --- SELECTION MARGIN LIST WIDGET CONTROLLER ---
-    function getSelectedBlocks() {
-        const selection = window.getSelection();
-        if (!selection.rangeCount) return [];
-        const range = selection.getRangeAt(0);
-
-        const allBlocks = Array.from(editor.children);
-        return allBlocks.filter(block => range.intersectsNode(block));
-    }
-
-    function updateMarginListWidget() {
-        if (currentSuiteMode !== 'narrative') {
-            marginListWidget.style.display = 'none';
-            return;
-        }
-
-        const selection = window.getSelection();
-        if (!selection.rangeCount || selection.isCollapsed) {
-            marginListWidget.style.display = 'none';
-            return;
-        }
-
-        const selectedBlocks = getSelectedBlocks();
-        if (selectedBlocks.length === 0) {
-            marginListWidget.style.display = 'none';
-            return;
-        }
-
-        const firstBlock = selectedBlocks[0];
-        const editorRect = editor.getBoundingClientRect();
-        const firstBlockRect = firstBlock.getBoundingClientRect();
-
-        const topOffset = firstBlockRect.top - editorRect.top + editor.scrollTop;
-        marginListWidget.style.top = `${Math.max(0, topOffset)}px`;
-        marginListWidget.style.display = 'flex';
-
-        const isAllBullets = selectedBlocks.every(b => (b.dataset.listType === 'bullet' || /^•\s/.test(b.innerText.trim())));
-        const isAllNumbers = selectedBlocks.every(b => (b.dataset.listType === 'number' || /^\d+[\.\)]\s/.test(b.innerText.trim())));
-
-        btnBulletToggle.classList.toggle('active', isAllBullets);
-        btnNumberToggle.classList.toggle('active', isAllNumbers);
-    }
-
-    function toggleListFormatting(type) {
-        const selectedBlocks = getSelectedBlocks();
-        if (selectedBlocks.length === 0) return;
-
-        const isAllBullets = selectedBlocks.every(b => (b.dataset.listType === 'bullet' || /^•\s/.test(b.innerText.trim())));
-        const isAllNumbers = selectedBlocks.every(b => (b.dataset.listType === 'number' || /^\d+[\.\)]\s/.test(b.innerText.trim())));
-
-        let turningOff = (type === 'bullet' && isAllBullets) || (type === 'number' && isAllNumbers);
-
-        selectedBlocks.forEach((block, idx) => {
-            let text = block.innerText ? block.innerText.replace(/\u200B/g, "").trim() : "";
-            text = text.replace(/^([•\-\*]|\d+[\.\)])\s+/, "");
-
-            if (turningOff) {
-                block.dataset.listType = "none";
-                block.dataset.indent = "0";
-                block.dataset.firstLineIndent = "false";
-                block.style.paddingLeft = "0px";
-                block.style.textIndent = "0px";
-                block.textContent = text === "" ? "" : text;
-                if (block.textContent === "") block.innerHTML = "<br>";
-            } else {
-                block.dataset.listType = type;
-                block.dataset.indent = "1";
-                block.dataset.firstLineIndent = "false";
-                block.style.paddingLeft = "30px";
-                block.style.textIndent = "0px";
-
-                const prefix = type === 'bullet' ? "• " : `${idx + 1}. `;
-                block.textContent = `${prefix}${text}`;
-            }
-        });
-
-        applyDynamicListSpacing();
-        updateAnalytics(editor.innerText);
-        saveDocument();
-        updateMarginListWidget();
-    }
-
-    btnBulletToggle.addEventListener('mousedown', (e) => {
-        e.preventDefault();
-        toggleListFormatting('bullet');
-    });
-
-    btnNumberToggle.addEventListener('mousedown', (e) => {
-        e.preventDefault();
-        toggleListFormatting('number');
-    });
-
-    document.addEventListener('selectionchange', () => {
-        if (workspaceView.classList.contains('active')) {
-            updateMarginListWidget();
-        }
-    });
-
-    // --- ROBUST PARAGRAPH & INDENT PRESERVING PASTE SANITIZER ---
-    editor.addEventListener('paste', (e) => {
-        e.preventDefault();
-        const clipboard = e.clipboardData || window.clipboardData;
-        const plainText = clipboard.getData('text/plain');
-        const htmlText = clipboard.getData('text/html');
-
-        const selection = window.getSelection();
-        if (!selection.rangeCount) return;
-        selection.deleteFromDocument();
-        const range = selection.getRangeAt(0);
-
-        function sanitizeInlineNodes(node) {
-            const fragment = document.createDocumentFragment();
-            Array.from(node.childNodes).forEach(child => {
-                if (child.nodeType === Node.TEXT_NODE) {
-                    fragment.appendChild(document.createTextNode(child.textContent));
-                } else if (child.nodeType === Node.ELEMENT_NODE) {
-                    const tag = child.tagName.toLowerCase();
-                    if (tag === 'b' || tag === 'strong') {
-                        const b = document.createElement('b');
-                        b.appendChild(sanitizeInlineNodes(child));
-                        fragment.appendChild(b);
-                    } else if (tag === 'i' || tag === 'em') {
-                        const i = document.createElement('i');
-                        i.appendChild(sanitizeInlineNodes(child));
-                        fragment.appendChild(i);
-                    } else if (tag === 'br') {
-                        fragment.appendChild(document.createElement('br'));
-                    } else {
-                        fragment.appendChild(sanitizeInlineNodes(child));
-                    }
+                    block.style.marginBottom = ""; 
                 }
             });
-            return fragment;
         }
 
-        if (htmlText) {
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = htmlText;
-            tempDiv.querySelectorAll('style, script, meta, link, xml').forEach(el => el.remove());
+        // --- INLINE MARKDOWN AUTO-CONVERTER ---
+        function processInlineMarkdownFormatting() {
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
 
-            const blockElements = tempDiv.querySelectorAll('p, div, li, h1, h2, h3, h4, h5, h6, tr, blockquote');
-            const fragment = document.createDocumentFragment();
+            let currentBlock = selection.getRangeAt(0).startContainer;
+            if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
 
-            if (blockElements.length > 0) {
-                blockElements.forEach(block => {
+            if (!currentBlock || currentBlock === editor) return;
+
+            let html = currentBlock.innerHTML;
+            let modified = false;
+
+            const boldRegex = /(?<!\w)\*([^*]+)\*(?!\w)/g;
+            if (boldRegex.test(html)) {
+                currentBlock.innerHTML = html.replace(boldRegex, '<b>$1</b>&#8203;');
+                modified = true;
+            }
+
+            const italicRegex = /(?<!\w)_([^_]+)_(?!\w)/g;
+            if (italicRegex.test(currentBlock.innerHTML)) {
+                currentBlock.innerHTML = currentBlock.innerHTML.replace(italicRegex, '<i>$1</i>&#8203;');
+                modified = true;
+            }
+
+            if (modified) {
+                placeCaretAfterFormatting(currentBlock);
+            }
+        }
+
+        function placeCaretAfterFormatting(container) {
+            const selection = window.getSelection();
+            const range = document.createRange();
+            
+            let lastChild = container.lastChild;
+            if (!lastChild) return;
+
+            if (lastChild.nodeType === Node.ELEMENT_NODE && (lastChild.tagName === 'B' || lastChild.tagName === 'I')) {
+                const zwsp = document.createTextNode('\u200B');
+                container.appendChild(zwsp);
+                lastChild = zwsp;
+            }
+
+            if (lastChild.nodeType === Node.TEXT_NODE) {
+                range.setStart(lastChild, lastChild.length);
+                range.collapse(true);
+            } else {
+                range.selectNodeContents(lastChild);
+                range.collapse(false);
+            }
+
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+
+        // --- ANALYTICS ENGINE ---
+        function updateAnalytics(text) {
+            const cleanText = text.replace(/\u200B/g, "");
+            
+            const charCount = cleanText.length;
+            charCountEl.textContent = charCount.toLocaleString();
+
+            const words = cleanText.trim().split(/\s+/).filter(word => word.length > 0);
+            const wordCount = words.length;
+            wordCountEl.textContent = wordCount.toLocaleString();
+
+            const readingTime = Math.ceil(wordCount / 200);
+            readTimeEl.textContent = currentSuiteMode === 'screenplay' 
+                ? `${Math.ceil(wordCount / 120)} min read` 
+                : `${readingTime} min read`;
+        }
+
+        // --- SELECTION MARGIN LIST WIDGET CONTROLLER ---
+        function getSelectedBlocks() {
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return [];
+            const range = selection.getRangeAt(0);
+
+            const allBlocks = Array.from(editor.children);
+            return allBlocks.filter(block => range.intersectsNode(block));
+        }
+
+        function updateMarginListWidget() {
+            if (currentSuiteMode !== 'narrative') {
+                marginListWidget.style.display = 'none';
+                return;
+            }
+
+            const selection = window.getSelection();
+            if (!selection.rangeCount || selection.isCollapsed) {
+                marginListWidget.style.display = 'none';
+                return;
+            }
+
+            const selectedBlocks = getSelectedBlocks();
+            if (selectedBlocks.length === 0) {
+                marginListWidget.style.display = 'none';
+                return;
+            }
+
+            const firstBlock = selectedBlocks[0];
+            const editorRect = editor.getBoundingClientRect();
+            const firstBlockRect = firstBlock.getBoundingClientRect();
+
+            const topOffset = firstBlockRect.top - editorRect.top + editor.scrollTop;
+            marginListWidget.style.top = `${Math.max(0, topOffset)}px`;
+            marginListWidget.style.display = 'flex';
+
+            const isAllBullets = selectedBlocks.every(b => (b.dataset.listType === 'bullet' || /^•\s/.test(b.innerText.trim())));
+            const isAllNumbers = selectedBlocks.every(b => (b.dataset.listType === 'number' || /^\d+[\.\)]\s/.test(b.innerText.trim())));
+
+            btnBulletToggle.classList.toggle('active', isAllBullets);
+            btnNumberToggle.classList.toggle('active', isAllNumbers);
+        }
+
+        function toggleListFormatting(type) {
+            const selectedBlocks = getSelectedBlocks();
+            if (selectedBlocks.length === 0) return;
+
+            const isAllBullets = selectedBlocks.every(b => (b.dataset.listType === 'bullet' || /^•\s/.test(b.innerText.trim())));
+            const isAllNumbers = selectedBlocks.every(b => (b.dataset.listType === 'number' || /^\d+[\.\)]\s/.test(b.innerText.trim())));
+
+            let turningOff = (type === 'bullet' && isAllBullets) || (type === 'number' && isAllNumbers);
+
+            selectedBlocks.forEach((block, idx) => {
+                let text = block.innerText ? block.innerText.replace(/\u200B/g, "").trim() : "";
+                text = text.replace(/^([•\-\*]|\d+[\.\)])\s+/, "");
+
+                if (turningOff) {
+                    block.dataset.listType = "none";
+                    block.dataset.indent = "0";
+                    block.dataset.firstLineIndent = "false";
+                    block.style.paddingLeft = "0px";
+                    block.style.textIndent = "0px";
+                    block.textContent = text === "" ? "" : text;
+                    if (block.textContent === "") block.innerHTML = "<br>";
+                } else {
+                    block.dataset.listType = type;
+                    block.dataset.indent = "1";
+                    block.dataset.firstLineIndent = "false";
+                    block.style.paddingLeft = "30px";
+                    block.style.textIndent = "0px";
+
+                    const prefix = type === 'bullet' ? "• " : `${idx + 1}. `;
+                    block.textContent = `${prefix}${text}`;
+                }
+            });
+
+            applyDynamicListSpacing();
+            updateAnalytics(editor.innerText);
+            saveDocument();
+            updateMarginListWidget();
+        }
+
+        btnBulletToggle.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            toggleListFormatting('bullet');
+        });
+
+        btnNumberToggle.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            toggleListFormatting('number');
+        });
+
+        document.addEventListener('selectionchange', () => {
+            if (workspaceView.classList.contains('active')) {
+                updateMarginListWidget();
+            }
+        });
+
+        // --- ROBUST PARAGRAPH & INDENT PRESERVING PASTE SANITIZER ---
+        editor.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const clipboard = e.clipboardData || window.clipboardData;
+            const plainText = clipboard.getData('text/plain');
+            const htmlText = clipboard.getData('text/html');
+
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+            selection.deleteFromDocument();
+            const range = selection.getRangeAt(0);
+
+            function sanitizeInlineNodes(node) {
+                const fragment = document.createDocumentFragment();
+                Array.from(node.childNodes).forEach(child => {
+                    if (child.nodeType === Node.TEXT_NODE) {
+                        fragment.appendChild(document.createTextNode(child.textContent));
+                    } else if (child.nodeType === Node.ELEMENT_NODE) {
+                        const tag = child.tagName.toLowerCase();
+                        if (tag === 'b' || tag === 'strong') {
+                            const b = document.createElement('b');
+                            b.appendChild(sanitizeInlineNodes(child));
+                            fragment.appendChild(b);
+                        } else if (tag === 'i' || tag === 'em') {
+                            const i = document.createElement('i');
+                            i.appendChild(sanitizeInlineNodes(child));
+                            fragment.appendChild(i);
+                        } else if (tag === 'br') {
+                            fragment.appendChild(document.createElement('br'));
+                        } else {
+                            fragment.appendChild(sanitizeInlineNodes(child));
+                        }
+                    }
+                });
+                return fragment;
+            }
+
+            if (htmlText) {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = htmlText;
+                tempDiv.querySelectorAll('style, script, meta, link, xml').forEach(el => el.remove());
+
+                const blockElements = tempDiv.querySelectorAll('p, div, li, h1, h2, h3, h4, h5, h6, tr, blockquote');
+                const fragment = document.createDocumentFragment();
+
+                if (blockElements.length > 0) {
+                    blockElements.forEach(block => {
+                        const div = document.createElement('div');
+                        if (currentSuiteMode === 'screenplay') {
+                            div.setAttribute('data-element', 'action');
+                        }
+
+                        const stylePadding = parseInt(block.style.paddingLeft || block.style.marginLeft || "0", 10);
+                        const computedIndent = Math.min(Math.floor(stylePadding / 24), 5);
+                        
+                        if (computedIndent > 0 && currentSuiteMode === 'narrative') {
+                            div.dataset.indent = computedIndent;
+                            div.style.paddingLeft = `${computedIndent * 30}px`;
+                        }
+
+                        const rawText = block.innerText ? block.innerText.trim() : "";
+                        if (/^•\s/.test(rawText) || block.tagName.toLowerCase() === 'li') {
+                            div.dataset.listType = "bullet";
+                        } else if (/^\d+[\.\)]\s/.test(rawText)) {
+                            div.dataset.listType = "number";
+                        }
+
+                        const sanitizedContent = sanitizeInlineNodes(block);
+                        if (!sanitizedContent.textContent.trim()) {
+                            div.innerHTML = '<br>';
+                        } else {
+                            div.appendChild(sanitizedContent);
+                        }
+
+                        fragment.appendChild(div);
+                    });
+                } else {
                     const div = document.createElement('div');
-                    if (currentSuiteMode === 'screenplay') {
-                        div.setAttribute('data-element', 'action');
-                    }
-
-                    const stylePadding = parseInt(block.style.paddingLeft || block.style.marginLeft || "0", 10);
-                    const computedIndent = Math.min(Math.floor(stylePadding / 24), 5);
-                    
-                    if (computedIndent > 0 && currentSuiteMode === 'narrative') {
-                        div.dataset.indent = computedIndent;
-                        div.style.paddingLeft = `${computedIndent * 30}px`;
-                    }
-
-                    const rawText = block.innerText ? block.innerText.trim() : "";
-                    if (/^•\s/.test(rawText) || block.tagName.toLowerCase() === 'li') {
-                        div.dataset.listType = "bullet";
-                    } else if (/^\d+[\.\)]\s/.test(rawText)) {
-                        div.dataset.listType = "number";
-                    }
-
-                    const sanitizedContent = sanitizeInlineNodes(block);
+                    if (currentSuiteMode === 'screenplay') div.setAttribute('data-element', 'action');
+                    const sanitizedContent = sanitizeInlineNodes(tempDiv);
                     if (!sanitizedContent.textContent.trim()) {
                         div.innerHTML = '<br>';
                     } else {
                         div.appendChild(sanitizedContent);
                     }
+                    fragment.appendChild(div);
+                }
 
+                range.insertNode(fragment);
+            } else if (plainText) {
+                const lines = plainText.split(/\r\n|\r|\n/);
+                const fragment = document.createDocumentFragment();
+
+                lines.forEach((line) => {
+                    const div = document.createElement('div');
+                    if (currentSuiteMode === 'screenplay') {
+                        div.setAttribute('data-element', 'action');
+                    }
+                    
+                    const leadingTabs = (line.match(/^(\t|\s{4})+/) || [""])[0];
+                    const indentLevel = leadingTabs ? Math.floor(leadingTabs.length / (leadingTabs.includes('\t') ? 1 : 4)) : 0;
+                    const cleanLine = line.replace(/^(\t|\s{4})+/, "");
+
+                    if (indentLevel > 0 && currentSuiteMode === 'narrative') {
+                        div.dataset.indent = indentLevel;
+                        div.style.paddingLeft = `${indentLevel * 30}px`;
+                    }
+
+                    if (/^•\s/.test(cleanLine)) div.dataset.listType = "bullet";
+                    if (/^\d+[\.\)]\s/.test(cleanLine)) div.dataset.listType = "number";
+
+                    if (cleanLine.trim() === '') {
+                        div.innerHTML = '<br>';
+                    } else {
+                        div.textContent = cleanLine;
+                    }
                     fragment.appendChild(div);
                 });
-            } else {
-                const div = document.createElement('div');
-                if (currentSuiteMode === 'screenplay') div.setAttribute('data-element', 'action');
-                const sanitizedContent = sanitizeInlineNodes(tempDiv);
-                if (!sanitizedContent.textContent.trim()) {
-                    div.innerHTML = '<br>';
-                } else {
-                    div.appendChild(sanitizedContent);
-                }
-                fragment.appendChild(div);
+                range.insertNode(fragment);
             }
 
-            range.insertNode(fragment);
-        } else if (plainText) {
-            const lines = plainText.split(/\r\n|\r|\n/);
-            const fragment = document.createDocumentFragment();
-
-            lines.forEach((line) => {
-                const div = document.createElement('div');
-                if (currentSuiteMode === 'screenplay') {
-                    div.setAttribute('data-element', 'action');
-                }
-                
-                const leadingTabs = (line.match(/^(\t|\s{4})+/) || [""])[0];
-                const indentLevel = leadingTabs ? Math.floor(leadingTabs.length / (leadingTabs.includes('\t') ? 1 : 4)) : 0;
-                const cleanLine = line.replace(/^(\t|\s{4})+/, "");
-
-                if (indentLevel > 0 && currentSuiteMode === 'narrative') {
-                    div.dataset.indent = indentLevel;
-                    div.style.paddingLeft = `${indentLevel * 30}px`;
-                }
-
-                if (/^•\s/.test(cleanLine)) div.dataset.listType = "bullet";
-                if (/^\d+[\.\)]\s/.test(cleanLine)) div.dataset.listType = "number";
-
-                if (cleanLine.trim() === '') {
-                    div.innerHTML = '<br>';
-                } else {
-                    div.textContent = cleanLine;
-                }
-                fragment.appendChild(div);
-            });
-            range.insertNode(fragment);
-        }
-
-        if (currentSuiteMode === 'narrative') {
-            applyDynamicListSpacing();
-        }
-        updateAnalytics(editor.innerText);
-        saveDocument();
-    });
-
-    // --- NORMALIZED CLIPBOARD EXPORT (PRESERVES RETURNS & INDENTS) ---
-    editor.addEventListener('copy', (e) => {
-        const selection = window.getSelection();
-        if (!selection.rangeCount || selection.isCollapsed) return;
-
-        const selectedBlocks = getSelectedBlocks();
-        let plainTextLines = [];
-        let htmlFragments = [];
-
-        if (selectedBlocks.length > 0) {
-            selectedBlocks.forEach(block => {
-                let text = block.innerText ? block.innerText.replace(/\u200B/g, "") : "";
-                const indent = parseInt(block.dataset.indent || "0", 10);
-                const indentPrefix = "\t".repeat(indent);
-                
-                plainTextLines.push(indentPrefix + text);
-
-                const clone = block.cloneNode(true);
-                clone.style.color = '#000000';
-                clone.style.textShadow = 'none';
-                clone.style.filter = 'none';
-                clone.style.backgroundColor = 'transparent';
-                if (indent > 0) {
-                    clone.style.paddingLeft = `${indent * 30}px`;
-                }
-                htmlFragments.push(clone.outerHTML);
-            });
-        } else {
-            plainTextLines.push(selection.toString().replace(/\u200B/g, ""));
-        }
-
-        const plainText = plainTextLines.join('\n\n');
-        const sanitizedHtml = `<div style="color: #000000 !important; background-color: transparent !important; text-shadow: none !important;">${htmlFragments.join('')}</div>`;
-
-        e.clipboardData.setData('text/plain', plainText);
-        e.clipboardData.setData('text/html', sanitizedHtml);
-        e.preventDefault();
-    });
-
-    // --- FILE RESTORATION DRAG-AND-DROP & INPUT HANDLERS ---
-    restoreDropZone.addEventListener('click', () => {
-        manualFileInput.click();
-    });
-
-    restoreDropZone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        restoreDropZone.classList.add('dragover');
-    });
-
-    restoreDropZone.addEventListener('dragleave', () => {
-        restoreDropZone.classList.remove('dragover');
-    });
-
-    restoreDropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        restoreDropZone.classList.remove('dragover');
-        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-            processRestoredFile(e.dataTransfer.files[0]);
-        }
-    });
-
-    manualFileInput.addEventListener('change', (e) => {
-        if (e.target.files && e.target.files.length > 0) {
-            processRestoredFile(e.target.files[0]);
-        }
-    });
-
-    function processRestoredFile(file) {
-        const fileName = file.name;
-        const reader = new FileReader();
-
-        reader.onload = (e) => {
-            const content = e.target.result;
-            let parsedContent = "";
-            let detectedMode = fileName.endsWith('.fountain') ? 'screenplay' : 'narrative';
-
-            if (fileName.endsWith('.rtf')) {
-                const rawLines = content.replace(/\\par/g, '\n').replace(/\{.*?\}/g, '').replace(/\\[a-z0-9]+/g, '').split('\n');
-                parsedContent = rawLines.map(l => l.trim() ? `<div>${l.trim()}</div>` : '').filter(l => l !== '').join('');
-            } else if (fileName.endsWith('.fountain') || fileName.endsWith('.txt')) {
-                const lines = content.split(/\r?\n/);
-                parsedContent = lines.map(line => {
-                    const trimmed = line.trim();
-                    if (!trimmed) return '<div><br></div>';
-                    if (detectedMode === 'screenplay' && /^(INT\.|EXT\.|EST\.)/i.test(trimmed)) {
-                        return `<div data-element="scene-heading">${trimmed.toUpperCase()}</div>`;
-                    }
-                    return `<div>${trimmed}</div>`;
-                }).join('');
-            } else {
-                parsedContent = content;
+            if (currentSuiteMode === 'narrative') {
+                applyDynamicListSpacing();
             }
-
-            currentSuiteMode = detectedMode;
-            currentLocalFileId = "local_" + Date.now();
-            currentDriveFileId = null;
-
-            editor.innerHTML = parsedContent || "<div>Start typing here...</div>";
-            if (docTitle) docTitle.value = fileName;
-
+            updateAnalytics(editor.innerText);
             saveDocument();
-            configureWorkspaceUIPresentation();
-            pickerModal.style.display = 'none';
-            launchpadView.classList.remove('active');
-            workspaceView.classList.add('active');
-            showZenAlert("Document Restored", `Successfully imported "${fileName}" into ${currentSuiteMode} mode.`);
-        };
+        });
 
-        reader.readAsText(file);
-    }
+        // --- NORMALIZED CLIPBOARD EXPORT (PRESERVES RETURNS & INDENTS) ---
+        editor.addEventListener('copy', (e) => {
+            const selection = window.getSelection();
+            if (!selection.rangeCount || selection.isCollapsed) return;
 
-    // --- UNIFIED KEYBOARD INPUT INTERCEPTOR ENGINE ---
-    editor.addEventListener('keydown', (e) => {
-        const selection = window.getSelection();
+            const selectedBlocks = getSelectedBlocks();
+            let plainTextLines = [];
+            let htmlFragments = [];
 
-        if (currentSuiteMode === 'narrative') {
-            const isModifier = e.metaKey || e.ctrlKey;
-            if (isModifier && e.key.toLowerCase() === 'b') { e.preventDefault(); document.execCommand('bold', false, null); saveDocument(); return; }
-            if (isModifier && e.key.toLowerCase() === 'i') { e.preventDefault(); document.execCommand('italic', false, null); saveDocument(); return; }
+            if (selectedBlocks.length > 0) {
+                selectedBlocks.forEach(block => {
+                    let text = block.innerText ? block.innerText.replace(/\u200B/g, "") : "";
+                    const indent = parseInt(block.dataset.indent || "0", 10);
+                    const indentPrefix = "\t".repeat(indent);
+                    
+                    plainTextLines.push(indentPrefix + text);
+
+                    const clone = block.cloneNode(true);
+                    clone.style.color = '#000000';
+                    clone.style.textShadow = 'none';
+                    clone.style.filter = 'none';
+                    clone.style.backgroundColor = 'transparent';
+                    if (indent > 0) {
+                        clone.style.paddingLeft = `${indent * 30}px`;
+                    }
+                    htmlFragments.push(clone.outerHTML);
+                });
+            } else {
+                plainTextLines.push(selection.toString().replace(/\u200B/g, ""));
+            }
+
+            const plainText = plainTextLines.join('\n\n');
+            const sanitizedHtml = `<div style="color: #000000 !important; background-color: transparent !important; text-shadow: none !important;">${htmlFragments.join('')}</div>`;
+
+            e.clipboardData.setData('text/plain', plainText);
+            e.clipboardData.setData('text/html', sanitizedHtml);
+            e.preventDefault();
+        });
+
+        // --- FILE RESTORATION DRAG-AND-DROP & INPUT HANDLERS ---
+        restoreDropZone.addEventListener('click', () => {
+            manualFileInput.click();
+        });
+
+        restoreDropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            restoreDropZone.classList.add('dragover');
+        });
+
+        restoreDropZone.addEventListener('dragleave', () => {
+            restoreDropZone.classList.remove('dragover');
+        });
+
+        restoreDropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            restoreDropZone.classList.remove('dragover');
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                processRestoredFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        manualFileInput.addEventListener('change', (e) => {
+            if (e.target.files && e.target.files.length > 0) {
+                processRestoredFile(e.target.files[0]);
+            }
+        });
+
+        function processRestoredFile(file) {
+            const fileName = file.name;
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                const content = e.target.result;
+                let parsedContent = "";
+                let detectedMode = fileName.endsWith('.fountain') ? 'screenplay' : 'narrative';
+
+                if (fileName.endsWith('.rtf')) {
+                    const rawLines = content.replace(/\\par/g, '\n').replace(/\{.*?\}/g, '').replace(/\\[a-z0-9]+/g, '').split('\n');
+                    parsedContent = rawLines.map(l => l.trim() ? `<div>${l.trim()}</div>` : '').filter(l => l !== '').join('');
+                } else if (fileName.endsWith('.fountain') || fileName.endsWith('.txt')) {
+                    const lines = content.split(/\r?\n/);
+                    parsedContent = lines.map(line => {
+                        const trimmed = line.trim();
+                        if (!trimmed) return '<div><br></div>';
+                        if (detectedMode === 'screenplay' && /^(INT\.|EXT\.|EST\.)/i.test(trimmed)) {
+                            return `<div data-element="scene-heading">${trimmed.toUpperCase()}</div>`;
+                        }
+                        return `<div>${trimmed}</div>`;
+                    }).join('');
+                } else {
+                    parsedContent = content;
+                }
+
+                currentSuiteMode = detectedMode;
+                currentLocalFileId = "local_" + Date.now();
+                currentDriveFileId = null;
+
+                editor.innerHTML = parsedContent || "<div>Start typing here...</div>";
+                if (docTitle) docTitle.value = fileName;
+
+                saveDocument();
+                configureWorkspaceUIPresentation();
+                pickerModal.style.display = 'none';
+                launchpadView.classList.remove('active');
+                workspaceView.classList.add('active');
+                showZenAlert("Document Restored", `Successfully imported "${fileName}" into ${currentSuiteMode} mode.`);
+            };
+
+            reader.readAsText(file);
+        }
+
+        // --- LOCAL DRAFT LIST RENDERER ---
+        function listLocalFiles() {
+            const db = getLocalDatabase().filter(item => item.suiteMode === currentSuiteMode && !item.driveId);
+            localDocsTarget.innerHTML = '';
+
+            if (db.length > 0) {
+                db.forEach(file => {
+                    const item = document.createElement('div');
+                    item.className = 'doc-list-item';
+                    item.innerHTML = `
+                        <span class="load-trigger" style="flex-grow:1; display:flex; align-items:center; cursor:pointer;">
+                            ${currentSuiteMode === 'screenplay' ? '🎬' : '📄'} ${file.title}
+                        </span>
+                        <div style="display:flex; align-items:center; gap:2px;">
+                            <button class="list-rename-btn" title="Rename Draft">Rename</button>
+                            <button class="list-delete-btn" title="Delete Draft">Delete</button>
+                            <button class="list-download-btn" title="Download Local File">↓</button>
+                        </div>
+                    `;
+                    
+                    item.querySelector('.load-trigger').addEventListener('click', () => {
+                        loadLocalFile(file.id);
+                    });
+
+                    item.querySelector('.list-rename-btn').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        requestDocumentRename(file.id, file.title, 'local');
+                    });
+                    
+                    item.querySelector('.list-download-btn').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        exportDocumentToDisk(file.title, file.content, file.suiteMode);
+                    });
+
+                    item.querySelector('.list-delete-btn').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        requestDocumentDeletion(file.id, file.title, 'local');
+                    });
+                    
+                    localDocsTarget.appendChild(item);
+                });
+            } else {
+                localDocsTarget.innerHTML = `
+                    <div style="font-size:0.75rem; color:var(--text-color); text-shadow:var(--text-glow); padding: 12px 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        No Assets yet. Create Fresh Document to begin!
+                    </div>`;
+            }
+        }
+
+        // --- UNIFIED KEYBOARD INPUT INTERCEPTOR ENGINE ---
+        editor.addEventListener('keydown', (e) => {
+            const selection = window.getSelection();
+
+            if (currentSuiteMode === 'narrative') {
+                const isModifier = e.metaKey || e.ctrlKey;
+                if (isModifier && e.key.toLowerCase() === 'b') { e.preventDefault(); document.execCommand('bold', false, null); saveDocument(); return; }
+                if (isModifier && e.key.toLowerCase() === 'i') { e.preventDefault(); document.execCommand('italic', false, null); saveDocument(); return; }
+
+                if (!selection.rangeCount) return;
+
+                const range = selection.getRangeAt(0);
+                let currentBlock = range.startContainer;
+                if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
+                
+                while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
+                    currentBlock = currentBlock.parentNode;
+                }
+
+                if (currentBlock === editor || !currentBlock) {
+                    document.execCommand('formatBlock', false, 'div');
+                    const updatedSel = window.getSelection();
+                    if (updatedSel && updatedSel.rangeCount) {
+                        currentBlock = updatedSel.getRangeAt(0).startContainer;
+                        if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
+                        while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
+                            currentBlock = currentBlock.parentNode;
+                        }
+                    }
+                }
+
+                if (!currentBlock || currentBlock === editor) return;
+
+                const currentIndent = parseInt(currentBlock.dataset.indent || "0", 10);
+                const hasFirstLineIndent = currentBlock.dataset.firstLineIndent === "true";
+
+                if (e.key === 'Tab') {
+                    e.preventDefault();
+
+                    if (e.shiftKey) {
+                        if (currentIndent > 1) {
+                            const newIndent = currentIndent - 1;
+                            currentBlock.dataset.indent = newIndent;
+                            currentBlock.style.paddingLeft = `${newIndent * 30}px`;
+                        } else if (currentIndent === 1) {
+                            currentBlock.dataset.indent = "0";
+                            currentBlock.style.paddingLeft = "0px";
+                            currentBlock.dataset.firstLineIndent = "true";
+                            currentBlock.style.textIndent = "2em";
+                        } else if (hasFirstLineIndent) {
+                            currentBlock.dataset.firstLineIndent = "false";
+                            currentBlock.style.textIndent = "0px";
+                            currentBlock.style.paddingLeft = "0px";
+                        }
+                    } else {
+                        const text = currentBlock.innerText ? currentBlock.innerText.trim() : "";
+                        const isListPattern = /^(\d+[\.\)]|[-*•])\s/.test(text);
+
+                        if (!hasFirstLineIndent && currentIndent === 0 && !isListPattern) {
+                            currentBlock.dataset.firstLineIndent = "true";
+                            currentBlock.style.textIndent = "2em";
+                            currentBlock.style.paddingLeft = "0px";
+                        } else {
+                            currentBlock.dataset.firstLineIndent = "false";
+                            currentBlock.style.textIndent = "0px";
+                            const newIndent = currentIndent + 1;
+                            currentBlock.dataset.indent = newIndent;
+                            currentBlock.style.paddingLeft = `${newIndent * 30}px`;
+                        }
+                    }
+
+                    applyDynamicListSpacing();
+                    saveDocument();
+                    return;
+                }
+
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+
+                    const textContent = currentBlock.innerText ? currentBlock.innerText.replace(/\u200B/g, "").trim() : "";
+
+                    if (textContent === "" || /^([•\-\*]|\d+[\.\)])\s*$/.test(textContent)) {
+                        if (currentIndent > 0) {
+                            const newIndent = currentIndent - 1;
+                            currentBlock.dataset.indent = newIndent;
+                            currentBlock.dataset.listType = "none";
+                            currentBlock.style.paddingLeft = newIndent > 0 ? `${newIndent * 30}px` : "0px";
+                            currentBlock.innerHTML = "<br>";
+                            applyDynamicListSpacing();
+                            saveDocument();
+                            return;
+                        } else if (hasFirstLineIndent) {
+                            currentBlock.dataset.firstLineIndent = "false";
+                            currentBlock.style.textIndent = "0px";
+                            currentBlock.innerHTML = "<br>";
+                            saveDocument();
+                            return;
+                        }
+                    }
+
+                    const newBlock = document.createElement('div');
+                    newBlock.dataset.firstLineIndent = "false";
+                    newBlock.style.textIndent = "0px";
+
+                    const isList = currentBlock.dataset.listType === 'bullet' || currentBlock.dataset.listType === 'number' || /^([•\-\*]|\d+[\.\)])\s/.test(textContent);
+                    let listPrefix = "";
+
+                    if (isList) {
+                        newBlock.dataset.indent = currentIndent > 0 ? currentIndent : "1";
+                        newBlock.style.paddingLeft = `${parseInt(newBlock.dataset.indent, 10) * 30}px`;
+                        
+                        if (currentBlock.dataset.listType === 'number' || /^\d+[\.\)]\s/.test(textContent)) {
+                            newBlock.dataset.listType = "number";
+                            const match = textContent.match(/^(\d+)[\.\)]\s/);
+                            const nextNum = match ? parseInt(match[1], 10) + 1 : 2;
+                            listPrefix = `${nextNum}. `;
+                        } else {
+                            newBlock.dataset.listType = "bullet";
+                            listPrefix = "• ";
+                        }
+                    } else if (currentIndent > 0) {
+                        newBlock.dataset.indent = currentIndent;
+                        newBlock.style.paddingLeft = `${currentIndent * 30}px`;
+                    } else {
+                        newBlock.dataset.indent = "0";
+                        newBlock.style.paddingLeft = "0px";
+                    }
+
+                    const splitRange = selection.getRangeAt(0).cloneRange();
+                    splitRange.selectNodeContents(currentBlock);
+                    splitRange.setStart(range.startContainer, range.startOffset);
+
+                    const extractedFragment = splitRange.extractContents();
+
+                    if (!extractedFragment.textContent || extractedFragment.textContent.replace(/\u200B/g, "").trim() === "") {
+                        newBlock.innerHTML = listPrefix ? listPrefix : '<br>';
+                    } else {
+                        if (listPrefix) {
+                            newBlock.textContent = listPrefix;
+                            newBlock.appendChild(extractedFragment);
+                        } else {
+                            newBlock.appendChild(extractedFragment);
+                        }
+                    }
+
+                    if (currentBlock.innerHTML.trim() === "" || currentBlock.innerText.replace(/\u200B/g, "").trim() === "") {
+                        currentBlock.innerHTML = '<br>';
+                    }
+
+                    if (currentBlock.nextSibling) {
+                        editor.insertBefore(newBlock, currentBlock.nextSibling);
+                    } else {
+                        editor.appendChild(newBlock);
+                    }
+
+                    const newRange = document.createRange();
+                    if (listPrefix && newBlock.firstChild) {
+                        newRange.setStart(newBlock.firstChild, listPrefix.length);
+                    } else {
+                        newRange.setStart(newBlock, 0);
+                    }
+                    newRange.collapse(true);
+                    selection.removeAllRanges();
+                    selection.addRange(newRange);
+
+                    applyDynamicListSpacing();
+                    saveDocument();
+                    return;
+                }
+                return;
+            }
 
             if (!selection.rangeCount) return;
 
             const range = selection.getRangeAt(0);
             let currentBlock = range.startContainer;
             if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
-            
             while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
                 currentBlock = currentBlock.parentNode;
             }
 
-            if (currentBlock === editor || !currentBlock) {
+            if (currentBlock === editor || !currentBlock || !currentBlock.hasAttribute) {
                 document.execCommand('formatBlock', false, 'div');
-                const updatedSel = window.getSelection();
-                if (updatedSel && updatedSel.rangeCount) {
-                    currentBlock = updatedSel.getRangeAt(0).startContainer;
-                    if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
-                    while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
-                        currentBlock = currentBlock.parentNode;
-                    }
-                }
+                currentBlock = editor.firstElementChild;
+                if (currentBlock) currentBlock.setAttribute('data-element', 'action');
             }
 
-            if (!currentBlock || currentBlock === editor) return;
-
-            const currentIndent = parseInt(currentBlock.dataset.indent || "0", 10);
-            const hasFirstLineIndent = currentBlock.dataset.firstLineIndent === "true";
+            const currentType = currentBlock ? (currentBlock.getAttribute('data-element') || 'action') : 'action';
 
             if (e.key === 'Tab') {
                 e.preventDefault();
+                let nextType = 'character';
 
                 if (e.shiftKey) {
-                    if (currentIndent > 1) {
-                        const newIndent = currentIndent - 1;
-                        currentBlock.dataset.indent = newIndent;
-                        currentBlock.style.paddingLeft = `${newIndent * 30}px`;
-                    } else if (currentIndent === 1) {
-                        currentBlock.dataset.indent = "0";
-                        currentBlock.style.paddingLeft = "0px";
-                        currentBlock.dataset.firstLineIndent = "true";
-                        currentBlock.style.textIndent = "2em";
-                    } else if (hasFirstLineIndent) {
-                        currentBlock.dataset.firstLineIndent = "false";
-                        currentBlock.style.textIndent = "0px";
-                        currentBlock.style.paddingLeft = "0px";
-                    }
+                    if (currentType === 'action') nextType = 'scene-heading';
+                    else if (currentType === 'scene-heading') nextType = 'transition';
+                    else if (currentType === 'transition') nextType = 'dialogue';
+                    else if (currentType === 'dialogue') nextType = 'parenthetical';
+                    else if (currentType === 'parenthetical') nextType = 'character';
+                    else if (currentType === 'character') nextType = 'action';
                 } else {
-                    const text = currentBlock.innerText ? currentBlock.innerText.trim() : "";
-                    const isListPattern = /^(\d+[\.\)]|[-*•])\s/.test(text);
-
-                    if (!hasFirstLineIndent && currentIndent === 0 && !isListPattern) {
-                        currentBlock.dataset.firstLineIndent = "true";
-                        currentBlock.style.textIndent = "2em";
-                        currentBlock.style.paddingLeft = "0px";
-                    } else {
-                        currentBlock.dataset.firstLineIndent = "false";
-                        currentBlock.style.textIndent = "0px";
-                        const newIndent = currentIndent + 1;
-                        currentBlock.dataset.indent = newIndent;
-                        currentBlock.style.paddingLeft = `${newIndent * 30}px`;
-                    }
+                    if (currentType === 'action') nextType = 'character';
+                    else if (currentType === 'character') nextType = 'parenthetical';
+                    else if (currentType === 'parenthetical') nextType = 'dialogue';
+                    else if (currentType === 'dialogue') nextType = 'transition';
+                    else if (currentType === 'transition') nextType = 'scene-heading';
+                    else if (currentType === 'scene-heading') nextType = 'action';
                 }
 
-                applyDynamicListSpacing();
-                saveDocument();
-                return;
+                if (currentBlock) {
+                    currentBlock.setAttribute('data-element', nextType);
+                    updateLiveElementTag();
+                    saveDocument();
+                }
             }
 
             if (e.key === 'Enter') {
                 e.preventDefault();
+                let targetType = 'action';
 
-                const textContent = currentBlock.innerText ? currentBlock.innerText.replace(/\u200B/g, "").trim() : "";
+                if (currentType === 'scene-heading') targetType = 'action';
+                else if (currentType === 'action') targetType = 'action';
+                else if (currentType === 'character') targetType = 'dialogue';
+                else if (currentType === 'dialogue') targetType = 'character';
+                else if (currentType === 'parenthetical') targetType = 'dialogue';
+                else if (currentType === 'transition') targetType = 'scene-heading';
 
-                if (textContent === "" || /^([•\-\*]|\d+[\.\)])\s*$/.test(textContent)) {
-                    if (currentIndent > 0) {
-                        const newIndent = currentIndent - 1;
-                        currentBlock.dataset.indent = newIndent;
-                        currentBlock.dataset.listType = "none";
-                        currentBlock.style.paddingLeft = newIndent > 0 ? `${newIndent * 30}px` : "0px";
-                        currentBlock.innerHTML = "<br>";
-                        applyDynamicListSpacing();
-                        saveDocument();
-                        return;
-                    } else if (hasFirstLineIndent) {
-                        currentBlock.dataset.firstLineIndent = "false";
-                        currentBlock.style.textIndent = "0px";
-                        currentBlock.innerHTML = "<br>";
-                        saveDocument();
-                        return;
-                    }
-                }
-
-                const newBlock = document.createElement('div');
-                newBlock.dataset.firstLineIndent = "false";
-                newBlock.style.textIndent = "0px";
-
-                const isList = currentBlock.dataset.listType === 'bullet' || currentBlock.dataset.listType === 'number' || /^([•\-\*]|\d+[\.\)])\s/.test(textContent);
-                let listPrefix = "";
-
-                if (isList) {
-                    newBlock.dataset.indent = currentIndent > 0 ? currentIndent : "1";
-                    newBlock.style.paddingLeft = `${parseInt(newBlock.dataset.indent, 10) * 30}px`;
-                    
-                    if (currentBlock.dataset.listType === 'number' || /^\d+[\.\)]\s/.test(textContent)) {
-                        newBlock.dataset.listType = "number";
-                        const match = textContent.match(/^(\d+)[\.\)]\s/);
-                        const nextNum = match ? parseInt(match[1], 10) + 1 : 2;
-                        listPrefix = `${nextNum}. `;
-                    } else {
-                        newBlock.dataset.listType = "bullet";
-                        listPrefix = "• ";
-                    }
-                } else if (currentIndent > 0) {
-                    newBlock.dataset.indent = currentIndent;
-                    newBlock.style.paddingLeft = `${currentIndent * 30}px`;
-                } else {
-                    newBlock.dataset.indent = "0";
-                    newBlock.style.paddingLeft = "0px";
-                }
-
+                const nextBlock = document.createElement('div');
+                nextBlock.setAttribute('data-element', targetType);
+                
                 const splitRange = selection.getRangeAt(0).cloneRange();
                 splitRange.selectNodeContents(currentBlock);
                 splitRange.setStart(range.startContainer, range.startOffset);
-
                 const extractedFragment = splitRange.extractContents();
 
                 if (!extractedFragment.textContent || extractedFragment.textContent.replace(/\u200B/g, "").trim() === "") {
-                    newBlock.innerHTML = listPrefix ? listPrefix : '<br>';
+                    nextBlock.innerHTML = '<br>';
                 } else {
-                    if (listPrefix) {
-                        newBlock.textContent = listPrefix;
-                        newBlock.appendChild(extractedFragment);
-                    } else {
-                        newBlock.appendChild(extractedFragment);
-                    }
+                    nextBlock.appendChild(extractedFragment);
                 }
 
                 if (currentBlock.innerHTML.trim() === "" || currentBlock.innerText.replace(/\u200B/g, "").trim() === "") {
                     currentBlock.innerHTML = '<br>';
                 }
 
-                if (currentBlock.nextSibling) {
-                    editor.insertBefore(newBlock, currentBlock.nextSibling);
+                if (currentBlock && currentBlock.parentNode) {
+                    currentBlock.parentNode.insertBefore(nextBlock, currentBlock.nextSibling);
                 } else {
-                    editor.appendChild(newBlock);
+                    editor.appendChild(nextBlock);
                 }
 
                 const newRange = document.createRange();
-                if (listPrefix && newBlock.firstChild) {
-                    newRange.setStart(newBlock.firstChild, listPrefix.length);
-                } else {
-                    newRange.setStart(newBlock, 0);
-                }
+                newRange.setStart(nextBlock, 0);
                 newRange.collapse(true);
                 selection.removeAllRanges();
                 selection.addRange(newRange);
 
-                applyDynamicListSpacing();
-                saveDocument();
-                return;
-            }
-            return;
-        }
-
-        if (!selection.rangeCount) return;
-
-        const range = selection.getRangeAt(0);
-        let currentBlock = range.startContainer;
-        if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
-        while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
-            currentBlock = currentBlock.parentNode;
-        }
-
-        if (currentBlock === editor || !currentBlock || !currentBlock.hasAttribute) {
-            document.execCommand('formatBlock', false, 'div');
-            currentBlock = editor.firstElementChild;
-            if (currentBlock) currentBlock.setAttribute('data-element', 'action');
-        }
-
-        const currentType = currentBlock ? (currentBlock.getAttribute('data-element') || 'action') : 'action';
-
-        if (e.key === 'Tab') {
-            e.preventDefault();
-            let nextType = 'character';
-
-            if (e.shiftKey) {
-                if (currentType === 'action') nextType = 'scene-heading';
-                else if (currentType === 'scene-heading') nextType = 'transition';
-                else if (currentType === 'transition') nextType = 'dialogue';
-                else if (currentType === 'dialogue') nextType = 'parenthetical';
-                else if (currentType === 'parenthetical') nextType = 'character';
-                else if (currentType === 'character') nextType = 'action';
-            } else {
-                if (currentType === 'action') nextType = 'character';
-                else if (currentType === 'character') nextType = 'parenthetical';
-                else if (currentType === 'parenthetical') nextType = 'dialogue';
-                else if (currentType === 'dialogue') nextType = 'transition';
-                else if (currentType === 'transition') nextType = 'scene-heading';
-                else if (currentType === 'scene-heading') nextType = 'action';
-            }
-
-            if (currentBlock) {
-                currentBlock.setAttribute('data-element', nextType);
                 updateLiveElementTag();
                 saveDocument();
             }
+        });
+
+        editor.addEventListener('keyup', () => {
+            if (currentSuiteMode === 'screenplay') updateLiveElementTag();
+        });
+        editor.addEventListener('click', () => {
+            if (currentSuiteMode === 'screenplay') updateLiveElementTag();
+        });
+
+        function updateLiveElementTag() {
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+            let currentBlock = selection.getRangeAt(0).startContainer;
+            if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
+            while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
+                currentBlock = currentBlock.parentNode;
+            }
+            if (currentBlock && currentBlock.hasAttribute && currentBlock.hasAttribute('data-element')) {
+                const tag = currentBlock.getAttribute('data-element');
+                elementStatusTag.textContent = `Element: ${tag.replace('-', ' ')}`;
+            } else {
+                elementStatusTag.textContent = "Element: Action";
+            }
         }
 
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            let targetType = 'action';
-
-            if (currentType === 'scene-heading') targetType = 'action';
-            else if (currentType === 'action') targetType = 'action';
-            else if (currentType === 'character') targetType = 'dialogue';
-            else if (currentType === 'dialogue') targetType = 'character';
-            else if (currentType === 'parenthetical') targetType = 'dialogue';
-            else if (currentType === 'transition') targetType = 'scene-heading';
-
-            const nextBlock = document.createElement('div');
-            nextBlock.setAttribute('data-element', targetType);
+        function highlightFirstCharacterAppearance(characterName) {
+            if (!characterName || characterName.trim() === "") return;
             
-            const splitRange = selection.getRangeAt(0).cloneRange();
-            splitRange.selectNodeContents(currentBlock);
-            splitRange.setStart(range.startContainer, range.startOffset);
-            const extractedFragment = splitRange.extractContents();
+            const cleanName = characterName.trim().toUpperCase();
+            const blocks = Array.from(editor.children);
+            const nameRegex = new RegExp(`\\b${cleanName}\\b`, 'i');
 
-            if (!extractedFragment.textContent || extractedFragment.textContent.replace(/\u200B/g, "").trim() === "") {
-                nextBlock.innerHTML = '<br>';
-            } else {
-                nextBlock.appendChild(extractedFragment);
-            }
-
-            if (currentBlock.innerHTML.trim() === "" || currentBlock.innerText.replace(/\u200B/g, "").trim() === "") {
-                currentBlock.innerHTML = '<br>';
-            }
-
-            if (currentBlock && currentBlock.parentNode) {
-                currentBlock.parentNode.insertBefore(nextBlock, currentBlock.nextSibling);
-            } else {
-                editor.appendChild(nextBlock);
-            }
-
-            const newRange = document.createRange();
-            newRange.setStart(nextBlock, 0);
-            newRange.collapse(true);
-            selection.removeAllRanges();
-            selection.addRange(newRange);
-
-            updateLiveElementTag();
-            saveDocument();
-        }
-    });
-
-    editor.addEventListener('keyup', () => {
-        if (currentSuiteMode === 'screenplay') updateLiveElementTag();
-    });
-    editor.addEventListener('click', () => {
-        if (currentSuiteMode === 'screenplay') updateLiveElementTag();
-    });
-
-    function updateLiveElementTag() {
-        const selection = window.getSelection();
-        if (!selection.rangeCount) return;
-        let currentBlock = selection.getRangeAt(0).startContainer;
-        if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
-        while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
-            currentBlock = currentBlock.parentNode;
-        }
-        if (currentBlock && currentBlock.hasAttribute && currentBlock.hasAttribute('data-element')) {
-            const tag = currentBlock.getAttribute('data-element');
-            elementStatusTag.textContent = `Element: ${tag.replace('-', ' ')}`;
-        } else {
-            elementStatusTag.textContent = "Element: Action";
-        }
-    }
-
-    function highlightFirstCharacterAppearance(characterName) {
-        if (!characterName || characterName.trim() === "") return;
-        
-        const cleanName = characterName.trim().toUpperCase();
-        const blocks = Array.from(editor.children);
-        const nameRegex = new RegExp(`\\b${cleanName}\\b`, 'i');
-
-        for (let block of blocks) {
-            if (block.getAttribute('data-element') === 'action') {
-                const text = block.innerText;
-                if (nameRegex.test(text)) {
-                    const updatedText = text.replace(nameRegex, (match) => match.toUpperCase());
-                    if (text !== updatedText) {
-                        block.innerText = updatedText;
+            for (let block of blocks) {
+                if (block.getAttribute('data-element') === 'action') {
+                    const text = block.innerText;
+                    if (nameRegex.test(text)) {
+                        const updatedText = text.replace(nameRegex, (match) => match.toUpperCase());
+                        if (text !== updatedText) {
+                            block.innerText = updatedText;
+                        }
+                        break; 
                     }
-                    break; 
                 }
             }
         }
-    }
 
-    // --- DOM-AWARE RTF CONVERTER ENGINE ---
-    function convertHtmlToRtf(htmlContent) {
-        const temp = document.createElement('div');
-        temp.innerHTML = htmlContent;
+        // --- DOM-AWARE RTF CONVERTER ENGINE ---
+        function convertHtmlToRtf(htmlContent) {
+            const temp = document.createElement('div');
+            temp.innerHTML = htmlContent;
 
-        let rtf = "{\\rtf1\\ansi\\deff0 {\\fonttbl{\\f0 JetBrains Mono;}}\n";
-        rtf += "\\viewkind4\\uc1\\dscr "; 
+            let rtf = "{\\rtf1\\ansi\\deff0 {\\fonttbl{\\f0 JetBrains Mono;}}\n";
+            rtf += "\\viewkind4\\uc1\\dscr "; 
 
-        function parseNode(node) {
-            if (node.nodeType === Node.TEXT_NODE) {
-                return node.textContent
-                    .replace(/\u200B/g, "")
-                    .replace(/\\/g, "\\\\")
-                    .replace(/\{/g, "\\{")
-                    .replace(/\}/g, "\\}");
-            }
-
-            if (node.nodeType === Node.ELEMENT_NODE) {
-                const tag = node.tagName.toLowerCase();
-                const inner = Array.from(node.childNodes).map(parseNode).join('');
-
-                if (tag === 'b' || tag === 'strong') {
-                    return `\\b ${inner}\\b0 `;
+            function parseNode(node) {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    return node.textContent
+                        .replace(/\u200B/g, "")
+                        .replace(/\\/g, "\\\\")
+                        .replace(/\{/g, "\\{")
+                        .replace(/\}/g, "\\}");
                 }
-                if (tag === 'i' || tag === 'em') {
-                    return `\\i ${inner}\\i0 `;
-                }
-                if (tag === 'br') {
-                    return "\\line ";
-                }
-                if (tag === 'div' || tag === 'p') {
-                    const indentAttr = parseInt(node.dataset.indent || "0", 10);
-                    const stylePadding = parseInt(node.style.paddingLeft || "0", 10);
-                    const indentFromStyle = Math.round(stylePadding / 30);
-                    const indentLevel = Math.max(indentAttr, indentFromStyle);
 
-                    const indentTwips = indentLevel * 720; 
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                    const tag = node.tagName.toLowerCase();
+                    const inner = Array.from(node.childNodes).map(parseNode).join('');
 
-                    let spaceBeforeTwips = 0;
-                    if (node.style.marginTop === "1.25em") {
-                        spaceBeforeTwips = 180; 
+                    if (tag === 'b' || tag === 'strong') {
+                        return `\\b ${inner}\\b0 `;
+                    }
+                    if (tag === 'i' || tag === 'em') {
+                        return `\\i ${inner}\\i0 `;
+                    }
+                    if (tag === 'br') {
+                        return "\\line ";
+                    }
+                    if (tag === 'div' || tag === 'p') {
+                        const indentAttr = parseInt(node.dataset.indent || "0", 10);
+                        const stylePadding = parseInt(node.style.paddingLeft || "0", 10);
+                        const indentFromStyle = Math.round(stylePadding / 30);
+                        const indentLevel = Math.max(indentAttr, indentFromStyle);
+
+                        const indentTwips = indentLevel * 720; 
+
+                        let spaceBeforeTwips = 0;
+                        if (node.style.marginTop === "1.25em") {
+                            spaceBeforeTwips = 180; 
+                        }
+
+                        let spaceAfterTwips = 216; 
+                        if (node.style.marginBottom === "0.7em" || node.style.marginBottom === "0.75em") {
+                            spaceAfterTwips = 100; 
+                        }
+
+                        return `\\par\\pard\\f0\\fs24\\sb${spaceBeforeTwips}\\sa${spaceAfterTwips}\\li${indentTwips} ${inner}`;
                     }
 
-                    let spaceAfterTwips = 216; 
-                    if (node.style.marginBottom === "0.7em" || node.style.marginBottom === "0.75em") {
-                        spaceAfterTwips = 100; 
-                    }
-
-                    return `\\par\\pard\\f0\\fs24\\sb${spaceBeforeTwips}\\sa${spaceAfterTwips}\\li${indentTwips} ${inner}`;
+                    return inner;
                 }
-
-                return inner;
-            }
-            return "";
-        }
-
-        const compiledRtfBody = Array.from(temp.childNodes).map(parseNode).join('');
-        rtf += compiledRtfBody + "}";
-        return rtf;
-    }
-
-    function scrollToCursor() {
-        const selection = window.getSelection();
-        if (!selection.rangeCount) return;
-
-        const range = selection.getRangeAt(0);
-        let currentBlock = range.startContainer;
-        if (currentBlock.nodeType === Node.TEXT_NODE) {
-            currentBlock = currentBlock.parentNode;
-        }
-
-        if (currentBlock && currentBlock !== editor && typeof currentBlock.scrollIntoView === 'function') {
-            currentBlock.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-        }
-    }
-
-    // --- EXPORTER ENGINE ---
-    function exportDocumentToDisk(title, content, mode) {
-        try {
-            let processedText = "";
-            let fileExtension = mode === 'screenplay' ? '.fountain' : '.rtf';
-            let cleanTitle = title ? title.trim() : "untitled";
-
-            if (!cleanTitle.toLowerCase().endsWith(fileExtension)) {
-                cleanTitle = cleanTitle.replace(/\.[^/.]+$/, "") + fileExtension;
+                return "";
             }
 
-            if (mode === 'narrative') {
-                processedText = convertHtmlToRtf(content);
-            } else {
-                const parserNode = document.createElement('div');
-                parserNode.innerHTML = content;
-                const blocks = Array.from(parserNode.children);
+            const compiledRtfBody = Array.from(temp.childNodes).map(parseNode).join('');
+            rtf += compiledRtfBody + "}";
+            return rtf;
+        }
 
-                if (blocks && blocks.length > 0) {
-                    processedText = blocks.map(block => {
-                        if (!block) return "";
-                        const type = (typeof block.getAttribute === 'function') ? (block.getAttribute('data-element') || 'action') : 'action';
-                        const text = block.innerText ? block.innerText.replace(/\u200B/g, "").trim() : "";
-                        if (!text) return "";
-                        
-                        if (type === 'scene-heading' || type === 'character' || type === 'transition') return text.toUpperCase();
-                        if (type === 'parenthetical') return text.startsWith('(') ? text : `(${text})`;
-                        return text;
-                    }).filter(line => line !== "").join('\n\n');
-                }
-                if (!processedText.trim()) {
-                    processedText = parserNode.innerText ? parserNode.innerText.replace(/\u200B/g, "").trim() : content;
-                }
+        function scrollToCursor() {
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+
+            const range = selection.getRangeAt(0);
+            let currentBlock = range.startContainer;
+            if (currentBlock.nodeType === Node.TEXT_NODE) {
+                currentBlock = currentBlock.parentNode;
             }
 
-            const mimeType = mode === 'narrative' ? 'application/rtf' : 'text/plain;charset=utf-8';
-            const blob = new Blob([processedText], { type: mimeType });
-            const tempLink = document.createElement('a');
-            tempLink.href = URL.createObjectURL(blob);
-            tempLink.download = cleanTitle;
-            
-            document.body.appendChild(tempLink);
-            tempLink.click();
-            document.body.removeChild(tempLink);
-            
-        } catch (error) {
-            showZenAlert("Download Engine Error", error.message);
+            if (currentBlock && currentBlock !== editor && typeof currentBlock.scrollIntoView === 'function') {
+                currentBlock.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            }
         }
-    }
 
-    function requestDocumentRename(fileId, currentTitle, storageType) {
-        zenAlertTitle.textContent = "Rename Document";
-        zenAlertText.textContent = `Enter a new file title for "${currentTitle}":`;
-        
-        const bodyWell = document.getElementById('alert-interactive-body');
-        bodyWell.innerHTML = `<input type="text" id="rename-title-input" class="alert-input" value="${currentTitle}">`;
-        
-        const actionsWell = document.getElementById('alert-actions-well');
-        actionsWell.innerHTML = `
-            <button class="alert-btn" id="confirm-rename-execute">Save Name</button>
-            <button class="alert-btn" onclick="closeZenAlert()">Cancel</button>
-        `;
-        
-        zenAlertOverlay.classList.add('active');
-        const inputEl = document.getElementById('rename-title-input');
-        inputEl.focus();
-        inputEl.select();
+        // --- EXPORTER ENGINE ---
+        function exportDocumentToDisk(title, content, mode) {
+            try {
+                let processedText = "";
+                let fileExtension = mode === 'screenplay' ? '.fountain' : '.rtf';
+                let cleanTitle = title ? title.trim() : "untitled";
 
-        document.getElementById('confirm-rename-execute').onclick = () => {
-            const newTitle = inputEl.value.trim();
-            if (newTitle && newTitle !== currentTitle) {
-                if (storageType === 'local') {
-                    executeLocalRename(fileId, newTitle);
+                if (!cleanTitle.toLowerCase().endsWith(fileExtension)) {
+                    cleanTitle = cleanTitle.replace(/\.[^/.]+$/, "") + fileExtension;
+                }
+
+                if (mode === 'narrative') {
+                    processedText = convertHtmlToRtf(content);
                 } else {
-                    executeCloudRename(fileId, newTitle);
-                }
-            }
-            closeZenAlert();
-        };
-    }
+                    const parserNode = document.createElement('div');
+                    parserNode.innerHTML = content;
+                    const blocks = Array.from(parserNode.children);
 
-    function executeLocalRename(fileId, newTitle) {
-        let db = getLocalDatabase();
-        const item = db.find(i => i.id === fileId);
-        if (item) {
-            item.title = newTitle;
+                    if (blocks && blocks.length > 0) {
+                        processedText = blocks.map(block => {
+                            if (!block) return "";
+                            const type = (typeof block.getAttribute === 'function') ? (block.getAttribute('data-element') || 'action') : 'action';
+                            const text = block.innerText ? block.innerText.replace(/\u200B/g, "").trim() : "";
+                            if (!text) return "";
+                            
+                            if (type === 'scene-heading' || type === 'character' || type === 'transition') return text.toUpperCase();
+                            if (type === 'parenthetical') return text.startsWith('(') ? text : `(${text})`;
+                            return text;
+                        }).filter(line => line !== "").join('\n\n');
+                    }
+                    if (!processedText.trim()) {
+                        processedText = parserNode.innerText ? parserNode.innerText.replace(/\u200B/g, "").trim() : content;
+                    }
+                }
+
+                const mimeType = mode === 'narrative' ? 'application/rtf' : 'text/plain;charset=utf-8';
+                const blob = new Blob([processedText], { type: mimeType });
+                const tempLink = document.createElement('a');
+                tempLink.href = URL.createObjectURL(blob);
+                tempLink.download = cleanTitle;
+                
+                document.body.appendChild(tempLink);
+                tempLink.click();
+                document.body.removeChild(tempLink);
+                
+            } catch (error) {
+                showZenAlert("Download Engine Error", error.message);
+            }
+        }
+
+        function requestDocumentRename(fileId, currentTitle, storageType) {
+            zenAlertTitle.textContent = "Rename Document";
+            zenAlertText.textContent = `Enter a new file title for "${currentTitle}":`;
+            
+            const bodyWell = document.getElementById('alert-interactive-body');
+            bodyWell.innerHTML = `<input type="text" id="rename-title-input" class="alert-input" value="${currentTitle}">`;
+            
+            const actionsWell = document.getElementById('alert-actions-well');
+            actionsWell.innerHTML = `
+                <button class="alert-btn" id="confirm-rename-execute">Save Name</button>
+                <button class="alert-btn" onclick="closeZenAlert()">Cancel</button>
+            `;
+            
+            zenAlertOverlay.classList.add('active');
+            const inputEl = document.getElementById('rename-title-input');
+            inputEl.focus();
+            inputEl.select();
+
+            document.getElementById('confirm-rename-execute').onclick = () => {
+                const newTitle = inputEl.value.trim();
+                if (newTitle && newTitle !== currentTitle) {
+                    if (storageType === 'local') {
+                        executeLocalRename(fileId, newTitle);
+                    } else {
+                        executeCloudRename(fileId, newTitle);
+                    }
+                }
+                closeZenAlert();
+            };
+        }
+
+        function executeLocalRename(fileId, newTitle) {
+            let db = getLocalDatabase();
+            const item = db.find(i => i.id === fileId);
+            if (item) {
+                item.title = newTitle;
+                localStorage.setItem('zensuite_local_db', JSON.stringify(db));
+                
+                if (currentLocalFileId === fileId && docTitle) {
+                    docTitle.value = newTitle;
+                }
+                listLocalFiles();
+            }
+        }
+
+        function executeCloudRename(fileId, newTitle) {
+            if (!accessToken) return;
+            saveIndicator.textContent = "• Renaming Cloud Asset...";
+
+            fetch(`https://www.googleapis.com/drive/v3/files/${fileId}`, {
+                method: 'PATCH',
+                headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: newTitle })
+            })
+            .then(res => {
+                if (res.status === 401 || res.status === 403) { handleAuthError(); throw new Error("Auth expired"); }
+                return res.json();
+            })
+            .then(() => {
+                saveIndicator.textContent = "• File Renamed";
+                if (currentDriveFileId === fileId && docTitle) {
+                    docTitle.value = newTitle;
+                }
+                listDriveFiles();
+            })
+            .catch(() => showZenAlert("Cloud Error", "Failed to update filename on Google Drive."));
+        }
+
+        function requestDocumentDeletion(fileId, title, storageType) {
+            const storageLabel = storageType === 'cloud' ? 'Google Cloud Drive storage directory' : 'browser sandbox partition';
+            const confirmationText = `Are you absolutely certain you want to permanently delete "${title}"? This process will wipe the file from your ${storageLabel} and cannot be undone.`;
+            
+            zenAlertTitle.textContent = "Confirm Permanent Deletion?";
+            zenAlertText.textContent = confirmationText;
+            document.getElementById('alert-interactive-body').innerHTML = "";
+            
+            const actionsWell = document.getElementById('alert-actions-well');
+            actionsWell.innerHTML = `
+                <button class="alert-btn" id="confirm-delete-execute" style="border-color: #ef4444; color: #ef4444;">Permanently Delete</button>
+                <button class="alert-btn" onclick="closeZenAlert()">Cancel</button>
+            `;
+            
+            zenAlertOverlay.classList.add('active');
+
+            document.getElementById('confirm-delete-execute').onclick = () => {
+                if (storageType === 'local') {
+                    executeLocalWipe(fileId);
+                } else if (storageType === 'cloud') {
+                    executeCloudWipe(fileId);
+                }
+                closeZenAlert();
+            };
+        }
+
+        function executeLocalWipe(fileId) {
+            let db = getLocalDatabase();
+            db = db.filter(item => item.id !== fileId);
             localStorage.setItem('zensuite_local_db', JSON.stringify(db));
             
-            if (currentLocalFileId === fileId && docTitle) {
-                docTitle.value = newTitle;
-            }
-            listLocalFiles();
-        }
-    }
-
-    function executeCloudRename(fileId, newTitle) {
-        if (!accessToken) return;
-        saveIndicator.textContent = "• Renaming Cloud Asset...";
-
-        fetch(`https://www.googleapis.com/drive/v3/files/${fileId}`, {
-            method: 'PATCH',
-            headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: newTitle })
-        })
-        .then(res => {
-            if (res.status === 401 || res.status === 403) { handleAuthError(); throw new Error("Auth expired"); }
-            return res.json();
-        })
-        .then(() => {
-            saveIndicator.textContent = "• File Renamed";
-            if (currentDriveFileId === fileId && docTitle) {
-                docTitle.value = newTitle;
-            }
-            listDriveFiles();
-        })
-        .catch(() => showZenAlert("Cloud Error", "Failed to update filename on Google Drive."));
-    }
-
-    function requestDocumentDeletion(fileId, title, storageType) {
-        const storageLabel = storageType === 'cloud' ? 'Google Cloud Drive storage directory' : 'browser sandbox partition';
-        const confirmationText = `Are you absolutely certain you want to permanently delete "${title}"? This process will wipe the file from your ${storageLabel} and cannot be undone.`;
-        
-        zenAlertTitle.textContent = "Confirm Permanent Deletion?";
-        zenAlertText.textContent = confirmationText;
-        document.getElementById('alert-interactive-body').innerHTML = "";
-        
-        const actionsWell = document.getElementById('alert-actions-well');
-        actionsWell.innerHTML = `
-            <button class="alert-btn" id="confirm-delete-execute" style="border-color: #ef4444; color: #ef4444;">Permanently Delete</button>
-            <button class="alert-btn" onclick="closeZenAlert()">Cancel</button>
-        `;
-        
-        zenAlertOverlay.classList.add('active');
-
-        document.getElementById('confirm-delete-execute').onclick = () => {
-            if (storageType === 'local') {
-                executeLocalWipe(fileId);
-            } else if (storageType === 'cloud') {
-                executeCloudWipe(fileId);
-            }
-            closeZenAlert();
-        };
-    }
-
-    function executeLocalWipe(fileId) {
-        let db = getLocalDatabase();
-        db = db.filter(item => item.id !== fileId);
-        localStorage.setItem('zensuite_local_db', JSON.stringify(db));
-        
-        if (currentLocalFileId === fileId) {
-            editor.innerHTML = currentSuiteMode === 'screenplay' ? '<div data-element="scene-heading">INT. NEW SCENE - DAY</div>' : "";
-            if (docTitle) docTitle.value = currentSuiteMode === 'screenplay' ? "untitledScript.fountain" : "untitledProse.rtf";
-            currentLocalFileId = "local_" + Date.now();
-            currentDriveFileId = null;
-            updateUrlParameters(null, null);
-            pickerModifierSync();
-        }
-        listLocalFiles();
-    }
-
-    function executeCloudWipe(fileId) {
-        if (!accessToken) return;
-        saveIndicator.textContent = "• Transmitting Wipe Command...";
-        
-        fetch(`https://www.googleapis.com/drive/v3/files/${fileId}`, {
-            method: 'DELETE',
-            headers: { 'Authorization': `Bearer ${accessToken}` }
-        })
-        .then(res => {
-            if (res.status === 401 || res.status === 403) { handleAuthError(); throw new Error("Auth expired"); }
-            saveIndicator.textContent = "• Cloud Archive Updated";
-            if (currentDriveFileId === fileId) {
+            if (currentLocalFileId === fileId) {
+                editor.innerHTML = currentSuiteMode === 'screenplay' ? '<div data-element="scene-heading">INT. NEW SCENE - DAY</div>' : "";
+                if (docTitle) docTitle.value = currentSuiteMode === 'screenplay' ? "untitledScript.fountain" : "untitledProse.rtf";
+                currentLocalFileId = "local_" + Date.now();
                 currentDriveFileId = null;
                 updateUrlParameters(null, null);
                 pickerModifierSync();
             }
-            listDriveFiles();
-        })
-        .catch(() => showZenAlert("Cloud Error", "Failed to clear item from Google Drive directories."));
-    }
-
-    // --- LOCAL METADATA STORAGE SYSTEM ---
-    function getLocalDatabase() {
-        const raw = localStorage.getItem('zensuite_local_db');
-        return raw ? JSON.parse(raw) : [];
-    }
-
-    function saveToLocalDatabase(fileObj) {
-        let db = getLocalDatabase();
-        const index = db.findIndex(item => item.id === fileObj.id);
-        if (index !== -1) {
-            db[index] = fileObj; 
-        } else {
-            if (db.filter(i => i.suiteMode === currentSuiteMode).length >= 10) return;
-            db.unshift(fileObj); 
-        }
-        localStorage.setItem('zensuite_local_db', JSON.stringify(db));
-    }
-
-    function listLocalFiles() {
-        const db = getLocalDatabase().filter(item => item.suiteMode === currentSuiteMode && !item.driveId);
-        localDocsTarget.innerHTML = '';
-
-        if (db.length > 0) {
-            db.forEach(file => {
-                const item = document.createElement('div');
-                item.className = 'doc-list-item';
-                item.innerHTML = `
-                    <span class="load-trigger" style="flex-grow:1; display:flex; align-items:center; cursor:pointer;">
-                        ${currentSuiteMode === 'screenplay' ? '🎬' : '📄'} ${file.title}
-                    </span>
-                    <div style="display:flex; align-items:center; gap:2px;">
-                        <button class="list-rename-btn" title="Rename Draft">Rename</button>
-                        <button class="list-delete-btn" title="Delete Draft">Delete</button>
-                        <button class="list-download-btn" title="Download Local File">↓</button>
-                    </div>
-                `;
-                
-                item.querySelector('.load-trigger').addEventListener('click', () => {
-                    loadLocalFile(file.id);
-                });
-
-                item.querySelector('.list-rename-btn').addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    requestDocumentRename(file.id, file.title, 'local');
-                });
-                
-                item.querySelector('.list-download-btn').addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    exportDocumentToDisk(file.title, file.content, file.suiteMode);
-                });
-
-                item.querySelector('.list-delete-btn').addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    requestDocumentDeletion(file.id, file.title, 'local');
-                });
-                
-                localDocsTarget.appendChild(item);
-            });
-        } else {
-            localDocsTarget.innerHTML = `
-                <div style="font-size:0.78rem; color:var(--text-color); text-shadow:var(--text-glow); padding:10px 4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                    No Assets yet. Create Fresh Document to begin!
-                </div>`;
-        }
-    }
-
-    function loadLocalFile(fileId) {
-        const db = getLocalDatabase();
-        const file = db.find(item => item.id === fileId);
-        if (!file) return;
-
-        currentSuiteMode = file.suiteMode || 'narrative';
-        configureWorkspaceUIPresentation();
-
-        editor.innerHTML = file.content;
-        if (docTitle) docTitle.value = file.title;
-        currentLocalFileId = file.id;
-        currentDriveFileId = file.driveId || null;
-
-        localStorage.setItem('zensuite_active_suite_mode', currentSuiteMode);
-        localStorage.setItem(`zensuite_current_active_${currentSuiteMode}_id`, fileId);
-        localStorage.setItem('zensuite_view_state', 'workspace');
-        
-        updateUrlParameters(fileId, currentSuiteMode);
-        updateAnalytics(editor.innerText);
-        pickerModifierSync();
-        if (currentSuiteMode === 'screenplay') updateLiveElementTag();
-        renderGhostMarginGuide();
-        
-        pickerModal.style.display = 'none';
-        launchpadView.classList.remove('active');
-        workspaceView.classList.add('active');
-    }
-
-    function pickerModifierSync() {
-        if (currentDriveFileId && accessToken) {
-            syncDot.classList.add('connected');
-            if (cloudStatus) cloudStatus.textContent = "Cloud: Connected";
-        } else {
-            syncDot.classList.remove('connected');
-            if (cloudStatus) cloudStatus.textContent = accessToken ? "Cloud: Ready" : "Cloud: Local Only";
-        }
-    }
-
-    // --- GOOGLE OAUTH & STATE HYDRATION ENGINE ---
-    window.onload = function() {
-        requestPersistentStorage();
-
-        const cachedTheme = localStorage.getItem('zensuite_saved_theme');
-        if (cachedTheme) { applyAppTheme(cachedTheme); }
-
-        const savedBackupState = localStorage.getItem('zensuite_autobackup_enabled');
-        if (savedBackupState === 'true') {
-            isAutoBackupEnabled = true;
-            document.getElementById('auto-backup-toggle').checked = true;
-        }
-        const savedBackupInterval = localStorage.getItem('zensuite_autobackup_interval');
-        if (savedBackupInterval) {
-            autoBackupMinutes = parseInt(savedBackupInterval, 10);
-            document.getElementById('auto-backup-interval-select').value = autoBackupMinutes;
-        }
-        configureAutoBackupTimer();
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const urlDocId = urlParams.get('doc');
-        const urlMode = urlParams.get('mode');
-
-        if (urlMode) {
-            currentSuiteMode = urlMode;
-            configureWorkspaceUIPresentation();
-        } else {
-            const savedSuiteMode = localStorage.getItem('zensuite_active_suite_mode');
-            if (savedSuiteMode) {
-                currentSuiteMode = savedSuiteMode;
-                configureWorkspaceUIPresentation();
-            }
+            listLocalFiles();
         }
 
-        const savedViewState = localStorage.getItem('zensuite_view_state');
-        const targetDocId = urlDocId || localStorage.getItem(`zensuite_current_active_${currentSuiteMode}_id`);
-
-        if (savedViewState === 'workspace' || urlDocId) {
-            if (targetDocId) {
-                loadLocalFile(targetDocId);
-            }
-        } else {
-            workspaceView.classList.remove('active');
-            launchpadView.classList.add('active');
-            document.body.classList.remove('distraction-free');
-        }
-
-        const shouldPersist = localStorage.getItem('zensuite_persist_google_auth') !== 'false';
-        const cachedToken = localStorage.getItem('zensuite_google_access_token');
-        const tokenExp = parseInt(localStorage.getItem('zensuite_google_token_exp') || '0', 10);
-
-        if (shouldPersist && cachedToken && Date.now() < tokenExp) {
-            accessToken = cachedToken;
-            pickerModifierSync();
-            scheduleTokenRenewal(tokenExp - Date.now());
-        }
-
-        if (typeof google !== 'undefined') {
-            tokenClient = google.accounts.oauth2.initTokenClient({
-                client_id: CLIENT_ID,
-                scope: SCOPES,
-                callback: (tokenResponse) => {
-                    if (tokenResponse.error !== undefined) {
-                        handleAuthError();
-                        return;
-                    }
-                    accessToken = tokenResponse.access_token;
-                    hideLeftMarginAlert();
-                    
-                    const expiresInMs = (tokenResponse.expires_in ? parseInt(tokenResponse.expires_in, 10) : 3600) * 1000;
-                    const expirationTime = Date.now() + expiresInMs;
-
-                    if (localStorage.getItem('zensuite_persist_google_auth') !== 'false') {
-                        localStorage.setItem('zensuite_google_access_token', accessToken);
-                        localStorage.setItem('zensuite_google_token_exp', expirationTime.toString());
-                    }
-
-                    pickerModifierSync();
-                    scheduleTokenRenewal(expiresInMs);
-                    
-                    const tabToggleCloud = document.getElementById('tab-toggle-cloud');
-                    if (tabToggleCloud && tabToggleCloud.classList.contains('active')) {
-                        renderCloudTabInterface();
-                    }
-                },
-            });
-
-            if (shouldPersist && (!accessToken || Date.now() >= tokenExp) && cachedToken) {
-                trySilentTokenRefresh();
-            }
-        }
-    };
-
-    function listDriveFiles() {
-        if (!accessToken) return;
-        
-        const targetNode = document.getElementById('cloud-docs-target-node');
-        if (!targetNode) return;
-        
-        const query = encodeURIComponent(`appProperties has { key='suiteMode' and value='${currentSuiteMode}' } and trashed = false`);
-        
-        fetch(`https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id, name, modifiedTime)&orderBy=modifiedTime desc`, {
-            headers: { 'Authorization': `Bearer ${accessToken}` }
-        })
-        .then(res => {
-            if (res.status === 401 || res.status === 403) { handleAuthError(); throw new Error("Auth expired"); }
-            return res.json();
-        })
-        .then(data => {
-            if (data.files && data.files.length > 0) {
-                targetNode.innerHTML = ''; 
-                data.files.forEach(file => {
-                    const item = document.createElement('div');
-                    item.className = 'doc-list-item';
-                    item.innerHTML = `
-                        <span class="load-trigger" style="flex-grow:1; display:flex; align-items:center; cursor:pointer;">☁️ ${file.name}</span>
-                        <div style="display:flex; align-items:center; gap:2px;">
-                            <button class="list-rename-btn" title="Rename Remote File">Rename</button>
-                            <button class="list-delete-btn" title="Delete Remote File">Delete</button>
-                            <button class="list-download-btn" title="Download Document">↓</button>
-                        </div>
-                    `;
-                    
-                    item.querySelector('.load-trigger').addEventListener('click', () => { 
-                        fetchDocumentFromDrive(file.id, file.name); 
-                    });
-
-                    item.querySelector('.list-rename-btn').addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        requestDocumentRename(file.id, file.name, 'cloud');
-                    });
-
-                    item.querySelector('.list-download-btn').addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        fetch(`https://www.googleapis.com/drive/v3/files/${file.id}?alt=media`, {
-                            headers: { 'Authorization': `Bearer ${accessToken}` }
-                        })
-                        .then(res => res.text())
-                        .then(content => {
-                            exportDocumentToDisk(file.name, content, currentSuiteMode);
-                        });
-                    });
-
-                    item.querySelector('.list-delete-btn').addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        requestDocumentDeletion(file.id, file.name, 'cloud');
-                    });
-
-                    targetNode.appendChild(item);
-                });
-            } else {
-                targetNode.innerHTML = '<div style="font-size:0.8rem; color:var(--muted-color); padding: 10px;">No cloud files discovered.</div>';
-            }
-        })
-        .catch(() => { targetNode.innerHTML = '<div style="font-size:0.8rem; color:var(--muted-color); padding:10px;">Directory scanning malfunction.</div>'; });
-    }
-
-    function fetchDocumentFromDrive(fileId, fileName) {
-        if (!accessToken) return;
-        saveIndicator.textContent = "• Synchronizing Pipeline...";
-
-        fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
-            headers: { 'Authorization': `Bearer ${accessToken}` }
-        })
-        .then(res => {
-            if (res.status === 401 || res.status === 403) { handleAuthError(); throw new Error("Auth expired"); }
-            return res.text();
-        })
-        .then(content => {
-            editor.innerHTML = content;
-            if (docTitle) docTitle.value = fileName;
-            currentDriveFileId = fileId;
+        function executeCloudWipe(fileId) {
+            if (!accessToken) return;
+            saveIndicator.textContent = "• Transmitting Wipe Command...";
             
+            fetch(`https://www.googleapis.com/drive/v3/files/${fileId}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            })
+            .then(res => {
+                if (res.status === 401 || res.status === 403) { handleAuthError(); throw new Error("Auth expired"); }
+                saveIndicator.textContent = "• Cloud Archive Updated";
+                if (currentDriveFileId === fileId) {
+                    currentDriveFileId = null;
+                    updateUrlParameters(null, null);
+                    pickerModifierSync();
+                }
+                listDriveFiles();
+            })
+            .catch(() => showZenAlert("Cloud Error", "Failed to clear item from Google Drive directories."));
+        }
+
+        // --- LOCAL METADATA STORAGE SYSTEM ---
+        function getLocalDatabase() {
+            const raw = localStorage.getItem('zensuite_local_db');
+            return raw ? JSON.parse(raw) : [];
+        }
+
+        function saveToLocalDatabase(fileObj) {
+            let db = getLocalDatabase();
+            const index = db.findIndex(item => item.id === fileObj.id);
+            if (index !== -1) {
+                db[index] = fileObj; 
+            } else {
+                if (db.filter(i => i.suiteMode === currentSuiteMode).length >= 10) return;
+                db.unshift(fileObj); 
+            }
+            localStorage.setItem('zensuite_local_db', JSON.stringify(db));
+        }
+
+        function loadLocalFile(fileId) {
             const db = getLocalDatabase();
-            const existing = db.find(i => i.driveId === fileId);
-            currentLocalFileId = existing ? existing.id : "local_" + Date.now();
+            const file = db.find(item => item.id === fileId);
+            if (!file) return;
 
-            saveDocument(); 
-            updateUrlParameters(currentLocalFileId, currentSuiteMode);
+            currentSuiteMode = file.suiteMode || 'narrative';
+            configureWorkspaceUIPresentation();
+
+            editor.innerHTML = file.content;
+            if (docTitle) docTitle.value = file.title;
+            currentLocalFileId = file.id;
+            currentDriveFileId = file.driveId || null;
+
+            localStorage.setItem('zensuite_active_suite_mode', currentSuiteMode);
+            localStorage.setItem(`zensuite_current_active_${currentSuiteMode}_id`, fileId);
+            localStorage.setItem('zensuite_view_state', 'workspace');
+            
+            updateUrlParameters(fileId, currentSuiteMode);
+            updateAnalytics(editor.innerText);
             pickerModifierSync();
-
-            saveIndicator.textContent = "• Fully Synced Cloud & Local";
+            if (currentSuiteMode === 'screenplay') updateLiveElementTag();
+            renderGhostMarginGuide();
+            
             pickerModal.style.display = 'none';
             launchpadView.classList.remove('active');
             workspaceView.classList.add('active');
-        })
-        .catch(() => showZenAlert("Replication Warning", "Remote drive transmission dropped."));
-    }
+        }
 
-    function triggerCloudSave() {
-        if (!accessToken) return;
-        saveIndicator.textContent = "• Replicating Cloud Core...";
-        clearTimeout(cloudSaveDebounceTimer);
-        cloudSaveDebounceTimer = setTimeout(() => {
-            if (currentDriveFileId) { updateDriveFile(); } else { createDriveFile(); }
-        }, 2000);
-    }
-
-    function createDriveFile() {
-        if (!accessToken) return;
-
-        const metadata = { 
-            name: (docTitle ? docTitle.value : '') || (currentSuiteMode === 'screenplay' ? 'untitledScript.fountain' : 'untitledProse.rtf'), 
-            mimeType: 'text/plain',
-            appProperties: { suiteMode: currentSuiteMode }
-        };
-        
-        const fileContent = editor.innerHTML; 
-        const boundary = 'foo_bar_baz';
-        const delimiter = `\r\n--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n`;
-        const close_delim = `\r\n--${boundary}--`;
-        const multipartRequestBody = delimiter + JSON.stringify(metadata) + `\r\n--${boundary}\r\nContent-Type: text/plain\r\n\r\n` + fileContent + close_delim;
-
-        fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': `multipart/related; boundary=${boundary}` },
-            body: multipartRequestBody
-        })
-        .then(res => {
-            if (res.status === 401 || res.status === 403) { handleAuthError(); throw new Error("Auth expired"); }
-            return res.json();
-        })
-        .then(file => {
-            currentDriveFileId = file.id;
-            
-            let db = getLocalDatabase();
-            const item = db.find(i => i.id === currentLocalFileId);
-            if (item) {
-                item.driveId = file.id;
-                localStorage.setItem('zensuite_local_db', JSON.stringify(db));
-            }
-
-            saveIndicator.textContent = "• Fully Synced Cloud & Local";
-            pickerModifierSync();
-            listDriveFiles(); 
-        })
-        .catch(() => { saveIndicator.textContent = "• Replication dropped."; });
-    }
-
-    function updateDriveFile() {
-        if (!accessToken || !currentDriveFileId) return;
-
-        fetch(`https://www.googleapis.com/drive/v3/files/${currentDriveFileId}`, {
-            method: 'PATCH',
-            headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: docTitle ? docTitle.value : '' })
-        })
-        .then(res => {
-            if (res.status === 401 || res.status === 403) { handleAuthError(); throw new Error("Auth expired"); }
-            return fetch(`https://www.googleapis.com/upload/drive/v3/files/${currentDriveFileId}?uploadType=media`, {
-                method: 'PATCH',
-                headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'text/plain' },
-                body: editor.innerHTML
-            });
-        })
-        .then(res => {
-            if (res && (res.status === 401 || res.status === 403)) { handleAuthError(); throw new Error("Auth expired"); }
-            saveIndicator.textContent = "• Fully Synced Cloud & Local"; 
-        })
-        .catch(() => { 
-            saveIndicator.textContent = "• Replication dropped."; 
-        });
-    }
-
-    // --- CORE AUTO-SAVE PIPELINES ---
-    function saveDocument() {
-        if (!workspaceView.classList.contains('active')) return; 
-        
-        const fileRecord = {
-            id: currentLocalFileId,
-            title: (docTitle ? docTitle.value : '') || (currentSuiteMode === 'screenplay' ? 'untitledScript.fountain' : 'untitledProse.rtf'),
-            content: editor.innerHTML,
-            suiteMode: currentSuiteMode,
-            driveId: currentDriveFileId
-        };
-
-        saveToLocalDatabase(fileRecord);
-        localStorage.setItem(`zensuite_current_active_${currentSuiteMode}_id`, currentLocalFileId);
-        updateUrlParameters(currentLocalFileId, currentSuiteMode);
-        
-        triggerCloudSave(); 
-    }
-
-    editor.addEventListener('input', () => {
-        processInlineMarkdownFormatting(); 
-        updateAnalytics(editor.innerText);
-        
-        clearTimeout(idleTimer);
-        idleTimer = setTimeout(startTypingDistractionHide, 1000);
-        
-        if (currentSuiteMode === 'screenplay') {
-            const selection = window.getSelection();
-            if (selection.rangeCount > 0) {
-                let currentBlock = selection.getRangeAt(0).startContainer;
-                if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
-                while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
-                    currentBlock = currentBlock.parentNode;
-                }
-                
-                if (currentBlock && currentBlock.getAttribute('data-element') === 'character') {
-                    highlightFirstCharacterAppearance(currentBlock.innerText);
-                }
+        function pickerModifierSync() {
+            if (currentDriveFileId && accessToken) {
+                syncDot.classList.add('connected');
+                if (cloudStatus) cloudStatus.textContent = "Cloud: Connected";
+            } else {
+                syncDot.classList.remove('connected');
+                if (cloudStatus) cloudStatus.textContent = accessToken ? "Cloud: Ready" : "Cloud: Local Only";
             }
         }
-        
-        saveDocument();
-        scrollToCursor();
-    });
-</script>
+
+        // --- GOOGLE OAUTH & STATE HYDRATION ENGINE ---
+        window.onload = function() {
+            requestPersistentStorage();
+
+            const cachedTheme = localStorage.getItem('zensuite_saved_theme');
+            if (cachedTheme) { applyAppTheme(cachedTheme); }
+
+            const savedBackupState = localStorage.getItem('zensuite_autobackup_enabled');
+            if (savedBackupState === 'true') {
+                isAutoBackupEnabled = true;
+                document.getElementById('auto-backup-toggle').checked = true;
+            }
+            const savedBackupInterval = localStorage.getItem('zensuite_autobackup_interval');
+            if (savedBackupInterval) {
+                autoBackupMinutes = parseInt(savedBackupInterval, 10);
+                document.getElementById('auto-backup-interval-select').value = autoBackupMinutes;
+            }
+            configureAutoBackupTimer();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlDocId = urlParams.get('doc');
+            const urlMode = urlParams.get('mode');
+
+            if (urlMode) {
+                currentSuiteMode = urlMode;
+                configureWorkspaceUIPresentation();
+            } else {
+                const savedSuiteMode = localStorage.getItem('zensuite_active_suite_mode');
+                if (savedSuiteMode) {
+                    currentSuiteMode = savedSuiteMode;
+                    configureWorkspaceUIPresentation();
+                }
+            }
+
+            const savedViewState = localStorage.getItem('zensuite_view_state');
+            const targetDocId = urlDocId || localStorage.getItem(`zensuite_current_active_${currentSuiteMode}_id`);
+
+            if (savedViewState === 'workspace' || urlDocId) {
+                if (targetDocId) {
+                    loadLocalFile(targetDocId);
+                }
+            } else {
+                workspaceView.classList.remove('active');
+                launchpadView.classList.add('active');
+                document.body.classList.remove('distraction-free');
+            }
+
+            const shouldPersist = localStorage.getItem('zensuite_persist_google_auth') !== 'false';
+            const cachedToken = localStorage.getItem('zensuite_google_access_token');
+            const tokenExp = parseInt(localStorage.getItem('zensuite_google_token_exp') || '0', 10);
+
+            if (shouldPersist && cachedToken && Date.now() < tokenExp) {
+                accessToken = cachedToken;
+                pickerModifierSync();
+                scheduleTokenRenewal(tokenExp - Date.now());
+            }
+
+            if (typeof google !== 'undefined') {
+                tokenClient = google.accounts.oauth2.initTokenClient({
+                    client_id: CLIENT_ID,
+                    scope: SCOPES,
+                    callback: (tokenResponse) => {
+                        if (tokenResponse.error !== undefined) {
+                            handleAuthError();
+                            return;
+                        }
+                        accessToken = tokenResponse.access_token;
+                        hideLeftMarginAlert();
+                        
+                        const expiresInMs = (tokenResponse.expires_in ? parseInt(tokenResponse.expires_in, 10) : 3600) * 1000;
+                        const expirationTime = Date.now() + expiresInMs;
+
+                        if (localStorage.getItem('zensuite_persist_google_auth') !== 'false') {
+                            localStorage.setItem('zensuite_google_access_token', accessToken);
+                            localStorage.setItem('zensuite_google_token_exp', expirationTime.toString());
+                        }
+
+                        pickerModifierSync();
+                        scheduleTokenRenewal(expiresInMs);
+                        
+                        const tabToggleCloud = document.getElementById('tab-toggle-cloud');
+                        if (tabToggleCloud && tabToggleCloud.classList.contains('active')) {
+                            renderCloudTabInterface();
+                        }
+                    },
+                });
+
+                if (shouldPersist && (!accessToken || Date.now() >= tokenExp) && cachedToken) {
+                    trySilentTokenRefresh();
+                }
+            }
+        };
+
+        function listDriveFiles() {
+            if (!accessToken) return;
+            
+            const targetNode = document.getElementById('cloud-docs-target-node');
+            if (!targetNode) return;
+            
+            const query = encodeURIComponent(`appProperties has { key='suiteMode' and value='${currentSuiteMode}' } and trashed = false`);
+            
+            fetch(`https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id, name, modifiedTime)&orderBy=modifiedTime desc`, {
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            })
+            .then(res => {
+                if (res.status === 401 || res.status === 403) { handleAuthError(); throw new Error("Auth expired"); }
+                return res.json();
+            })
+            .then(data => {
+                if (data.files && data.files.length > 0) {
+                    targetNode.innerHTML = ''; 
+                    data.files.forEach(file => {
+                        const item = document.createElement('div');
+                        item.className = 'doc-list-item';
+                        item.innerHTML = `
+                            <span class="load-trigger" style="flex-grow:1; display:flex; align-items:center; cursor:pointer;">☁️ ${file.name}</span>
+                            <div style="display:flex; align-items:center; gap:2px;">
+                                <button class="list-rename-btn" title="Rename Remote File">Rename</button>
+                                <button class="list-delete-btn" title="Delete Remote File">Delete</button>
+                                <button class="list-download-btn" title="Download Document">↓</button>
+                            </div>
+                        `;
+                        
+                        item.querySelector('.load-trigger').addEventListener('click', () => { 
+                            fetchDocumentFromDrive(file.id, file.name); 
+                        });
+
+                        item.querySelector('.list-rename-btn').addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            requestDocumentRename(file.id, file.name, 'cloud');
+                        });
+
+                        item.querySelector('.list-download-btn').addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            fetch(`https://www.googleapis.com/drive/v3/files/${file.id}?alt=media`, {
+                                headers: { 'Authorization': `Bearer ${accessToken}` }
+                            })
+                            .then(res => res.text())
+                            .then(content => {
+                                exportDocumentToDisk(file.name, content, currentSuiteMode);
+                            });
+                        });
+
+                        item.querySelector('.list-delete-btn').addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            requestDocumentDeletion(file.id, file.name, 'cloud');
+                        });
+
+                        targetNode.appendChild(item);
+                    });
+                } else {
+                    targetNode.innerHTML = '<div style="font-size:0.8rem; color:var(--muted-color); padding: 10px;">No cloud files discovered.</div>';
+                }
+            })
+            .catch(() => { targetNode.innerHTML = '<div style="font-size:0.8rem; color:var(--muted-color); padding:10px;">Directory scanning malfunction.</div>'; });
+        }
+
+        function fetchDocumentFromDrive(fileId, fileName) {
+            if (!accessToken) return;
+            saveIndicator.textContent = "• Synchronizing Pipeline...";
+
+            fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            })
+            .then(res => {
+                if (res.status === 401 || res.status === 403) { handleAuthError(); throw new Error("Auth expired"); }
+                return res.text();
+            })
+            .then(content => {
+                editor.innerHTML = content;
+                if (docTitle) docTitle.value = fileName;
+                currentDriveFileId = fileId;
+                
+                const db = getLocalDatabase();
+                const existing = db.find(i => i.driveId === fileId);
+                currentLocalFileId = existing ? existing.id : "local_" + Date.now();
+
+                saveDocument(); 
+                updateUrlParameters(currentLocalFileId, currentSuiteMode);
+                pickerModifierSync();
+
+                saveIndicator.textContent = "• Fully Synced Cloud & Local";
+                pickerModal.style.display = 'none';
+                launchpadView.classList.remove('active');
+                workspaceView.classList.add('active');
+            })
+            .catch(() => showZenAlert("Replication Warning", "Remote drive transmission dropped."));
+        }
+
+        function triggerCloudSave() {
+            if (!accessToken) return;
+            saveIndicator.textContent = "• Replicating Cloud Core...";
+            clearTimeout(cloudSaveDebounceTimer);
+            cloudSaveDebounceTimer = setTimeout(() => {
+                if (currentDriveFileId) { updateDriveFile(); } else { createDriveFile(); }
+            }, 2000);
+        }
+
+        function createDriveFile() {
+            if (!accessToken) return;
+
+            const metadata = { 
+                name: (docTitle ? docTitle.value : '') || (currentSuiteMode === 'screenplay' ? 'untitledScript.fountain' : 'untitledProse.rtf'), 
+                mimeType: 'text/plain',
+                appProperties: { suiteMode: currentSuiteMode }
+            };
+            
+            const fileContent = editor.innerHTML; 
+            const boundary = 'foo_bar_baz';
+            const delimiter = `\r\n--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n`;
+            const close_delim = `\r\n--${boundary}--`;
+            const multipartRequestBody = delimiter + JSON.stringify(metadata) + `\r\n--${boundary}\r\nContent-Type: text/plain\r\n\r\n` + fileContent + close_delim;
+
+            fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': `multipart/related; boundary=${boundary}` },
+                body: multipartRequestBody
+            })
+            .then(res => {
+                if (res.status === 401 || res.status === 403) { handleAuthError(); throw new Error("Auth expired"); }
+                return res.json();
+            })
+            .then(file => {
+                currentDriveFileId = file.id;
+                
+                let db = getLocalDatabase();
+                const item = db.find(i => i.id === currentLocalFileId);
+                if (item) {
+                    item.driveId = file.id;
+                    localStorage.setItem('zensuite_local_db', JSON.stringify(db));
+                }
+
+                saveIndicator.textContent = "• Fully Synced Cloud & Local";
+                pickerModifierSync();
+                listDriveFiles(); 
+            })
+            .catch(() => { saveIndicator.textContent = "• Replication dropped."; });
+        }
+
+        function updateDriveFile() {
+            if (!accessToken || !currentDriveFileId) return;
+
+            fetch(`https://www.googleapis.com/drive/v3/files/${currentDriveFileId}`, {
+                method: 'PATCH',
+                headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: docTitle ? docTitle.value : '' })
+            })
+            .then(res => {
+                if (res.status === 401 || res.status === 403) { handleAuthError(); throw new Error("Auth expired"); }
+                return fetch(`https://www.googleapis.com/upload/drive/v3/files/${currentDriveFileId}?uploadType=media`, {
+                    method: 'PATCH',
+                    headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'text/plain' },
+                    body: editor.innerHTML
+                });
+            })
+            .then(res => {
+                if (res && (res.status === 401 || res.status === 403)) { handleAuthError(); throw new Error("Auth expired"); }
+                saveIndicator.textContent = "• Fully Synced Cloud & Local"; 
+            })
+            .catch(() => { 
+                saveIndicator.textContent = "• Replication dropped."; 
+            });
+        }
+
+        // --- CORE AUTO-SAVE PIPELINES ---
+        function saveDocument() {
+            if (!workspaceView.classList.contains('active')) return; 
+            
+            const fileRecord = {
+                id: currentLocalFileId,
+                title: (docTitle ? docTitle.value : '') || (currentSuiteMode === 'screenplay' ? 'untitledScript.fountain' : 'untitledProse.rtf'),
+                content: editor.innerHTML,
+                suiteMode: currentSuiteMode,
+                driveId: currentDriveFileId
+            };
+
+            saveToLocalDatabase(fileRecord);
+            localStorage.setItem(`zensuite_current_active_${currentSuiteMode}_id`, currentLocalFileId);
+            updateUrlParameters(currentLocalFileId, currentSuiteMode);
+            
+            triggerCloudSave(); 
+        }
+
+        editor.addEventListener('input', () => {
+            processInlineMarkdownFormatting(); 
+            updateAnalytics(editor.innerText);
+            
+            clearTimeout(idleTimer);
+            idleTimer = setTimeout(startTypingDistractionHide, 1000);
+            
+            if (currentSuiteMode === 'screenplay') {
+                const selection = window.getSelection();
+                if (selection.rangeCount > 0) {
+                    let currentBlock = selection.getRangeAt(0).startContainer;
+                    if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
+                    while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
+                        currentBlock = currentBlock.parentNode;
+                    }
+                    
+                    if (currentBlock && currentBlock.getAttribute('data-element') === 'character') {
+                        highlightFirstCharacterAppearance(currentBlock.innerText);
+                    }
+                }
+            }
+            
+            saveDocument();
+            scrollToCursor();
+        });
+    </script>
 </body>
 </html>
