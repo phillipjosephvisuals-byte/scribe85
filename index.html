@@ -292,3 +292,2696 @@
         }
 
         .suite-write-btn:hover {
+            background: var(--accent-color);
+            color: var(--bg-color);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.35);
+            transform: scale(1.04);
+        }
+
+        /* ------------------------------------------------------------------
+           3. FLOATING PICKER MODAL DIALOG CONTAINER
+        ------------------------------------------------------------------ */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.85); 
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal-box {
+            background-color: var(--bg-color); 
+            border: 1px solid var(--accent-color); 
+            color: var(--text-color); 
+            width: 100%;
+            max-width: 520px;
+            height: 580px; 
+            border-radius: 8px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; 
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+            transition: background-color 0.4s ease, border-color 0.4s ease;
+        }
+
+        .modal-box h3 {
+            font-size: 1.15rem;
+            font-weight: 400;
+            margin-bottom: 15px;
+            text-align: center;
+            text-shadow: var(--text-glow);
+        }
+
+        .modal-tabs-bar {
+            display: flex;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 3px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .modal-tab-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--muted-color);
+            padding: 8px;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .modal-tab-btn.active {
+            background: var(--text-color);
+            color: var(--bg-color);
+            font-weight: bold;
+        }
+
+        .modal-scroll-well {
+            flex-grow: 1;
+            overflow-y: auto; 
+            padding-right: 4px;
+            margin-bottom: 15px;
+        }
+
+        .modal-scroll-well::-webkit-scrollbar { width: 4px; }
+        .modal-scroll-well::-webkit-scrollbar-track { background: transparent; }
+        .modal-scroll-well::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+        .modal-scroll-well::-webkit-scrollbar-thumb:hover { background: var(--accent-color); }
+
+        .tab-panel-view { display: none; }
+        .tab-panel-view.active { display: block; }
+
+        .picker-action-btn {
+            display: block;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--muted-color);
+            color: var(--text-color);
+            padding: 12px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-align: center;
+            margin-bottom: 15px;
+            transition: all 0.2s ease;
+            text-shadow: var(--text-glow);
+        }
+
+        .picker-action-btn:hover { 
+            border-color: var(--text-color); 
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        #new-doc-btn { background: rgba(56, 189, 248, 0.1); border-color: var(--accent-color); color: var(--accent-color); }
+        #new-doc-btn:hover { background: var(--accent-color); color: var(--bg-color); text-shadow: none; }
+        
+        #auth-btn { background: var(--text-color); color: var(--bg-color); border-color: var(--text-color); font-weight: bold; margin: 10px 0; width: 100%; }
+        #auth-btn:hover { opacity: 0.9; }
+
+        /* CLEAN AUTO-BACKUP TOGGLE STYLES (REFINED HEADING) */
+        .auto-backup-control-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 15px;
+            font-size: 0.75rem;
+        }
+
+        .auto-backup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .auto-backup-title {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        .auto-backup-options-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 8px;
+            color: var(--muted-color);
+        }
+
+        .auto-backup-select {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid var(--muted-color);
+            color: var(--text-color);
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            outline: none;
+        }
+
+        .document-list-title { font-size: 0.70rem; text-transform: uppercase; color: var(--muted-color); letter-spacing: 1px; margin-bottom: 8px; }
+        .limit-subtext { text-transform: none; font-size: 0.70rem; letter-spacing: 0px; color: var(--muted-color); margin-left: 4px; }
+        .document-scroll-list { margin-bottom: 10px; border-top: 1px solid rgba(255, 255, 255, 0.04); padding-top: 8px; }
+        
+        .doc-list-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 9px 6px; font-size: 0.80rem; border-radius: 4px; cursor: pointer; word-break: break-all;
+            color: var(--text-color); text-shadow: var(--text-glow);
+        }
+        .doc-list-item:hover { background: rgba(255, 255, 255, 0.03); color: var(--accent-color); }
+        
+        .list-download-btn {
+            background: transparent;
+            border: none;
+            color: var(--muted-color);
+            cursor: pointer;
+            font-family: var(--font-mono);
+            font-size: 0.80rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        .list-download-btn:hover {
+            color: var(--accent-color);
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        .list-rename-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--muted-color);
+            cursor: pointer;
+            font-family: var(--font-mono);
+            font-size: 0.70rem;
+            text-transform: uppercase;
+            padding: 2px 6px;
+            margin-right: 4px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        .list-rename-btn:hover {
+            color: var(--accent-color);
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .list-delete-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--muted-color);
+            cursor: pointer;
+            font-family: var(--font-mono);
+            font-size: 0.70rem;
+            text-transform: uppercase;
+            padding: 2px 6px;
+            margin-right: 6px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        .list-delete-btn:hover {
+            color: #ef4444; 
+            border-color: rgba(239, 68, 68, 0.4);
+            background: rgba(239, 68, 68, 0.08);
+        }
+        
+        .modal-close-btn { background: transparent; border: none; color: var(--muted-color); font-family: var(--font-mono); font-size: 0.8rem; cursor: pointer; display: block; text-align: center; width: 100%; padding-top: 5px; }
+        .modal-close-btn:hover { color: var(--text-color); }
+
+        /* ------------------------------------------------------------------
+           REACTIVE SYSTEM ALERT DESIGN
+        ------------------------------------------------------------------ */
+        .alert-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(2px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+        
+        .alert-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .alert-box {
+            background-color: var(--bg-color);
+            border: 1px solid var(--accent-color);
+            padding: 25px;
+            border-radius: 6px;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+            font-family: var(--font-mono);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(0,0,0,0.3);
+        }
+
+        .alert-box h4 {
+            color: var(--accent-color);
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            text-shadow: var(--text-glow);
+        }
+
+        .alert-box p {
+            color: var(--text-color);
+            font-size: 0.85rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            text-shadow: var(--text-glow);
+        }
+
+        .alert-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--muted-color);
+            color: var(--text-color);
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+            outline: none;
+        }
+
+        .alert-btn {
+            background: transparent;
+            border: 1px solid var(--text-color);
+            color: var(--text-color);
+            padding: 8px 20px;
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-shadow: var(--text-glow);
+        }
+
+        .alert-btn:hover {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        /* ------------------------------------------------------------------
+           4. WORKSPACE STYLES
+        ------------------------------------------------------------------ */
+        .chrome-element {
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 1;
+        }
+
+        body.distraction-free .chrome-element {
+            opacity: 0 !important;
+            pointer-events: none; 
+            transform: translateY(-8px);
+        }
+        
+        body.distraction-free footer.chrome-element {
+            transform: translateY(8px);
+        }
+
+        body.distraction-free .margin-ghost-guide {
+            opacity: 0 !important;
+            pointer-events: none;
+            transform: translateY(-50%) scale(0.98);
+        }
+
+        #workspace-view {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        header {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr; 
+            align-items: center;
+            padding: 15px 40px;
+            width: 100%;
+            font-size: 0.85rem;
+            color: var(--muted-color);
+            z-index: 10;
+        }
+
+        .doc-left { 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            justify-self: start; 
+        } 
+        
+        .header-center-hub {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            justify-self: center;
+        }
+
+        .header-logo-container {
+            width: 110px; 
+            height: auto;
+            max-height: 24px;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            outline: none;
+            transition: opacity 0.2s ease, color 0.4s ease;
+        }
+
+        .header-logo-container:hover {
+            opacity: 0.8;
+        }
+
+        .header-logo-container svg {
+            width: 100%;
+            height: auto;
+            fill: currentColor;
+        }
+
+        .sync-status { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            justify-self: end; 
+        }
+
+        #save-indicator {
+            font-size: 0.75rem;
+            color: var(--muted-color);
+        }
+
+        .inline-theme-picker {
+            display: flex;
+            gap: 6px;
+        }
+
+        .theme-square {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: transform 0.15s ease, border-color 0.15s ease;
+        }
+        
+        .theme-square:hover { transform: scale(1.25); }
+        .sq-dark { background-color: #12141c; border-color: #64748b; }
+        .sq-amber { background-color: #ffb000; border-color: #ffb000; }
+        .sq-matrix { background-color: #33ff33; border-color: #33ff33; }
+        .sq-cobalt { background-color: #000080; border-color: #ffffff; }
+
+        .doc-title {
+            color: var(--text-color);
+            border: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            background: transparent;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            font-weight: bold;
+            outline: none;
+            width: 260px;
+            text-align: center;
+            padding-bottom: 2px;
+            transition: border-bottom-color 0.3s ease, box-shadow 0.3s ease, text-shadow 0.3s ease;
+        }
+
+        .doc-title:hover, 
+        .doc-title:focus {
+            border-bottom-color: var(--accent-color);
+            box-shadow: 0 1px 6px rgba(255, 255, 255, 0.3);
+            text-shadow: var(--text-glow);
+        }
+
+        .sync-dot {
+            width: 8px; height: 8px;
+            background-color: var(--muted-color);
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+
+        .sync-dot.connected { background-color: var(--accent-color); }
+
+        main {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center; 
+            overflow-y: auto; 
+            padding: 0px 20px;
+            width: 100%;
+            position: relative;
+        }
+
+        .editor-container { 
+            width: 100%; 
+            max-width: var(--canvas-width); 
+            min-height: 100%; 
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .editor {
+            width: 100%; 
+            min-height: 100%;
+            border: none; 
+            outline: none; 
+            background: transparent;
+            color: var(--text-color); 
+            caret-color: var(--accent-color) !important; /* Forces visible blinking caret */
+            font-family: var(--font-mono);
+            font-size: 1.1rem; 
+            line-height: 1.8; 
+            resize: none; 
+            white-space: pre-wrap;
+            text-shadow: var(--text-glow); 
+            padding-top: 40px;
+            padding-bottom: 200px;
+        }
+
+        /* STRIP GOOGLE DOCS INLINE BLACK TEXT & BACKGROUNDS WHILE PRESERVING CARET */
+        .editor * {
+            color: var(--text-color);
+            background-color: transparent !important;
+        }
+
+        .editor:empty:before {
+            content: attr(placeholder);
+            color: var(--muted-color);
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        /* ------------------------------------------------------------------
+           4.2 MARGIN LIST FORMATTING WIDGET
+        ------------------------------------------------------------------ */
+        .margin-list-widget {
+            position: absolute;
+            left: -48px;
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--accent-color);
+            border-radius: 6px;
+            padding: 5px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 50;
+            transition: opacity 0.2s ease;
+            user-select: none;
+        }
+
+        .margin-widget-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--muted-color);
+            cursor: pointer;
+            border-radius: 4px;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            font-weight: bold;
+            transition: all 0.2s ease;
+        }
+
+        .margin-widget-btn:hover {
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+            background: rgba(255, 255, 255, 0.08);
+            text-shadow: var(--text-glow);
+        }
+
+        .margin-widget-btn.active {
+            background: var(--accent-color);
+            color: var(--bg-color);
+            border-color: var(--accent-color);
+            text-shadow: none;
+        }
+
+        .margin-widget-btn svg {
+            width: 15px;
+            height: 15px;
+            fill: currentColor;
+        }
+
+        /* ------------------------------------------------------------------
+           4.3 RIGHT MARGIN GHOST SHORTCUT GUIDE CARD
+        ------------------------------------------------------------------ */
+        .margin-ghost-guide {
+            position: fixed;
+            top: 50%;
+            right: max(16px, calc((100vw - var(--canvas-width)) / 4 - 110px));
+            width: 220px;
+            transform: translateY(-50%) scale(1);
+            transform-origin: center right;
+            background: rgba(255, 255, 255, 0.015);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 16px 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(3px);
+            z-index: 15;
+            opacity: 0.22;
+            cursor: default;
+            user-select: none;
+            transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+                        transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+                        border-color 0.35s ease, 
+                        background 0.35s ease, 
+                        box-shadow 0.35s ease;
+        }
+
+        /* Hide ghost guide when launchpad is active */
+        #launchpad-view.active ~ #workspace-view .margin-ghost-guide {
+            display: none !important;
+        }
+
+        .margin-ghost-guide:hover {
+            opacity: 1 !important;
+            transform: translateY(-50%) scale(1.03);
+            border-color: var(--accent-color);
+            background: rgba(0, 0, 0, 0.65);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8), 0 0 12px rgba(255, 255, 255, 0.05);
+        }
+
+        .ghost-guide-title {
+            font-size: 0.70rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--accent-color);
+            margin-bottom: 12px;
+            text-shadow: var(--text-glow);
+            text-align: center;
+            font-weight: bold;
+            opacity: 0.9;
+        }
+
+        .ghost-guide-list {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            font-size: 0.73rem;
+            line-height: 1.4;
+        }
+
+        .ghost-guide-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+        }
+
+        .ghost-guide-row span {
+            color: var(--muted-color);
+            font-size: 0.71rem;
+            transition: color 0.3s ease;
+        }
+
+        .margin-ghost-guide:hover .ghost-guide-row span {
+            color: var(--text-color);
+        }
+
+        .ghost-guide-row code {
+            font-family: var(--font-mono);
+            color: var(--accent-color);
+            background: rgba(255, 255, 255, 0.06);
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-size: 0.68rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            white-space: nowrap;
+        }
+
+        /* ------------------------------------------------------------------
+           4.5 NARRATIVE PARAGRAPH SPACING ENGINE (ISOLATED INDENTATION)
+        ------------------------------------------------------------------ */
+        body.mode-narrative .editor {
+            text-indent: 0;
+        }
+
+        body.mode-narrative .editor div, 
+        body.mode-narrative .editor p {
+            margin-bottom: 1.5em;
+            text-indent: 0; /* Prevents global inheritance across paragraphs */
+            transition: margin-bottom 0.2s ease, margin-top 0.2s ease;
+        }
+
+        body.mode-narrative .editor br {
+            margin-bottom: 0.75em;
+        }
+
+        /* ------------------------------------------------------------------
+           5. RIGID SCREENPLAY FORMATTING RIGGING
+        ------------------------------------------------------------------ */
+        body.mode-screenplay .editor {
+            font-family: var(--font-script);
+            font-size: 1rem;
+            line-height: 1.2;
+            white-space: normal;
+        }
+
+        body.mode-screenplay .editor div {
+            margin-bottom: 14pt;
+            width: 100%;
+            min-height: 1.2em;
+        }
+
+        body.mode-screenplay div[data-element="scene-heading"] {
+            text-transform: uppercase;
+            margin-top: 24pt;
+            margin-bottom: 4pt;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        body.mode-screenplay div[data-element="action"] {
+            text-transform: none;
+            text-align: left;
+            margin-bottom: 14pt;
+        }
+
+        body.mode-screenplay div[data-element="character"] {
+            text-transform: uppercase;
+            padding-left: 40%;
+            margin-bottom: 2pt;
+        }
+
+        body.mode-screenplay div[data-element="parenthetical"] {
+            text-transform: none;
+            padding-left: 28%;
+            max-width: 70%;
+            margin-bottom: 2pt;
+        }
+
+        body.mode-screenplay div[data-element="dialogue"] {
+            text-transform: none;
+            padding-left: 22%;
+            max-width: 62%;
+            margin-bottom: 14pt;
+        }
+
+        body.mode-screenplay div[data-element="transition"] {
+            text-transform: uppercase;
+            text-align: right;
+            padding-right: 5%;
+            margin-bottom: 14pt;
+        }
+
+        footer {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            padding: 15px 40px;
+            width: 100%;
+            font-size: 0.80rem;
+            color: var(--muted-color);
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+            background-color: var(--bg-color);
+            transition: background-color 0.4s ease, border-top-color 0.4s ease;
+            z-index: 10;
+        }
+
+        .stats-left { justify-self: start; display: flex; gap: 20px; }
+        .footer-center { justify-self: center; }
+        .stats-right { justify-self: end; display: flex; gap: 20px; }
+
+        .footer-files-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--text-color);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 5px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-shadow: var(--text-glow);
+        }
+
+        .footer-files-btn:hover {
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        #element-status-tag { color: var(--accent-color); font-weight: bold; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* ------------------------------------------------------------------
+           6. RESPONSIVE MOBILE & DESKTOP MARGIN MEDIA QUERIES
+        ------------------------------------------------------------------ */
+        @media (max-width: 1180px) {
+            .margin-ghost-guide { display: none !important; }
+        }
+
+        @media (max-width: 600px) {
+            body { font-size: 16px; }
+
+            .brand-header { padding: 0 15px; margin-top: 20px; }
+            .brand-header h1 { font-size: 1.8rem; }
+            .suite-options { flex-direction: column; gap: 15px; }
+
+            header {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: center;
+                padding: 10px 15px;
+                gap: 8px;
+            }
+
+            .doc-left {
+                order: 1;
+                gap: 8px;
+            }
+
+            .header-logo-container {
+                width: 75px;
+            }
+
+            .inline-theme-picker { display: flex; gap: 4px; }
+
+            .header-center-hub {
+                order: 3;
+                width: 100%;
+                margin-top: 4px;
+            }
+
+            .doc-title { 
+                width: 100%; 
+                max-width: 220px; 
+                font-size: 0.8rem; 
+            }
+
+            .sync-status {
+                order: 2;
+                gap: 6px;
+            }
+
+            #save-indicator { display: none; }
+
+            main { padding: 0 10px; }
+            .editor { font-size: 0.95rem; padding-top: 15px; }
+
+            footer {
+                padding: 10px 15px;
+                font-size: 0.7rem;
+                grid-template-columns: 1fr auto;
+            }
+
+            .footer-center { order: 2; }
+            .stats-right { display: none; }
+            .margin-list-widget { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="launchpad-view" class="app-view active">
+        <div class="brand-header">
+            <div class="brand-logo-frame">
+                <!-- Widescreen Vector Logo Main Asset Frame -->
+                <svg width="100%" height="100%" viewBox="0 0 2102 340" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+                    <g transform="matrix(4.16667,0,0,4.16667,-875.209,-2882.7)">
+                        <g transform="matrix(1.13216,0,0,1.13216,51.044,-99.6933)">
+                            <path d="M140.445,728.643C140.445,725.605 142.908,723.142 145.945,723.142C158.55,723.142 188.445,723.142 188.445,723.142L188.445,735.142L153.885,735.142L153.885,741.142L188.445,741.142L188.445,765.642C188.445,768.68 185.982,771.142 182.945,771.142C170.34,771.142 140.445,771.142 140.445,771.142L140.445,759.142L175.005,759.142L175.005,753.142L140.445,753.142L140.445,728.643Z" style="fill-rule:nonzero;"/>
+                            <path d="M200.445,723.142L248.445,723.142L248.445,735.142L213.885,735.142L213.885,759.142L248.445,759.142L248.445,771.142L200.445,771.142L200.445,723.142Z" style="fill-rule:nonzero;"/>
+                            <path d="M260.445,723.142L296.445,723.142L296.445,735.142L273.885,735.142L273.885,771.142L260.445,771.142L260.445,723.142Z" style="fill-rule:nonzero;"/>
+                            <path d="M308.445,723.142L321.885,723.142L321.885,771.142L308.445,771.142L308.445,723.142ZM308.445,699.142L321.885,699.142L321.885,711.142L308.445,711.142L308.445,699.142Z" style="fill-rule:nonzero;"/>
+                            <path d="M333.885,699.142L347.325,699.142L347.325,723.142L376.385,723.142C377.843,723.142 379.242,723.722 380.274,724.753C381.305,725.785 381.885,727.184 381.885,728.643C381.885,741.247 381.885,771.142 381.885,771.142L354.885,771.142L347.325,763.582L347.325,771.142L333.885,771.142L333.885,699.142ZM347.325,735.142L347.325,759.142L368.445,759.142L368.445,735.142L347.325,735.142Z" style="fill-rule:nonzero;"/>
+                            <path d="M393.885,723.142L441.885,723.142L441.885,753.142L407.325,753.142L407.325,759.142L441.885,759.142L441.885,771.142L393.885,771.142L393.885,723.142ZM407.325,735.142L407.325,741.142L428.445,741.142L428.445,735.142L407.325,735.142Z" style="fill-rule:nonzero;"/>
+                            <path d="M477.885,704.643C477.885,701.605 480.348,699.142 483.385,699.142C495.99,699.142 525.885,699.142 525.885,699.142L525.885,729.142L519.885,735.142L525.885,741.142L525.885,765.642C525.885,768.68 523.422,771.142 520.385,771.142C507.78,771.142 477.885,771.142 477.885,771.142L477.885,741.142L483.885,735.142L477.885,729.142L477.885,704.643ZM491.325,711.142L491.325,729.142L512.445,729.142L512.445,711.142L491.325,711.142ZM491.325,741.142L491.325,759.142L512.445,759.142L512.445,741.142L491.325,741.142Z" style="fill-rule:nonzero;"/>
+                            <path d="M537.885,699.142L585.885,699.142L585.885,705.642C585.885,707.101 585.305,708.5 584.274,709.531C583.242,710.563 581.843,711.142 580.385,711.142C570.632,711.142 551.325,711.142 551.325,711.142L551.325,729.142L576.885,729.142L585.885,738.142L585.885,762.142L576.885,771.142L537.885,771.142L537.885,764.643C537.885,763.184 538.464,761.785 539.496,760.753C540.528,759.722 541.927,759.142 543.385,759.142C553.138,759.142 572.445,759.142 572.445,759.142L572.445,741.142L537.885,741.142L537.885,699.142Z" style="fill-rule:nonzero;"/>
+                        </g>
+                    </g>
+                </svg>
+            </div>
+            <p>Distraction-free storytelling.</p>
+        </div>
+
+        <!-- Collapsible Header Theme Picker Unit -->
+        <div class="collapsible-theme-hub" id="theme-accordion-hub">
+            <button class="theme-accordion-toggle" onclick="toggleThemeAccordion()">
+                <div class="theme-square-group">
+                    <div class="theme-square sq-dark" title="Classic Dark"></div>
+                    <div class="theme-square sq-amber" title="Amber CRT"></div>
+                </div>
+                <span class="theme-toggle-label">themes</span>
+                <div class="theme-square-group">
+                    <div class="theme-square sq-matrix" title="Matrix Green"></div>
+                    <div class="theme-square sq-cobalt" title="Retro Cobalt"></div>
+                </div>
+            </button>
+
+            <div class="theme-selection-panel">
+                <div class="theme-card t-dark" onclick="applyAppTheme('dark')">Classic Dark</div>
+                <div class="theme-card t-amber" onclick="applyAppTheme('amber')">Amber CRT</div>
+                <div class="theme-card t-matrix" onclick="applyAppTheme('matrix')">Matrix Green</div>
+                <div class="theme-card t-cobalt" onclick="applyAppTheme('cobalt')">Retro Cobalt</div>
+            </div>
+        </div>
+        
+        <!-- STREAMLINED SUITE CARDS CONTAINER -->
+        <div class="suite-options">
+            
+            <!-- NARRATIVE CARD -->
+            <div class="suite-card" id="card-narrative">
+                <div class="suite-card-icon-frame">
+                    <!-- Custom SVG: Fountain Pen Nib Concept -->
+                    <svg width="415" height="631" viewBox="0 0 415 631" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M185.196 625.063C191.792 627.87 199.112 623.03 199.112 615.862V313.092V290.984C189.62 288.084 181.83 281.288 177.603 272.461C175.397 267.854 174.161 262.694 174.161 257.245C174.161 251.796 175.397 246.636 177.603 242.029C181.83 233.202 189.62 226.406 199.112 223.505C202.377 222.507 205.844 221.971 209.436 221.971C211.64 221.971 213.796 222.173 215.888 222.559C224.604 224.171 232.196 228.986 237.397 235.738C241.983 241.691 244.71 249.149 244.71 257.245C244.71 265.341 241.983 272.799 237.397 278.752C232.196 285.504 224.604 290.319 215.888 291.93V313.665V615.862C215.888 623.03 223.208 627.87 229.804 625.063L251.553 615.808C255.393 614.174 257.814 610.329 257.628 606.161L257.605 605.637C254.803 542.849 278.453 475.063 310.048 415.168C341.555 355.439 380.322 304.761 406.206 276.562L406.823 275.89C411.067 271.266 410.053 263.922 404.715 260.622L403.938 260.142C313.234 204.07 287.489 107.039 285.999 66.284L285.973 65.5581C285.777 60.1808 281.361 55.9228 275.98 55.9228H260.196H252.453H165.558H158.675H139.02C133.639 55.9228 129.223 60.1808 129.027 65.5581L129.001 66.284C127.511 107.039 101.766 204.07 11.0619 260.142L10.2852 260.622C4.94741 263.922 3.93315 271.266 8.17667 275.89L8.79423 276.562C34.6779 304.761 73.4449 355.439 104.952 415.168C136.547 475.063 160.197 542.849 157.395 605.637L157.372 606.161C157.186 610.329 159.607 614.174 163.447 615.808L185.196 625.063ZM149.748 77.4316H158.675H165.558H252.453H260.196H265.252C270.198 125.065 298.531 214.257 381.933 271.468C355.474 301.937 320.235 349.757 291.024 405.133C264.916 454.625 243.204 510.942 237.397 566.749V306.678C254.607 296.922 266.219 278.44 266.219 257.245C266.219 240.05 258.576 224.64 246.502 214.227C243.694 211.805 240.645 209.653 237.397 207.812C230.915 204.137 223.638 201.701 215.888 200.824C213.771 200.585 211.618 200.462 209.436 200.462C205.91 200.462 202.459 200.783 199.112 201.398C191.258 202.841 183.968 205.9 177.603 210.217C175.78 211.453 174.032 212.793 172.369 214.227C160.295 224.64 152.653 240.05 152.653 257.245C152.653 276.808 162.546 294.061 177.603 304.273V566.749C171.796 510.942 150.084 454.625 123.976 405.133C94.765 349.757 59.5264 301.937 33.0672 271.468C116.469 214.257 144.802 125.065 149.748 77.4316Z" fill="currentColor"/>
+                        <path d="M129.423 9.99999C129.423 4.47714 133.9 0 139.423 0H276.007C281.53 0 286.007 4.47715 286.007 10V20.1123C286.007 25.6351 281.53 30.1123 276.007 30.1123H139.423C133.9 30.1123 129.423 25.6351 129.423 20.1123V9.99999Z" fill="currentColor"/>
+                    </svg>
+                </div>
+
+                <h2>Narrative 85</h2>
+                <p class="card-desc">An unencumbered environment tailored for essays, prose, and long-form storytelling. Features smart paragraph spacing, multi-tier list indentation, and automated RTF formatting exports.</p>
+
+                <div class="write-btn-wrapper">
+                    <button class="suite-write-btn" onclick="triggerSuiteWrite('narrative', event)">write</button>
+                </div>
+            </div>
+            
+            <!-- SCREENPLAY CARD -->
+            <div class="suite-card" id="card-screenplay">
+                <div class="suite-card-icon-frame">
+                    <!-- Custom SVG: Production Clapperboard Concept -->
+                    <svg width="533" height="506" viewBox="0 0 533 506" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M465.419 0.698792C478.556 -2.4666 491.895 5.40773 495.413 18.5357L512.236 81.3209L512.356 81.8218C513.429 86.8279 510.53 91.8496 505.658 93.4234L505.165 93.5689L46.7954 216.388H522.388L522.903 216.401C528.186 216.669 532.388 221.038 532.388 226.388V480.388C532.388 493.979 521.542 505.038 508.034 505.38L507.388 505.388H45.3882C31.5812 505.388 20.3884 494.195 20.3882 480.388V223.496H20.27L0.85791 151.051C-2.71551 137.715 5.19922 124.007 18.5356 120.433L464.793 0.857971L465.419 0.698792ZM45.3882 480.388H507.388V313.388H45.3882V480.388ZM442.388 408.388H110.388V390.388H442.388V408.388ZM442.388 372.388H110.388V354.388H442.388V372.388ZM45.3882 288.388H131.741L104.605 241.388H45.3882V288.388ZM160.608 288.388H279.741L252.605 241.388H133.473L160.608 288.388ZM308.608 288.388H427.741L400.605 241.388H281.473L308.608 288.388ZM456.608 288.388H507.388V241.388H429.473L456.608 288.388ZM25.0063 144.581L37.9478 192.878L94.1909 177.807L109.133 122.039L25.0063 144.581ZM137.017 114.568L122.076 170.336L237.148 139.502L252.09 83.7339L137.017 114.568ZM279.974 76.2623L265.033 132.03L380.105 101.196L395.047 45.4283L279.974 76.2623ZM422.931 37.9576L407.99 93.7252L484.205 73.3023L471.264 25.0064L422.931 37.9576Z" fill="currentColor"/>
+                    </svg>
+                </div>
+
+                <h2>Screenplay 85</h2>
+                <p class="card-desc">A rigid screenplay layout engine adhering to industry standard formatting. Effortlessly flows through sluglines, action, characters, and dialogue using automatic Tab and Enter key mechanics.</p>
+
+                <div class="write-btn-wrapper">
+                    <button class="suite-write-btn" onclick="triggerSuiteWrite('screenplay', event)">write</button>
+                </div>
+            </div>
+
+        </div>
+
+        <span style="font-size: 0.65rem; color: var(--muted-color); margin-top: 75px; opacity: 0.6; letter-spacing: 0.5px; text-transform: uppercase;">
+            &copy; 2026 Phillip Joseph Villarreal. All Rights Reserved.
+        </span>
+    </div>
+
+    <!-- DOCUMENT PICKER MODAL -->
+    <div id="picker-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 id="modal-context-title">Narrative Workspace</h3>
+            
+            <div class="modal-tabs-bar">
+                <button class="modal-tab-btn active" id="tab-toggle-local">Local Storage</button>
+                <button class="modal-tab-btn" id="tab-toggle-cloud">Cloud Integration</button>
+            </div>
+
+            <div class="modal-scroll-well">
+                <div id="panel-local-content" class="tab-panel-view active">
+                    <button class="picker-action-btn" id="new-doc-btn">+ Create Fresh Document</button>
+                    
+                    <!-- REFINED AUTO-BACKUP CONTROL BOX -->
+                    <div class="auto-backup-control-box">
+                        <div class="auto-backup-header">
+                            <span class="auto-backup-title">Auto-Backup Downloads</span>
+                            <input type="checkbox" id="auto-backup-toggle" onchange="toggleAutoBackupState(this.checked)">
+                        </div>
+                        <p style="color:var(--muted-color); line-height:1.4;">Automated client-side file downloads to disk protect against browser cache purges and OS updates.</p>
+                        <div class="auto-backup-options-row">
+                            <span>Frequency:</span>
+                            <select id="auto-backup-interval-select" class="auto-backup-select" onchange="updateAutoBackupInterval(this.value)">
+                                <option value="5">Every 5 Minutes</option>
+                                <option value="10" selected>Every 10 Minutes</option>
+                                <option value="15">Every 15 Minutes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="document-list-title">Recent Local Drafts <span class="limit-subtext" id="local-limit-tag">(limit: 10)</span></div>
+                    <div class="document-scroll-list" id="local-docs-target"></div>
+                </div>
+
+                <div id="panel-cloud-content" class="tab-panel-view">
+                    <div id="cloud-ui-injection-zone"></div>
+                </div>
+            </div>
+            
+            <button class="modal-close-btn" id="close-picker-btn">← Back to scribe85</button>
+        </div>
+    </div>
+
+    <div id="zen-alert-overlay" class="alert-overlay">
+        <div class="alert-box">
+            <h4 id="zen-alert-title">System Alert</h4>
+            <p id="zen-alert-text">Notification parameters.</p>
+            <div id="alert-interactive-body"></div>
+            <div id="alert-actions-well">
+                <button class="alert-btn" onclick="closeZenAlert()">Acknowledge</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="workspace-view" class="app-view">
+        <header class="chrome-element">
+            <div class="doc-left">
+                <button class="header-logo-container" id="return-home-btn" title="Return to scribe85 Launchpad">
+                   <svg width="100%" height="100%" viewBox="0 0 2102 340" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+                        <g transform="matrix(4.16667,0,0,4.16667,-875.209,-2882.7)">
+                            <g transform="matrix(1.13216,0,0,1.13216,51.044,-99.6933)">
+                                <path d="M140.445,728.643C140.445,725.605 142.908,723.142 145.945,723.142C158.55,723.142 188.445,723.142 188.445,723.142L188.445,735.142L153.885,735.142L153.885,741.142L188.445,741.142L188.445,765.642C188.445,768.68 185.982,771.142 182.945,771.142C170.34,771.142 140.445,771.142 140.445,771.142L140.445,759.142L175.005,759.142L175.005,753.142L140.445,753.142L140.445,728.643Z" style="fill-rule:nonzero;"/>
+                                <path d="M200.445,723.142L248.445,723.142L248.445,735.142L213.885,735.142L213.885,759.142L248.445,759.142L248.445,771.142L200.445,771.142L200.445,723.142Z" style="fill-rule:nonzero;"/>
+                                <path d="M260.445,723.142L296.445,723.142L296.445,735.142L273.885,735.142L273.885,771.142L260.445,771.142L260.445,723.142Z" style="fill-rule:nonzero;"/>
+                                <path d="M308.445,723.142L321.885,723.142L321.885,771.142L308.445,771.142L308.445,723.142ZM308.445,699.142L321.885,699.142L321.885,711.142L308.445,711.142L308.445,699.142Z" style="fill-rule:nonzero;"/>
+                                <path d="M333.885,699.142L347.325,699.142L347.325,723.142L376.385,723.142C377.843,723.142 379.242,723.722 380.274,724.753C381.305,725.785 381.885,727.184 381.885,728.643C381.885,741.247 381.885,771.142 381.885,771.142L354.885,771.142L347.325,763.582L347.325,771.142L333.885,771.142L333.885,699.142ZM347.325,735.142L347.325,759.142L368.445,759.142L368.445,735.142L347.325,735.142Z" style="fill-rule:nonzero;"/>
+                                <path d="M393.885,723.142L441.885,723.142L441.885,753.142L407.325,753.142L407.325,759.142L441.885,759.142L441.885,771.142L393.885,771.142L393.885,723.142ZM407.325,735.142L407.325,741.142L428.445,741.142L428.445,735.142L407.325,735.142Z" style="fill-rule:nonzero;"/>
+                                <path d="M477.885,704.643C477.885,701.605 480.348,699.142 483.385,699.142C495.99,699.142 525.885,699.142 525.885,699.142L525.885,729.142L519.885,735.142L525.885,741.142L525.885,765.642C525.885,768.68 523.422,771.142 520.385,771.142C507.78,771.142 477.885,771.142 477.885,771.142L477.885,741.142L483.885,735.142L477.885,729.142L477.885,704.643ZM491.325,711.142L491.325,729.142L512.445,729.142L512.445,711.142L491.325,711.142ZM491.325,741.142L491.325,759.142L512.445,759.142L512.445,741.142L491.325,741.142Z" style="fill-rule:nonzero;"/>
+                                <path d="M537.885,699.142L585.885,699.142L585.885,705.642C585.885,707.101 585.305,708.5 584.274,709.531C583.242,710.563 581.843,711.142 580.385,711.142C570.632,711.142 551.325,711.142 551.325,711.142L551.325,729.142L576.885,729.142L585.885,738.142L585.885,762.142L576.885,771.142L537.885,771.142L537.885,764.643C537.885,763.184 538.464,761.785 539.496,760.753C540.528,759.722 541.927,759.142 543.385,759.142C553.138,759.142 572.445,759.142 572.445,759.142L572.445,741.142L537.885,741.142L537.885,699.142Z" style="fill-rule:nonzero;"/>
+                            </g>
+                        </g>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Collapsible Header Theme Picker Unit -->
+            <div class="collapsible-theme-hub" id="theme-accordion-hub-workspace">
+                <button class="theme-accordion-toggle" onclick="toggleThemeAccordion()">
+                    <div class="theme-square-group">
+                        <div class="theme-square sq-dark" title="Classic Dark"></div>
+                        <div class="theme-square sq-amber" title="Amber CRT"></div>
+                    </div>
+                    <span class="theme-toggle-label">themes</span>
+                    <div class="theme-square-group">
+                        <div class="theme-square sq-matrix" title="Matrix Green"></div>
+                        <div class="theme-square sq-cobalt" title="Retro Cobalt"></div>
+                    </div>
+                </button>
+            </div>
+
+            <div class="sync-status">
+                <div class="sync-dot" id="sync-dot"></div>
+                <span id="save-indicator">Ready</span>
+            </div>
+        </header>
+
+        <!-- RIGHT MARGIN GHOST SHORTCUT GUIDE CARD (INSIDE WORKSPACE VIEW) -->
+        <div class="margin-ghost-guide chrome-element" id="margin-ghost-guide">
+            <div class="ghost-guide-title" id="ghost-guide-title">Narrative Shortcuts</div>
+            <div class="ghost-guide-list" id="ghost-guide-list">
+                <!-- Dynamically populated based on mode -->
+            </div>
+        </div>
+
+        <main id="workspace-main">
+            <div class="editor-container">
+                <!-- MARGIN LIST TOGGLE WIDGET -->
+                <div class="margin-list-widget" id="margin-list-widget">
+                    <button class="margin-widget-btn" id="btn-bullet-toggle" title="Toggle Bulleted List">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="4" cy="6" r="2.5"/>
+                            <line x1="10" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2"/>
+                            <circle cx="4" cy="12" r="2.5"/>
+                            <line x1="10" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2"/>
+                            <circle cx="4" cy="18" r="2.5"/>
+                            <line x1="10" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </button>
+                    <button class="margin-widget-btn" id="btn-number-toggle" title="Toggle Numbered List">
+                        <svg viewBox="0 0 24 24">
+                            <text x="1" y="8" font-size="7" font-family="monospace" fill="currentColor">1.</text>
+                            <line x1="10" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2"/>
+                            <text x="1" y="14" font-size="7" font-family="monospace" fill="currentColor">2.</text>
+                            <line x1="10" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2"/>
+                            <text x="1" y="20" font-size="7" font-family="monospace" fill="currentColor">3.</text>
+                            <line x1="10" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="editor" contenteditable="true" spellcheck="true" placeholder="Start typing here...">Start typing here...</div>
+            </div>
+        </main>
+
+        <footer class="chrome-element">
+            <div class="stats-left">
+                <span>Words: <strong id="word-count">0</strong></span>
+                <span>Characters: <strong id="char-count">0</strong></span>
+            </div>
+
+            <div class="footer-center">
+                <button class="footer-files-btn" onclick="openPickerModal(event)">↓ Download / Files</button>
+            </div>
+
+            <div class="stats-right">
+                <span id="element-status-tag" style="display: none; margin-right: 15px;">Element: Action</span>
+                <span id="read-time">0 min read</span>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const CLIENT_ID = '819668101637-b1s5v7l35g6tu0oqt9j71argnr925phc.apps.googleusercontent.com';
+        const SCOPES = 'https://www.googleapis.com/auth/drive.file';
+
+        // --- GLOBAL RUNTIME STATE ---
+        let currentSuiteMode = 'narrative'; // 'narrative' or 'screenplay'
+        let autoBackupIntervalTimer = null;
+        let isAutoBackupEnabled = false;
+        let autoBackupMinutes = 10;
+
+        // --- ACCORDION THEME TOGGLE FOR LANDING SCREEN ---
+        function toggleThemeAccordion() {
+            const hub = document.getElementById('theme-accordion-hub');
+            hub.classList.toggle('expanded');
+        }
+
+        // --- GHOST SHORTCUT GUIDE CARD RENDERER ---
+        function renderGhostMarginGuide() {
+            const titleEl = document.getElementById('ghost-guide-title');
+            const listEl = document.getElementById('ghost-guide-list');
+
+            if (currentSuiteMode === 'narrative') {
+                titleEl.textContent = "Narrative Guide";
+                listEl.innerHTML = `
+                    <div class="ghost-guide-row"><span>Bold selection</span><code>Ctrl + B</code></div>
+                    <div class="ghost-guide-row"><span>Italicize</span><code>Ctrl + I</code></div>
+                    <div class="ghost-guide-row"><span>Bold syntax</span><code>*text*</code></div>
+                    <div class="ghost-guide-row"><span>Italics syntax</span><code>_text_</code></div>
+                    <div class="ghost-guide-row"><span>Indent 1st line</span><code>Tab</code></div>
+                    <div class="ghost-guide-row"><span>Indent list block</span><code>Tab x2</code></div>
+                    <div class="ghost-guide-row"><span>Outdent</span><code>Shift+Tab</code></div>
+                    <div class="ghost-guide-row"><span>List buttons</span><code>Highlight</code></div>
+                    <div class="ghost-guide-row"><span>Reset indent</span><code>Enter x2</code></div>
+                `;
+            } else {
+                titleEl.textContent = "Screenplay Guide";
+                listEl.innerHTML = `
+                    <div class="ghost-guide-row"><span>Slugline</span><code>Tab x0</code></div>
+                    <div class="ghost-guide-row"><span>Action</span><code>Tab x0</code></div>
+                    <div class="ghost-guide-row"><span>Character</span><code>Tab x1</code></div>
+                    <div class="ghost-guide-row"><span>Parenthetical</span><code>Tab x2</code></div>
+                    <div class="ghost-guide-row"><span>Dialogue</span><code>Tab x3</code></div>
+                    <div class="ghost-guide-row"><span>Transition</span><code>Tab x4</code></div>
+                    <div class="ghost-guide-row"><span>Reverse cycle</span><code>Shift+Tab</code></div>
+                    <div class="ghost-guide-row"><span>Auto-advance</span><code>Enter</code></div>
+                `;
+            }
+        }
+
+        // Open Document Picker Modal
+        function openPickerModal(event) {
+            if (event) event.preventDefault();
+            configureWorkspaceUIPresentation();
+            listLocalFiles(); 
+            if (accessToken) { listDriveFiles(); }
+            pickerModal.style.display = 'flex';
+        }
+
+        function triggerSuiteWrite(mode, event) {
+            if (event) event.stopPropagation();
+            currentSuiteMode = mode;
+            openPickerModal(event);
+        }
+
+        // --- TAB SELECTION SWAPPING HANDLERS ---
+        const tabToggleLocal = document.getElementById('tab-toggle-local');
+        const tabToggleCloud = document.getElementById('tab-toggle-cloud');
+        const panelLocalContent = document.getElementById('panel-local-content');
+        const panelCloudContent = document.getElementById('panel-cloud-content');
+        const cloudUiInjectionZone = document.getElementById('cloud-ui-injection-zone');
+
+        tabToggleLocal.addEventListener('click', () => {
+            tabToggleCloud.classList.remove('active');
+            tabToggleLocal.classList.add('active');
+            panelCloudContent.classList.remove('active');
+            panelLocalContent.classList.add('active');
+            listLocalFiles(); 
+        });
+
+        tabToggleCloud.addEventListener('click', () => {
+            tabToggleLocal.classList.remove('active');
+            tabToggleCloud.classList.add('active');
+            panelLocalContent.classList.remove('active');
+            panelCloudContent.classList.add('active');
+            renderCloudTabInterface(); 
+        });
+
+        // --- PERSISTENT GOOGLE AUTH & SILENT RE-CONNECT ENGINE ---
+        function togglePersistAuthState(enabled) {
+            localStorage.setItem('zensuite_persist_google_auth', enabled ? 'true' : 'false');
+        }
+
+        function triggerGoogleAuth(forceConsent) {
+            if (!tokenClient) return;
+            const shouldPersist = localStorage.getItem('zensuite_persist_google_auth') !== 'false';
+            const promptMode = forceConsent ? (shouldPersist ? '' : 'consent') : '';
+            tokenClient.requestAccessToken({ prompt: promptMode });
+        }
+
+        function disconnectGoogleAccount() {
+            if (accessToken && typeof google !== 'undefined') {
+                google.accounts.oauth2.revoke(accessToken, () => {
+                    accessToken = null;
+                    localStorage.removeItem('zensuite_google_access_token');
+                    localStorage.removeItem('zensuite_google_token_exp');
+                    pickerModifierSync();
+                    renderCloudTabInterface();
+                    showZenAlert("Disconnected", "Google Drive connection has been unlinked.");
+                });
+            } else {
+                accessToken = null;
+                localStorage.removeItem('zensuite_google_access_token');
+                localStorage.removeItem('zensuite_google_token_exp');
+                pickerModifierSync();
+                renderCloudTabInterface();
+            }
+        }
+
+        function renderCloudTabInterface() {
+            const isPersistChecked = localStorage.getItem('zensuite_persist_google_auth') !== 'false';
+
+            if (!accessToken) {
+                cloudUiInjectionZone.innerHTML = `
+                    <div style="text-align: center; padding: 15px 10px;">
+                        <p style="font-size:0.85rem; color:var(--muted-color); line-height:1.6; margin-bottom:12px;">
+                            Link your Google account to activate real-time replication and cloud backups.
+                        </p>
+                        <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:15px; font-size:0.75rem; color:var(--muted-color);">
+                            <input type="checkbox" id="persist-auth-toggle" ${isPersistChecked ? 'checked' : ''} onchange="togglePersistAuthState(this.checked)">
+                            <label for="persist-auth-toggle" style="cursor:pointer;">Stay connected across browser sessions</label>
+                        </div>
+                        <button class="picker-action-btn" id="auth-btn" onclick="triggerGoogleAuth(true)">G Connect Google Drive</button>
+                    </div>
+                `;
+            } else {
+                cloudUiInjectionZone.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; padding:0 2px;">
+                        <span style="font-size:0.75rem; color:var(--accent-color);">✓ Cloud Connected</span>
+                        <button onclick="disconnectGoogleAccount()" style="background:transparent; border:none; color:var(--muted-color); font-family:var(--font-mono); font-size:0.70rem; cursor:pointer; text-decoration:underline;">Disconnect</button>
+                    </div>
+                    <button class="picker-action-btn" id="new-cloud-doc-btn" style="background: rgba(56, 189, 248, 0.1); border-color: var(--accent-color); color: var(--accent-color);">+ Create Fresh Cloud Document</button>
+                    <div class="document-list-title">Google Cloud Documents</div>
+                    <div class="document-scroll-list" id="cloud-docs-target-node">
+                        <div style="font-size:0.8rem; color:var(--muted-color); padding: 10px;">Querying remote directories...</div>
+                    </div>
+                `;
+                
+                document.getElementById('new-cloud-doc-btn').addEventListener('click', () => {
+                    initializeDocumentTrack('cloud');
+                });
+                
+                listDriveFiles();
+            }
+        }
+        
+        // View Elements
+        const launchpadView = document.getElementById('launchpad-view');
+        const workspaceView = document.getElementById('workspace-view');
+        const pickerModal = document.getElementById('picker-modal');
+        const zenAlertOverlay = document.getElementById('zen-alert-overlay');
+        const zenAlertTitle = document.getElementById('zen-alert-title');
+        const zenAlertText = document.getElementById('zen-alert-text');
+        const modalContextTitle = document.getElementById('modal-context-title');
+
+        // Margin List Widget Elements
+        const marginListWidget = document.getElementById('margin-list-widget');
+        const btnBulletToggle = document.getElementById('btn-bullet-toggle');
+        const btnNumberToggle = document.getElementById('btn-number-toggle');
+
+        // Target Containers
+        const localDocsTarget = document.getElementById('local-docs-target');
+
+        // Buttons
+        const closePickerBtn = document.getElementById('close-picker-btn');
+        const newDocBtn = document.getElementById('new-doc-btn');
+        const returnHomeBtn = document.getElementById('return-home-btn');
+
+        // Core App Selectors
+        const editor = document.querySelector('.editor');
+        const docTitle = document.querySelector('.doc-title');
+        const wordCountEl = document.getElementById('word-count');
+        const charCountEl = document.getElementById('char-count');
+        const readTimeEl = document.getElementById('read-time');
+        const elementStatusTag = document.getElementById('element-status-tag');
+        
+        const syncDot = document.getElementById('sync-dot');
+        const cloudStatus = document.getElementById('cloud-status');
+        const saveIndicator = document.getElementById('save-indicator');
+
+        // State Anchors
+        let currentLocalFileId = null; 
+        let currentDriveFileId = null; 
+        let idleTimer;
+        let tokenClient;
+        let accessToken = null;
+        let cloudSaveDebounceTimer;
+
+        // --- ROUTE & URL PARAMETER SYNC ENGINE ---
+        function updateUrlParameters(docId, mode) {
+            const url = new URL(window.location);
+            if (docId) {
+                url.searchParams.set('doc', docId);
+                url.searchParams.set('mode', mode || currentSuiteMode);
+            } else {
+                url.searchParams.delete('doc');
+                url.searchParams.delete('mode');
+            }
+            window.history.replaceState({}, '', url);
+        }
+
+        // --- AUTOMATIC BACKGROUND FILE DOWNLOAD ENGINE ---
+        function toggleAutoBackupState(enabled) {
+            isAutoBackupEnabled = enabled;
+            localStorage.setItem('zensuite_autobackup_enabled', enabled ? 'true' : 'false');
+            configureAutoBackupTimer();
+        }
+
+        function updateAutoBackupInterval(minutes) {
+            autoBackupMinutes = parseInt(minutes, 10) || 10;
+            localStorage.setItem('zensuite_autobackup_interval', autoBackupMinutes);
+            configureAutoBackupTimer();
+        }
+
+        function configureAutoBackupTimer() {
+            if (autoBackupIntervalTimer) clearInterval(autoBackupIntervalTimer);
+
+            if (isAutoBackupEnabled) {
+                const intervalMs = autoBackupMinutes * 60 * 1000;
+                autoBackupIntervalTimer = setInterval(() => {
+                    executeEmergencyAutoDownload();
+                }, intervalMs);
+            }
+        }
+
+        function executeEmergencyAutoDownload() {
+            if (!workspaceView.classList.contains('active')) return;
+            const content = editor.innerHTML;
+            if (!content || content === 'Start typing here...') return;
+
+            const title = docTitle ? docTitle.value : 'scribe85-backup';
+            exportDocumentToDisk(`${title}_AUTO_BACKUP`, content, currentSuiteMode);
+            saveIndicator.textContent = "• Local Disk Backup Triggered";
+        }
+
+        // Request Persistent Storage to prevent macOS/Chrome Cache Purges
+        async function requestPersistentStorage() {
+            if (navigator.storage && navigator.storage.persist) {
+                const isPersisted = await navigator.storage.persist();
+                console.log(`Persistent storage status: ${isPersisted}`);
+            }
+        }
+
+        // --- SYSTEM ALERTS ---
+        function showZenAlert(title, text) {
+            zenAlertTitle.textContent = title;
+            zenAlertText.textContent = text;
+            document.getElementById('alert-interactive-body').innerHTML = "";
+            document.getElementById('alert-actions-well').innerHTML = `<button class="alert-btn" onclick="closeZenAlert()">Acknowledge</button>`;
+            zenAlertOverlay.classList.add('active');
+        }
+
+        function closeZenAlert() {
+            zenAlertOverlay.classList.remove('active');
+        }
+
+        // --- APP THEMING ENGINE ---
+        function applyAppTheme(themeName) {
+            const root = document.documentElement;
+            
+            if (themeName === 'dark') {
+                root.style.setProperty('--bg-color', '#12141c');
+                root.style.setProperty('--text-color', '#ffffff');     
+                root.style.setProperty('--muted-color', '#94a3b8');    
+                root.style.setProperty('--accent-color', '#ffffff');   
+                root.style.setProperty('--text-glow', '0 0 8px rgba(255,255,255,0.6)');
+            } 
+            else if (themeName === 'amber') {
+                root.style.setProperty('--bg-color', '#0a0800');
+                root.style.setProperty('--text-color', '#ffb000');
+                root.style.setProperty('--muted-color', '#8a6000');
+                root.style.setProperty('--accent-color', '#ffb000');
+                root.style.setProperty('--text-glow', '0 0 8px rgba(255,176,0,0.6)');
+            } 
+            else if (themeName === 'matrix') {
+                root.style.setProperty('--bg-color', '#000500');
+                root.style.setProperty('--text-color', '#33ff33');
+                root.style.setProperty('--muted-color', '#008800');
+                root.style.setProperty('--accent-color', '#33ff33');
+                root.style.setProperty('--text-glow', '0 0 8px rgba(51,255,51,0.6)');
+            } 
+            else if (themeName === 'cobalt') {
+                root.style.setProperty('--bg-color', '#000080');
+                root.style.setProperty('--text-color', '#ffffff');
+                root.style.setProperty('--muted-color', '#8a9be0');
+                root.style.setProperty('--accent-color', '#ffffff');   
+                root.style.setProperty('--text-glow', '0 0 8px rgba(255,255,255,0.6)');
+            }
+            localStorage.setItem('zensuite_saved_theme', themeName);
+        }
+
+        // --- ROUTING & VIEW CONTROLS ---
+        closePickerBtn.addEventListener('click', () => { pickerModal.style.display = 'none'; });
+
+        returnHomeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.setItem('zensuite_view_state', 'launchpad');
+            updateUrlParameters(null, null);
+            
+            workspaceView.classList.remove('active');
+            launchpadView.classList.add('active');
+            document.body.classList.remove('distraction-free');
+        });
+
+        function configureWorkspaceUIPresentation() {
+            if (currentSuiteMode === 'screenplay') {
+                document.body.classList.remove('mode-narrative');
+                document.body.classList.add('mode-screenplay');
+                modalContextTitle.textContent = "Screenplay Workspace";
+                elementStatusTag.style.display = "inline";
+                marginListWidget.style.display = "none";
+            } else {
+                document.body.classList.remove('mode-screenplay');
+                document.body.classList.add('mode-narrative');
+                modalContextTitle.textContent = "Narrative Workspace";
+                elementStatusTag.style.display = "none";
+            }
+            renderGhostMarginGuide();
+        }
+
+        // --- CENTRAL UNIFIED TRACK CONTROLLER SYSTEM ---
+        function initializeDocumentTrack(originTab) {
+            if (originTab === 'local') {
+                const currentLocalCount = getLocalDatabase().filter(item => item.suiteMode === currentSuiteMode).length;
+                if (currentLocalCount >= 10) {
+                    showZenAlert(
+                        "⚠️ Local Storage Limit Reached", 
+                        "You have filled your 10 offline slots for this workspace app. Connect to Google Drive to activate boundless document tracking layers!"
+                    );
+                    return;
+                }
+            }
+
+            if (currentSuiteMode === 'screenplay') {
+                editor.innerHTML = '<div data-element="scene-heading">INT. NEW SCENE - DAY</div>';
+                if (docTitle) docTitle.value = "untitledScript.fountain";
+            } else {
+                editor.innerHTML = '<div>Start typing here...</div>';
+                if (docTitle) docTitle.value = "untitledProse.rtf"; 
+            }
+
+            currentLocalFileId = "local_" + Date.now();
+
+            localStorage.setItem('zensuite_active_suite_mode', currentSuiteMode);
+            localStorage.setItem('zensuite_view_state', 'workspace');
+
+            if (originTab === 'cloud' && accessToken) {
+                saveIndicator.textContent = "• Allocating Cloud Node...";
+                createDriveFile(); 
+            } else {
+                currentDriveFileId = null;
+                saveDocument();
+            }
+
+            updateUrlParameters(currentLocalFileId, currentSuiteMode);
+            updateAnalytics(editor.innerText);
+            if (currentSuiteMode === 'screenplay') updateLiveElementTag();
+            pickerModifierSync();
+            renderGhostMarginGuide();
+            
+            pickerModal.style.display = 'none';
+            launchpadView.classList.remove('active');
+            workspaceView.classList.add('active');
+        }
+
+        newDocBtn.addEventListener('click', () => {
+            initializeDocumentTrack('local');
+        });
+
+        // --- THEATER MODE DISTRACTION-FREE TYPING EFFECT ---
+        function startTypingDistractionHide() {
+            if (document.activeElement === docTitle) return;
+
+            if (workspaceView.classList.contains('active')) {
+                document.body.classList.add('distraction-free');
+                marginListWidget.style.display = 'none';
+            }
+        }
+
+        function showUIChromeOnInteraction() {
+            document.body.classList.remove('distraction-free');
+            clearTimeout(idleTimer);
+            idleTimer = setTimeout(startTypingDistractionHide, 1000); 
+        }
+
+        window.addEventListener('mousemove', showUIChromeOnInteraction);
+
+        /* ------------------------------------------------------------------
+           DYNAMIC LINE SPACING CALCULATOR FOR INDENTED LIST GROUPS
+        ------------------------------------------------------------------ */
+        function applyDynamicListSpacing() {
+            const blocks = Array.from(editor.children);
+            
+            blocks.forEach((block, index) => {
+                const indent = parseInt(block.dataset.indent || "0", 10);
+                const prevBlock = blocks[index - 1];
+                const nextBlock = blocks[index + 1];
+                
+                const prevIndent = prevBlock ? parseInt(prevBlock.dataset.indent || "0", 10) : 0;
+                const nextIndent = nextBlock ? parseInt(nextBlock.dataset.indent || "0", 10) : 0;
+
+                if (indent > 0) {
+                    if (prevIndent === 0) {
+                        block.style.marginTop = "1.25em";
+                    } else {
+                        block.style.marginTop = "";
+                    }
+
+                    if (nextBlock && nextIndent === indent) {
+                        block.style.marginBottom = "0.7em";
+                    } else {
+                        block.style.marginBottom = "1.5em";
+                    }
+                } else {
+                    block.style.marginTop = "";
+                    block.style.marginBottom = ""; 
+                }
+            });
+        }
+
+        // --- INLINE MARKDOWN AUTO-CONVERTER (*bold* & _italics_) WITH ZERO-WIDTH STYLE ISOLATION ---
+        function processInlineMarkdownFormatting() {
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+
+            let currentBlock = selection.getRangeAt(0).startContainer;
+            if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
+
+            if (!currentBlock || currentBlock === editor) return;
+
+            let html = currentBlock.innerHTML;
+            let modified = false;
+
+            // Convert *bold* -> <b>bold</b> + Zero-Width Space (\u200B)
+            const boldRegex = /(?<!\w)\*([^*]+)\*(?!\w)/g;
+            if (boldRegex.test(html)) {
+                currentBlock.innerHTML = html.replace(boldRegex, '<b>$1</b>&#8203;');
+                modified = true;
+            }
+
+            // Convert _italics_ -> <i>italics</i> + Zero-Width Space (\u200B)
+            const italicRegex = /(?<!\w)_([^_]+)_(?!\w)/g;
+            if (italicRegex.test(currentBlock.innerHTML)) {
+                currentBlock.innerHTML = currentBlock.innerHTML.replace(italicRegex, '<i>$1</i>&#8203;');
+                modified = true;
+            }
+
+            if (modified) {
+                placeCaretAfterFormatting(currentBlock);
+            }
+        }
+
+        function placeCaretAfterFormatting(container) {
+            const selection = window.getSelection();
+            const range = document.createRange();
+            
+            let lastChild = container.lastChild;
+            if (!lastChild) return;
+
+            if (lastChild.nodeType === Node.ELEMENT_NODE && (lastChild.tagName === 'B' || lastChild.tagName === 'I')) {
+                const zwsp = document.createTextNode('\u200B');
+                container.appendChild(zwsp);
+                lastChild = zwsp;
+            }
+
+            if (lastChild.nodeType === Node.TEXT_NODE) {
+                range.setStart(lastChild, lastChild.length);
+                range.collapse(true);
+            } else {
+                range.selectNodeContents(lastChild);
+                range.collapse(false);
+            }
+
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+
+        // --- ANALYTICS ENGINE ---
+        function updateAnalytics(text) {
+            const cleanText = text.replace(/\u200B/g, "");
+            
+            const charCount = cleanText.length;
+            charCountEl.textContent = charCount.toLocaleString();
+
+            const words = cleanText.trim().split(/\s+/).filter(word => word.length > 0);
+            const wordCount = words.length;
+            wordCountEl.textContent = wordCount.toLocaleString();
+
+            const readingTime = Math.ceil(wordCount / 200);
+            readTimeEl.textContent = currentSuiteMode === 'screenplay' 
+                ? `${Math.ceil(wordCount / 120)} min read` 
+                : `${readingTime} min read`;
+        }
+
+        // --- SELECTION MARGIN LIST WIDGET CONTROLLER ---
+        function getSelectedBlocks() {
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return [];
+            const range = selection.getRangeAt(0);
+
+            const allBlocks = Array.from(editor.children);
+            return allBlocks.filter(block => range.intersectsNode(block));
+        }
+
+        function updateMarginListWidget() {
+            if (currentSuiteMode !== 'narrative') {
+                marginListWidget.style.display = 'none';
+                return;
+            }
+
+            const selection = window.getSelection();
+            if (!selection.rangeCount || selection.isCollapsed) {
+                marginListWidget.style.display = 'none';
+                return;
+            }
+
+            const selectedBlocks = getSelectedBlocks();
+            if (selectedBlocks.length === 0) {
+                marginListWidget.style.display = 'none';
+                return;
+            }
+
+            const firstBlock = selectedBlocks[0];
+            const editorRect = editor.getBoundingClientRect();
+            const firstBlockRect = firstBlock.getBoundingClientRect();
+
+            // Position widget strictly vertically aligned with top of the selected block
+            const topOffset = firstBlockRect.top - editorRect.top + editor.scrollTop;
+            marginListWidget.style.top = `${Math.max(0, topOffset)}px`;
+            marginListWidget.style.display = 'flex';
+
+            // Check if all selected blocks currently share a list type
+            const isAllBullets = selectedBlocks.every(b => (b.dataset.listType === 'bullet' || /^•\s/.test(b.innerText.trim())));
+            const isAllNumbers = selectedBlocks.every(b => (b.dataset.listType === 'number' || /^\d+[\.\)]\s/.test(b.innerText.trim())));
+
+            btnBulletToggle.classList.toggle('active', isAllBullets);
+            btnNumberToggle.classList.toggle('active', isAllNumbers);
+        }
+
+        function toggleListFormatting(type) {
+            const selectedBlocks = getSelectedBlocks();
+            if (selectedBlocks.length === 0) return;
+
+            const isAllBullets = selectedBlocks.every(b => (b.dataset.listType === 'bullet' || /^•\s/.test(b.innerText.trim())));
+            const isAllNumbers = selectedBlocks.every(b => (b.dataset.listType === 'number' || /^\d+[\.\)]\s/.test(b.innerText.trim())));
+
+            let turningOff = (type === 'bullet' && isAllBullets) || (type === 'number' && isAllNumbers);
+
+            selectedBlocks.forEach((block, idx) => {
+                let text = block.innerText ? block.innerText.replace(/\u200B/g, "").trim() : "";
+                
+                // Strip existing bullet/number prefixes
+                text = text.replace(/^([•\-\*]|\d+[\.\)])\s+/, "");
+
+                if (turningOff) {
+                    // Revert to clean flush-left prose
+                    block.dataset.listType = "none";
+                    block.dataset.indent = "0";
+                    block.dataset.firstLineIndent = "false";
+                    block.style.paddingLeft = "0px";
+                    block.style.textIndent = "0px";
+                    block.textContent = text === "" ? "" : text;
+                    if (block.textContent === "") block.innerHTML = "<br>";
+                } else {
+                    // Apply list formatting
+                    block.dataset.listType = type;
+                    block.dataset.indent = "1";
+                    block.dataset.firstLineIndent = "false";
+                    block.style.paddingLeft = "30px";
+                    block.style.textIndent = "0px";
+
+                    const prefix = type === 'bullet' ? "• " : `${idx + 1}. `;
+                    block.textContent = `${prefix}${text}`;
+                }
+            });
+
+            applyDynamicListSpacing();
+            updateAnalytics(editor.innerText);
+            saveDocument();
+            updateMarginListWidget();
+        }
+
+        btnBulletToggle.addEventListener('mousedown', (e) => {
+            e.preventDefault(); // Retains active selection range
+            toggleListFormatting('bullet');
+        });
+
+        btnNumberToggle.addEventListener('mousedown', (e) => {
+            e.preventDefault(); // Retains active selection range
+            toggleListFormatting('number');
+        });
+
+        document.addEventListener('selectionchange', () => {
+            if (workspaceView.classList.contains('active')) {
+                updateMarginListWidget();
+            }
+        });
+
+        // --- CLEAN PASTE SANITIZER (STRIPS GOOGLE DOCS HIDDEN FORMATTING & STYLES) ---
+        editor.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+            if (!text) return;
+
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+            selection.deleteFromDocument();
+
+            const range = selection.getRangeAt(0);
+            const lines = text.split(/\r\n|\r|\n/);
+
+            if (lines.length === 1) {
+                const textNode = document.createTextNode(lines[0]);
+                range.insertNode(textNode);
+                range.setStartAfter(textNode);
+                range.collapse(true);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            } else {
+                const fragment = document.createDocumentFragment();
+                lines.forEach((line) => {
+                    const div = document.createElement('div');
+                    if (currentSuiteMode === 'screenplay') {
+                        div.setAttribute('data-element', 'action');
+                    }
+                    if (line.trim() === '') {
+                        div.innerHTML = '<br>';
+                    } else {
+                        div.textContent = line;
+                    }
+                    fragment.appendChild(div);
+                });
+                range.insertNode(fragment);
+            }
+
+            if (currentSuiteMode === 'narrative') {
+                applyDynamicListSpacing();
+            }
+            updateAnalytics(editor.innerText);
+            saveDocument();
+        });
+
+        // --- UNIFIED KEYBOARD INPUT INTERCEPTOR ENGINE ---
+        editor.addEventListener('keydown', (e) => {
+            const selection = window.getSelection();
+
+            // A. NARRATIVE MODE KEYBOARD ENGINE (ISOLATED FIRST-LINE & BLOCK INDENTS + SAFE SPLIT)
+            if (currentSuiteMode === 'narrative') {
+                const isModifier = e.metaKey || e.ctrlKey;
+                if (isModifier && e.key.toLowerCase() === 'b') { e.preventDefault(); document.execCommand('bold', false, null); saveDocument(); return; }
+                if (isModifier && e.key.toLowerCase() === 'i') { e.preventDefault(); document.execCommand('italic', false, null); saveDocument(); return; }
+
+                if (!selection.rangeCount) return;
+
+                const range = selection.getRangeAt(0);
+                let currentBlock = range.startContainer;
+                if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
+                
+                // Climb up to the direct child div of the editor
+                while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
+                    currentBlock = currentBlock.parentNode;
+                }
+
+                if (currentBlock === editor || !currentBlock) {
+                    document.execCommand('formatBlock', false, 'div');
+                    const updatedSel = window.getSelection();
+                    if (updatedSel && updatedSel.rangeCount) {
+                        currentBlock = updatedSel.getRangeAt(0).startContainer;
+                        if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
+                        while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
+                            currentBlock = currentBlock.parentNode;
+                        }
+                    }
+                }
+
+                if (!currentBlock || currentBlock === editor) return;
+
+                const currentIndent = parseInt(currentBlock.dataset.indent || "0", 10);
+                const hasFirstLineIndent = currentBlock.dataset.firstLineIndent === "true";
+
+                // Tab & Shift + Tab: Strictly target ONLY this active block
+                if (e.key === 'Tab') {
+                    e.preventDefault();
+
+                    if (e.shiftKey) {
+                        // --- SHIFT + TAB (OUTDENT / STEP BACK) ---
+                        if (currentIndent > 1) {
+                            const newIndent = currentIndent - 1;
+                            currentBlock.dataset.indent = newIndent;
+                            currentBlock.style.paddingLeft = `${newIndent * 30}px`;
+                        } else if (currentIndent === 1) {
+                            currentBlock.dataset.indent = "0";
+                            currentBlock.style.paddingLeft = "0px";
+                            currentBlock.dataset.firstLineIndent = "true";
+                            currentBlock.style.textIndent = "2em";
+                        } else if (hasFirstLineIndent) {
+                            currentBlock.dataset.firstLineIndent = "false";
+                            currentBlock.style.textIndent = "0px";
+                            currentBlock.style.paddingLeft = "0px";
+                        }
+                    } else {
+                        // --- STANDARD TAB (INDENT) ---
+                        const text = currentBlock.innerText ? currentBlock.innerText.trim() : "";
+                        const isListPattern = /^(\d+[\.\)]|[-*•])\s/.test(text);
+
+                        if (!hasFirstLineIndent && currentIndent === 0 && !isListPattern) {
+                            // 1st Tab: First line indent ONLY for this paragraph
+                            currentBlock.dataset.firstLineIndent = "true";
+                            currentBlock.style.textIndent = "2em";
+                            currentBlock.style.paddingLeft = "0px";
+                        } else {
+                            // 2nd+ Tab or List Item: Multi-tier block indent
+                            currentBlock.dataset.firstLineIndent = "false";
+                            currentBlock.style.textIndent = "0px";
+                            const newIndent = currentIndent + 1;
+                            currentBlock.dataset.indent = newIndent;
+                            currentBlock.style.paddingLeft = `${newIndent * 30}px`;
+                        }
+                    }
+
+                    applyDynamicListSpacing();
+                    saveDocument();
+                    return;
+                }
+
+                // Enter Key Management: Clean mid-paragraph splits and non-inherited fresh lines
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+
+                    const textContent = currentBlock.innerText ? currentBlock.innerText.replace(/\u200B/g, "").trim() : "";
+
+                    // Empty Enter on Indented Line -> Step-down / Outdent
+                    if (textContent === "" || /^([•\-\*]|\d+[\.\)])\s*$/.test(textContent)) {
+                        if (currentIndent > 0) {
+                            const newIndent = currentIndent - 1;
+                            currentBlock.dataset.indent = newIndent;
+                            currentBlock.dataset.listType = "none";
+                            currentBlock.style.paddingLeft = newIndent > 0 ? `${newIndent * 30}px` : "0px";
+                            currentBlock.innerHTML = "<br>";
+                            applyDynamicListSpacing();
+                            saveDocument();
+                            return;
+                        } else if (hasFirstLineIndent) {
+                            currentBlock.dataset.firstLineIndent = "false";
+                            currentBlock.style.textIndent = "0px";
+                            currentBlock.innerHTML = "<br>";
+                            saveDocument();
+                            return;
+                        }
+                    }
+
+                    // Create new clean paragraph
+                    const newBlock = document.createElement('div');
+                    newBlock.dataset.firstLineIndent = "false";
+                    newBlock.style.textIndent = "0px";
+
+                    const isList = currentBlock.dataset.listType === 'bullet' || currentBlock.dataset.listType === 'number' || /^([•\-\*]|\d+[\.\)])\s/.test(textContent);
+                    let listPrefix = "";
+
+                    if (isList) {
+                        newBlock.dataset.indent = currentIndent > 0 ? currentIndent : "1";
+                        newBlock.style.paddingLeft = `${parseInt(newBlock.dataset.indent, 10) * 30}px`;
+                        
+                        if (currentBlock.dataset.listType === 'number' || /^\d+[\.\)]\s/.test(textContent)) {
+                            newBlock.dataset.listType = "number";
+                            const match = textContent.match(/^(\d+)[\.\)]\s/);
+                            const nextNum = match ? parseInt(match[1], 10) + 1 : 2;
+                            listPrefix = `${nextNum}. `;
+                        } else {
+                            newBlock.dataset.listType = "bullet";
+                            listPrefix = "• ";
+                        }
+                    } else if (currentIndent > 0) {
+                        newBlock.dataset.indent = currentIndent;
+                        newBlock.style.paddingLeft = `${currentIndent * 30}px`;
+                    } else {
+                        newBlock.dataset.indent = "0";
+                        newBlock.style.paddingLeft = "0px";
+                    }
+
+                    // Safe Deep Split: Extracts everything from caret to the end of the block
+                    const splitRange = selection.getRangeAt(0).cloneRange();
+                    splitRange.selectNodeContents(currentBlock);
+                    splitRange.setStart(range.startContainer, range.startOffset);
+
+                    const extractedFragment = splitRange.extractContents();
+
+                    if (!extractedFragment.textContent || extractedFragment.textContent.replace(/\u200B/g, "").trim() === "") {
+                        newBlock.innerHTML = listPrefix ? listPrefix : '<br>';
+                    } else {
+                        if (listPrefix) {
+                            newBlock.textContent = listPrefix;
+                            newBlock.appendChild(extractedFragment);
+                        } else {
+                            newBlock.appendChild(extractedFragment);
+                        }
+                    }
+
+                    // If remaining original block became empty, retain line-break placeholder
+                    if (currentBlock.innerHTML.trim() === "" || currentBlock.innerText.replace(/\u200B/g, "").trim() === "") {
+                        currentBlock.innerHTML = '<br>';
+                    }
+
+                    // Insert new split paragraph immediately after current one
+                    if (currentBlock.nextSibling) {
+                        editor.insertBefore(newBlock, currentBlock.nextSibling);
+                    } else {
+                        editor.appendChild(newBlock);
+                    }
+
+                    // Position caret at the beginning of the newly split line
+                    const newRange = document.createRange();
+                    if (listPrefix && newBlock.firstChild) {
+                        newRange.setStart(newBlock.firstChild, listPrefix.length);
+                    } else {
+                        newRange.setStart(newBlock, 0);
+                    }
+                    newRange.collapse(true);
+                    selection.removeAllRanges();
+                    selection.addRange(newRange);
+
+                    applyDynamicListSpacing();
+                    saveDocument();
+                    return;
+                }
+                return;
+            }
+
+            // B. SCREENPLAY MODE KEYBOARD ENGINE (WITH SAFE SPLIT & REVERSE CYCLE)
+            if (!selection.rangeCount) return;
+
+            const range = selection.getRangeAt(0);
+            let currentBlock = range.startContainer;
+            if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
+            while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
+                currentBlock = currentBlock.parentNode;
+            }
+
+            if (currentBlock === editor || !currentBlock || !currentBlock.hasAttribute) {
+                document.execCommand('formatBlock', false, 'div');
+                currentBlock = editor.firstElementChild;
+                if (currentBlock) currentBlock.setAttribute('data-element', 'action');
+            }
+
+            const currentType = currentBlock ? (currentBlock.getAttribute('data-element') || 'action') : 'action';
+
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                let nextType = 'character';
+
+                if (e.shiftKey) {
+                    // Reverse Cycle (Shift + Tab)
+                    if (currentType === 'action') nextType = 'scene-heading';
+                    else if (currentType === 'scene-heading') nextType = 'transition';
+                    else if (currentType === 'transition') nextType = 'dialogue';
+                    else if (currentType === 'dialogue') nextType = 'parenthetical';
+                    else if (currentType === 'parenthetical') nextType = 'character';
+                    else if (currentType === 'character') nextType = 'action';
+                } else {
+                    // Forward Cycle (Tab)
+                    if (currentType === 'action') nextType = 'character';
+                    else if (currentType === 'character') nextType = 'parenthetical';
+                    else if (currentType === 'parenthetical') nextType = 'dialogue';
+                    else if (currentType === 'dialogue') nextType = 'transition';
+                    else if (currentType === 'transition') nextType = 'scene-heading';
+                    else if (currentType === 'scene-heading') nextType = 'action';
+                }
+
+                if (currentBlock) {
+                    currentBlock.setAttribute('data-element', nextType);
+                    updateLiveElementTag();
+                    saveDocument();
+                }
+            }
+
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                let targetType = 'action';
+
+                if (currentType === 'scene-heading') targetType = 'action';
+                else if (currentType === 'action') targetType = 'action';
+                else if (currentType === 'character') targetType = 'dialogue';
+                else if (currentType === 'dialogue') targetType = 'character';
+                else if (currentType === 'parenthetical') targetType = 'dialogue';
+                else if (currentType === 'transition') targetType = 'scene-heading';
+
+                const nextBlock = document.createElement('div');
+                nextBlock.setAttribute('data-element', targetType);
+                
+                const splitRange = selection.getRangeAt(0).cloneRange();
+                splitRange.selectNodeContents(currentBlock);
+                splitRange.setStart(range.startContainer, range.startOffset);
+                const extractedFragment = splitRange.extractContents();
+
+                if (!extractedFragment.textContent || extractedFragment.textContent.replace(/\u200B/g, "").trim() === "") {
+                    nextBlock.innerHTML = '<br>';
+                } else {
+                    nextBlock.appendChild(extractedFragment);
+                }
+
+                if (currentBlock.innerHTML.trim() === "" || currentBlock.innerText.replace(/\u200B/g, "").trim() === "") {
+                    currentBlock.innerHTML = '<br>';
+                }
+
+                if (currentBlock && currentBlock.parentNode) {
+                    currentBlock.parentNode.insertBefore(nextBlock, currentBlock.nextSibling);
+                } else {
+                    editor.appendChild(nextBlock);
+                }
+
+                const newRange = document.createRange();
+                newRange.setStart(nextBlock, 0);
+                newRange.collapse(true);
+                selection.removeAllRanges();
+                selection.addRange(newRange);
+
+                updateLiveElementTag();
+                saveDocument();
+            }
+        });
+
+        editor.addEventListener('keyup', () => {
+            if (currentSuiteMode === 'screenplay') updateLiveElementTag();
+        });
+        editor.addEventListener('click', () => {
+            if (currentSuiteMode === 'screenplay') updateLiveElementTag();
+        });
+
+        function updateLiveElementTag() {
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+            let currentBlock = selection.getRangeAt(0).startContainer;
+            if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
+            while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
+                currentBlock = currentBlock.parentNode;
+            }
+            if (currentBlock && currentBlock.hasAttribute && currentBlock.hasAttribute('data-element')) {
+                const tag = currentBlock.getAttribute('data-element');
+                elementStatusTag.textContent = `Element: ${tag.replace('-', ' ')}`;
+            } else {
+                elementStatusTag.textContent = "Element: Action";
+            }
+        }
+
+        function highlightFirstCharacterAppearance(characterName) {
+            if (!characterName || characterName.trim() === "") return;
+            
+            const cleanName = characterName.trim().toUpperCase();
+            const blocks = Array.from(editor.children);
+            const nameRegex = new RegExp(`\\b${cleanName}\\b`, 'i');
+
+            for (let block of blocks) {
+                if (block.getAttribute('data-element') === 'action') {
+                    const text = block.innerText;
+                    if (nameRegex.test(text)) {
+                        const updatedText = text.replace(nameRegex, (match) => match.toUpperCase());
+                        if (text !== updatedText) {
+                            block.innerText = updatedText;
+                        }
+                        break; 
+                    }
+                }
+            }
+        }
+
+        // --- DOM-AWARE RTF CONVERTER ENGINE ---
+        function convertHtmlToRtf(htmlContent) {
+            const temp = document.createElement('div');
+            temp.innerHTML = htmlContent;
+
+            let rtf = "{\\rtf1\\ansi\\deff0 {\\fonttbl{\\f0 JetBrains Mono;}}\n";
+            rtf += "\\viewkind4\\uc1\\dscr "; 
+
+            function parseNode(node) {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    return node.textContent
+                        .replace(/\u200B/g, "")
+                        .replace(/\\/g, "\\\\")
+                        .replace(/\{/g, "\\{")
+                        .replace(/\}/g, "\\}");
+                }
+
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                    const tag = node.tagName.toLowerCase();
+                    const inner = Array.from(node.childNodes).map(parseNode).join('');
+
+                    if (tag === 'b' || tag === 'strong') {
+                        return `\\b ${inner}\\b0 `;
+                    }
+                    if (tag === 'i' || tag === 'em') {
+                        return `\\i ${inner}\\i0 `;
+                    }
+                    if (tag === 'br') {
+                        return "\\line ";
+                    }
+                    if (tag === 'div' || tag === 'p') {
+                        const indentAttr = parseInt(node.dataset.indent || "0", 10);
+                        const stylePadding = parseInt(node.style.paddingLeft || "0", 10);
+                        const indentFromStyle = Math.round(stylePadding / 30);
+                        const indentLevel = Math.max(indentAttr, indentFromStyle);
+
+                        const indentTwips = indentLevel * 720; 
+
+                        let spaceBeforeTwips = 0;
+                        if (node.style.marginTop === "1.25em") {
+                            spaceBeforeTwips = 180; 
+                        }
+
+                        let spaceAfterTwips = 216; 
+                        if (node.style.marginBottom === "0.7em" || node.style.marginBottom === "0.75em") {
+                            spaceAfterTwips = 100; 
+                        }
+
+                        return `\\par\\pard\\f0\\fs24\\sb${spaceBeforeTwips}\\sa${spaceAfterTwips}\\li${indentTwips} ${inner}`;
+                    }
+
+                    return inner;
+                }
+                return "";
+            }
+
+            const compiledRtfBody = Array.from(temp.childNodes).map(parseNode).join('');
+            rtf += compiledRtfBody + "}";
+            return rtf;
+        }
+
+        // --- AUTO-SCROLL TYPEWRITER CURSOR TRACKER ---
+        function scrollToCursor() {
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+
+            const range = selection.getRangeAt(0);
+            let currentBlock = range.startContainer;
+            if (currentBlock.nodeType === Node.TEXT_NODE) {
+                currentBlock = currentBlock.parentNode;
+            }
+
+            if (currentBlock && currentBlock !== editor && typeof currentBlock.scrollIntoView === 'function') {
+                currentBlock.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+            }
+        }
+
+        // --- EXPORTER ENGINE ---
+        function exportDocumentToDisk(title, content, mode) {
+            try {
+                let processedText = "";
+                let fileExtension = mode === 'screenplay' ? '.fountain' : '.rtf';
+                let cleanTitle = title ? title.trim() : "untitled";
+
+                if (!cleanTitle.toLowerCase().endsWith(fileExtension)) {
+                    cleanTitle = cleanTitle.replace(/\.[^/.]+$/, "") + fileExtension;
+                }
+
+                if (mode === 'narrative') {
+                    processedText = convertHtmlToRtf(content);
+                } else {
+                    const parserNode = document.createElement('div');
+                    parserNode.innerHTML = content;
+                    const blocks = Array.from(parserNode.children);
+
+                    if (blocks && blocks.length > 0) {
+                        processedText = blocks.map(block => {
+                            if (!block) return "";
+                            const type = (typeof block.getAttribute === 'function') ? (block.getAttribute('data-element') || 'action') : 'action';
+                            const text = block.innerText ? block.innerText.replace(/\u200B/g, "").trim() : "";
+                            if (!text) return "";
+                            
+                            if (type === 'scene-heading' || type === 'character' || type === 'transition') return text.toUpperCase();
+                            if (type === 'parenthetical') return text.startsWith('(') ? text : `(${text})`;
+                            return text;
+                        }).filter(line => line !== "").join('\n\n');
+                    }
+                    if (!processedText.trim()) {
+                        processedText = parserNode.innerText ? parserNode.innerText.replace(/\u200B/g, "").trim() : content;
+                    }
+                }
+
+                const mimeType = mode === 'narrative' ? 'application/rtf' : 'text/plain;charset=utf-8';
+                const blob = new Blob([processedText], { type: mimeType });
+                const tempLink = document.createElement('a');
+                tempLink.href = URL.createObjectURL(blob);
+                tempLink.download = cleanTitle;
+                
+                document.body.appendChild(tempLink);
+                tempLink.click();
+                document.body.removeChild(tempLink);
+                
+            } catch (error) {
+                showZenAlert("Download Engine Error", error.message);
+            }
+        }
+
+        // In-Modal Rename Logic
+        function requestDocumentRename(fileId, currentTitle, storageType) {
+            zenAlertTitle.textContent = "Rename Document";
+            zenAlertText.textContent = `Enter a new file title for "${currentTitle}":`;
+            
+            const bodyWell = document.getElementById('alert-interactive-body');
+            bodyWell.innerHTML = `<input type="text" id="rename-title-input" class="alert-input" value="${currentTitle}">`;
+            
+            const actionsWell = document.getElementById('alert-actions-well');
+            actionsWell.innerHTML = `
+                <button class="alert-btn" id="confirm-rename-execute">Save Name</button>
+                <button class="alert-btn" onclick="closeZenAlert()">Cancel</button>
+            `;
+            
+            zenAlertOverlay.classList.add('active');
+            const inputEl = document.getElementById('rename-title-input');
+            inputEl.focus();
+            inputEl.select();
+
+            document.getElementById('confirm-rename-execute').onclick = () => {
+                const newTitle = inputEl.value.trim();
+                if (newTitle && newTitle !== currentTitle) {
+                    if (storageType === 'local') {
+                        executeLocalRename(fileId, newTitle);
+                    } else {
+                        executeCloudRename(fileId, newTitle);
+                    }
+                }
+                closeZenAlert();
+            };
+        }
+
+        function executeLocalRename(fileId, newTitle) {
+            let db = getLocalDatabase();
+            const item = db.find(i => i.id === fileId);
+            if (item) {
+                item.title = newTitle;
+                localStorage.setItem('zensuite_local_db', JSON.stringify(db));
+                
+                if (currentLocalFileId === fileId && docTitle) {
+                    docTitle.value = newTitle;
+                }
+                listLocalFiles();
+            }
+        }
+
+        function executeCloudRename(fileId, newTitle) {
+            if (!accessToken) return;
+            saveIndicator.textContent = "• Renaming Cloud Asset...";
+
+            fetch(`https://www.googleapis.com/drive/v3/files/${fileId}`, {
+                method: 'PATCH',
+                headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: newTitle })
+            })
+            .then(() => {
+                saveIndicator.textContent = "• File Renamed";
+                if (currentDriveFileId === fileId && docTitle) {
+                    docTitle.value = newTitle;
+                }
+                listDriveFiles();
+            })
+            .catch(() => showZenAlert("Cloud Error", "Failed to update filename on Google Drive."));
+        }
+
+        // --- CONTROLLED DOCUMENT DELETION ROUTER ---
+        function requestDocumentDeletion(fileId, title, storageType) {
+            const storageLabel = storageType === 'cloud' ? 'Google Cloud Drive storage directory' : 'browser sandbox partition';
+            const confirmationText = `Are you absolutely certain you want to permanently delete "${title}"? This process will wipe the file from your ${storageLabel} and cannot be undone.`;
+            
+            zenAlertTitle.textContent = "Confirm Permanent Deletion?";
+            zenAlertText.textContent = confirmationText;
+            document.getElementById('alert-interactive-body').innerHTML = "";
+            
+            const actionsWell = document.getElementById('alert-actions-well');
+            actionsWell.innerHTML = `
+                <button class="alert-btn" id="confirm-delete-execute" style="border-color: #ef4444; color: #ef4444;">Permanently Delete</button>
+                <button class="alert-btn" onclick="closeZenAlert()">Cancel</button>
+            `;
+            
+            zenAlertOverlay.classList.add('active');
+
+            document.getElementById('confirm-delete-execute').onclick = () => {
+                if (storageType === 'local') {
+                    executeLocalWipe(fileId);
+                } else if (storageType === 'cloud') {
+                    executeCloudWipe(fileId);
+                }
+                closeZenAlert();
+            };
+        }
+
+        function executeLocalWipe(fileId) {
+            let db = getLocalDatabase();
+            db = db.filter(item => item.id !== fileId);
+            localStorage.setItem('zensuite_local_db', JSON.stringify(db));
+            
+            if (currentLocalFileId === fileId) {
+                editor.innerHTML = currentSuiteMode === 'screenplay' ? '<div data-element="scene-heading">INT. NEW SCENE - DAY</div>' : "";
+                if (docTitle) docTitle.value = currentSuiteMode === 'screenplay' ? "untitledScript.fountain" : "untitledProse.rtf";
+                currentLocalFileId = "local_" + Date.now();
+                currentDriveFileId = null;
+                updateUrlParameters(null, null);
+                pickerModifierSync();
+            }
+            listLocalFiles();
+        }
+
+        function executeCloudWipe(fileId) {
+            if (!accessToken) return;
+            saveIndicator.textContent = "• Transmitting Wipe Command...";
+            
+            fetch(`https://www.googleapis.com/drive/v3/files/${fileId}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            })
+            .then(() => {
+                saveIndicator.textContent = "• Cloud Archive Updated";
+                if (currentDriveFileId === fileId) {
+                    currentDriveFileId = null;
+                    updateUrlParameters(null, null);
+                    pickerModifierSync();
+                }
+                listDriveFiles();
+            })
+            .catch(() => showZenAlert("Cloud Error", "Failed to clear item from Google Drive directories."));
+        }
+
+        // --- LOCAL METADATA STORAGE SYSTEM ---
+        function getLocalDatabase() {
+            const raw = localStorage.getItem('zensuite_local_db');
+            return raw ? JSON.parse(raw) : [];
+        }
+
+        function saveToLocalDatabase(fileObj) {
+            let db = getLocalDatabase();
+            const index = db.findIndex(item => item.id === fileObj.id);
+            if (index !== -1) {
+                db[index] = fileObj; 
+            } else {
+                if (db.filter(i => i.suiteMode === currentSuiteMode).length >= 10) return;
+                db.unshift(fileObj); 
+            }
+            localStorage.setItem('zensuite_local_db', JSON.stringify(db));
+        }
+
+        function listLocalFiles() {
+            const db = getLocalDatabase().filter(item => item.suiteMode === currentSuiteMode && !item.driveId);
+            localDocsTarget.innerHTML = '';
+
+            if (db.length > 0) {
+                db.forEach(file => {
+                    const item = document.createElement('div');
+                    item.className = 'doc-list-item';
+                    item.innerHTML = `
+                        <span class="load-trigger" style="flex-grow:1; display:flex; align-items:center; cursor:pointer;">
+                            ${currentSuiteMode === 'screenplay' ? '🎬' : '📄'} ${file.title}
+                        </span>
+                        <div style="display:flex; align-items:center; gap:2px;">
+                            <button class="list-rename-btn" title="Rename Draft">Rename</button>
+                            <button class="list-delete-btn" title="Delete Draft">Delete</button>
+                            <button class="list-download-btn" title="Download Local File">↓</button>
+                        </div>
+                    `;
+                    
+                    item.querySelector('.load-trigger').addEventListener('click', () => {
+                        loadLocalFile(file.id);
+                    });
+
+                    item.querySelector('.list-rename-btn').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        requestDocumentRename(file.id, file.title, 'local');
+                    });
+                    
+                    item.querySelector('.list-download-btn').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        exportDocumentToDisk(file.title, file.content, file.suiteMode);
+                    });
+
+                    item.querySelector('.list-delete-btn').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        requestDocumentDeletion(file.id, file.title, 'local');
+                    });
+                    
+                    localDocsTarget.appendChild(item);
+                });
+            } else {
+                localDocsTarget.innerHTML = `
+                    <div style="font-size:0.8rem; color:var(--muted-color); padding: 10px;">
+                        No tracking assets. Click 'Create Fresh Document' above to begin!
+                    </div>`;
+            }
+        }
+
+        function loadLocalFile(fileId) {
+            const db = getLocalDatabase();
+            const file = db.find(item => item.id === fileId);
+            if (!file) return;
+
+            currentSuiteMode = file.suiteMode || 'narrative';
+            configureWorkspaceUIPresentation();
+
+            editor.innerHTML = file.content;
+            if (docTitle) docTitle.value = file.title;
+            currentLocalFileId = file.id;
+            currentDriveFileId = file.driveId || null;
+
+            localStorage.setItem('zensuite_active_suite_mode', currentSuiteMode);
+            localStorage.setItem(`zensuite_current_active_${currentSuiteMode}_id`, fileId);
+            localStorage.setItem('zensuite_view_state', 'workspace');
+            
+            updateUrlParameters(fileId, currentSuiteMode);
+            updateAnalytics(editor.innerText);
+            pickerModifierSync();
+            if (currentSuiteMode === 'screenplay') updateLiveElementTag();
+            renderGhostMarginGuide();
+            
+            pickerModal.style.display = 'none';
+            launchpadView.classList.remove('active');
+            workspaceView.classList.add('active');
+        }
+
+        function pickerModifierSync() {
+            if (currentDriveFileId && accessToken) {
+                syncDot.classList.add('connected');
+                if (cloudStatus) cloudStatus.textContent = "Cloud: Connected";
+            } else {
+                syncDot.classList.remove('connected');
+                if (cloudStatus) cloudStatus.textContent = accessToken ? "Cloud: Ready" : "Cloud: Local Only";
+            }
+        }
+
+        // --- GOOGLE OAUTH & STATE HYDRATION ENGINE ---
+        window.onload = function() {
+            requestPersistentStorage();
+
+            const cachedTheme = localStorage.getItem('zensuite_saved_theme');
+            if (cachedTheme) { applyAppTheme(cachedTheme); }
+
+            // Hydrate Backup Settings
+            const savedBackupState = localStorage.getItem('zensuite_autobackup_enabled');
+            if (savedBackupState === 'true') {
+                isAutoBackupEnabled = true;
+                document.getElementById('auto-backup-toggle').checked = true;
+            }
+            const savedBackupInterval = localStorage.getItem('zensuite_autobackup_interval');
+            if (savedBackupInterval) {
+                autoBackupMinutes = parseInt(savedBackupInterval, 10);
+                document.getElementById('auto-backup-interval-select').value = autoBackupMinutes;
+            }
+            configureAutoBackupTimer();
+
+            // Check URL Query Parameters First
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlDocId = urlParams.get('doc');
+            const urlMode = urlParams.get('mode');
+
+            if (urlMode) {
+                currentSuiteMode = urlMode;
+                configureWorkspaceUIPresentation();
+            } else {
+                const savedSuiteMode = localStorage.getItem('zensuite_active_suite_mode');
+                if (savedSuiteMode) {
+                    currentSuiteMode = savedSuiteMode;
+                    configureWorkspaceUIPresentation();
+                }
+            }
+
+            const savedViewState = localStorage.getItem('zensuite_view_state');
+            const targetDocId = urlDocId || localStorage.getItem(`zensuite_current_active_${currentSuiteMode}_id`);
+
+            if (savedViewState === 'workspace' || urlDocId) {
+                if (targetDocId) {
+                    loadLocalFile(targetDocId);
+                }
+            } else {
+                workspaceView.classList.remove('active');
+                launchpadView.classList.add('active');
+                document.body.classList.remove('distraction-free');
+            }
+
+            // Restore Cached Google Auth Token if Valid
+            const shouldPersist = localStorage.getItem('zensuite_persist_google_auth') !== 'false';
+            const cachedToken = localStorage.getItem('zensuite_google_access_token');
+            const tokenExp = parseInt(localStorage.getItem('zensuite_google_token_exp') || '0', 10);
+
+            if (shouldPersist && cachedToken && Date.now() < tokenExp) {
+                accessToken = cachedToken;
+                pickerModifierSync();
+            }
+
+            if (typeof google !== 'undefined') {
+                tokenClient = google.accounts.oauth2.initTokenClient({
+                    client_id: CLIENT_ID,
+                    scope: SCOPES,
+                    callback: (tokenResponse) => {
+                        if (tokenResponse.error !== undefined) return;
+                        accessToken = tokenResponse.access_token;
+                        
+                        // Cache token for 55 minutes
+                        if (localStorage.getItem('zensuite_persist_google_auth') !== 'false') {
+                            localStorage.setItem('zensuite_google_access_token', accessToken);
+                            localStorage.setItem('zensuite_google_token_exp', Date.now() + (55 * 60 * 1000));
+                        }
+
+                        pickerModifierSync();
+                        
+                        const tabToggleCloud = document.getElementById('tab-toggle-cloud');
+                        if (tabToggleCloud && tabToggleCloud.classList.contains('active')) {
+                            renderCloudTabInterface();
+                        }
+                    },
+                });
+
+                // Silently refresh token in background if session was saved but token expired
+                if (shouldPersist && (!accessToken || Date.now() >= tokenExp) && cachedToken) {
+                    triggerGoogleAuth(false);
+                }
+            }
+        };
+
+        function listDriveFiles() {
+            if (!accessToken) return;
+            
+            const targetNode = document.getElementById('cloud-docs-target-node');
+            if (!targetNode) return;
+            
+            const query = encodeURIComponent(`appProperties has { key='suiteMode' and value='${currentSuiteMode}' } and trashed = false`);
+            
+            fetch(`https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id, name, modifiedTime)&orderBy=modifiedTime desc`, {
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.files && data.files.length > 0) {
+                    targetNode.innerHTML = ''; 
+                    data.files.forEach(file => {
+                        const item = document.createElement('div');
+                        item.className = 'doc-list-item';
+                        item.innerHTML = `
+                            <span class="load-trigger" style="flex-grow:1; display:flex; align-items:center; cursor:pointer;">☁️ ${file.name}</span>
+                            <div style="display:flex; align-items:center; gap:2px;">
+                                <button class="list-rename-btn" title="Rename Remote File">Rename</button>
+                                <button class="list-delete-btn" title="Delete Remote File">Delete</button>
+                                <button class="list-download-btn" title="Download Document">↓</button>
+                            </div>
+                        `;
+                        
+                        item.querySelector('.load-trigger').addEventListener('click', () => { 
+                            fetchDocumentFromDrive(file.id, file.name); 
+                        });
+
+                        item.querySelector('.list-rename-btn').addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            requestDocumentRename(file.id, file.name, 'cloud');
+                        });
+
+                        item.querySelector('.list-download-btn').addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            fetch(`https://www.googleapis.com/drive/v3/files/${file.id}?alt=media`, {
+                                headers: { 'Authorization': `Bearer ${accessToken}` }
+                            })
+                            .then(res => res.text())
+                            .then(content => {
+                                exportDocumentToDisk(file.name, content, currentSuiteMode);
+                            });
+                        });
+
+                        item.querySelector('.list-delete-btn').addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            requestDocumentDeletion(file.id, file.name, 'cloud');
+                        });
+
+                        targetNode.appendChild(item);
+                    });
+                } else {
+                    targetNode.innerHTML = '<div style="font-size:0.8rem; color:var(--muted-color); padding: 10px;">No cloud files discovered.</div>';
+                }
+            })
+            .catch(() => { targetNode.innerHTML = '<div style="font-size:0.8rem; color:var(--muted-color); padding:10px;">Directory scanning malfunction.</div>'; });
+        }
+
+        function fetchDocumentFromDrive(fileId, fileName) {
+            if (!accessToken) return;
+            saveIndicator.textContent = "• Synchronizing Pipeline...";
+
+            fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            })
+            .then(res => res.text())
+            .then(content => {
+                editor.innerHTML = content;
+                if (docTitle) docTitle.value = fileName;
+                currentDriveFileId = fileId;
+                
+                const db = getLocalDatabase();
+                const existing = db.find(i => i.driveId === fileId);
+                currentLocalFileId = existing ? existing.id : "local_" + Date.now();
+
+                saveDocument(); 
+                updateUrlParameters(currentLocalFileId, currentSuiteMode);
+                pickerModifierSync();
+
+                saveIndicator.textContent = "• Fully Synced Cloud & Local";
+                pickerModal.style.display = 'none';
+                launchpadView.classList.remove('active');
+                workspaceView.classList.add('active');
+            })
+            .catch(() => showZenAlert("Replication Warning", "Remote drive transmission dropped."));
+        }
+
+        function triggerCloudSave() {
+            if (!accessToken) return;
+            saveIndicator.textContent = "• Replicating Cloud Core...";
+            clearTimeout(cloudSaveDebounceTimer);
+            cloudSaveDebounceTimer = setTimeout(() => {
+                if (currentDriveFileId) { updateDriveFile(); } else { createDriveFile(); }
+            }, 2000);
+        }
+
+        function createDriveFile() {
+            const metadata = { 
+                name: (docTitle ? docTitle.value : '') || (currentSuiteMode === 'screenplay' ? 'untitledScript.fountain' : 'untitledProse.rtf'), 
+                mimeType: 'text/plain',
+                appProperties: { suiteMode: currentSuiteMode }
+            };
+            
+            const fileContent = editor.innerHTML; 
+            const boundary = 'foo_bar_baz';
+            const delimiter = `\r\n--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n`;
+            const close_delim = `\r\n--${boundary}--`;
+            const multipartRequestBody = delimiter + JSON.stringify(metadata) + `\r\n--${boundary}\r\nContent-Type: text/plain\r\n\r\n` + fileContent + close_delim;
+
+            fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': `multipart/related; boundary=${boundary}` },
+                body: multipartRequestBody
+            })
+            .then(res => res.json())
+            .then(file => {
+                currentDriveFileId = file.id;
+                saveDocument(); 
+                listDriveFiles(); 
+            })
+            .catch(() => saveIndicator.textContent = "• Replication dropped.");
+        }
+
+        function updateDriveFile() {
+            if (!accessToken || !currentDriveFileId) return;
+
+            fetch(`https://www.googleapis.com/drive/v3/files/${currentDriveFileId}`, {
+                method: 'PATCH',
+                headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: docTitle ? docTitle.value : '' })
+            })
+            .then(() => {
+                return fetch(`https://www.googleapis.com/upload/drive/v3/files/${currentDriveFileId}?uploadType=media`, {
+                    method: 'PATCH',
+                    headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'text/plain' },
+                    body: editor.innerHTML
+                });
+            })
+            .then(() => { 
+                if (!document.body.classList.contains('distraction-free')) {
+                    saveIndicator.textContent = "• Fully Synced Cloud & Local"; 
+                }
+            })
+            .catch(() => { 
+                if (!document.body.classList.contains('distraction-free')) {
+                    saveIndicator.textContent = "• Replication dropped."; 
+                }
+            });
+        }
+
+        // --- CORE AUTO-SAVE PIPELINES ---
+        function saveDocument() {
+            if (!workspaceView.classList.contains('active')) return; 
+            
+            const fileRecord = {
+                id: currentLocalFileId,
+                title: (docTitle ? docTitle.value : '') || (currentSuiteMode === 'screenplay' ? 'untitledScript.fountain' : 'untitledProse.rtf'),
+                content: editor.innerHTML,
+                suiteMode: currentSuiteMode,
+                driveId: currentDriveFileId
+            };
+
+            saveToLocalDatabase(fileRecord);
+            localStorage.setItem(`zensuite_current_active_${currentSuiteMode}_id`, currentLocalFileId);
+            updateUrlParameters(currentLocalFileId, currentSuiteMode);
+            
+            triggerCloudSave(); 
+        }
+
+        editor.addEventListener('input', () => {
+            processInlineMarkdownFormatting(); 
+            updateAnalytics(editor.innerText);
+            
+            clearTimeout(idleTimer);
+            idleTimer = setTimeout(startTypingDistractionHide, 1000);
+            
+            if (currentSuiteMode === 'screenplay') {
+                const selection = window.getSelection();
+                if (selection.rangeCount > 0) {
+                    let currentBlock = selection.getRangeAt(0).startContainer;
+                    if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
+                    while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
+                        currentBlock = currentBlock.parentNode;
+                    }
+                    
+                    if (currentBlock && currentBlock.getAttribute('data-element') === 'character') {
+                        highlightFirstCharacterAppearance(currentBlock.innerText);
+                    }
+                }
+            }
+            
+            saveDocument();
+            scrollToCursor();
+        });
+    </script>
+</body>
+</html>
