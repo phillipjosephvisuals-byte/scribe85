@@ -318,7 +318,7 @@
             color: var(--text-color); 
             width: 100%;
             max-width: 520px;
-            height: 580px; 
+            height: 600px; 
             border-radius: 8px;
             padding: 25px;
             display: flex;
@@ -407,7 +407,28 @@
         #auth-btn { background: var(--text-color); color: var(--bg-color); border-color: var(--text-color); font-weight: bold; margin: 10px 0; width: 100%; }
         #auth-btn:hover { opacity: 0.9; }
 
-        /* CLEAN AUTO-BACKUP TOGGLE STYLES (REFINED HEADING) */
+        /* DROP ZONE TO RESTORE FILES */
+        .restore-drop-zone {
+            border: 1.5px dashed var(--muted-color);
+            border-radius: 6px;
+            padding: 18px 12px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.01);
+            color: var(--muted-color);
+            font-size: 0.76rem;
+            cursor: pointer;
+            margin-top: 10px;
+            margin-bottom: 8px;
+            transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+        }
+
+        .restore-drop-zone.dragover {
+            border-color: var(--accent-color);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-color);
+        }
+
+        /* CLEAN AUTO-BACKUP TOGGLE STYLES */
         .auto-backup-control-box {
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -769,7 +790,7 @@
             outline: none; 
             background: transparent;
             color: var(--text-color); 
-            caret-color: var(--accent-color) !important; /* Forces visible blinking caret */
+            caret-color: var(--accent-color) !important;
             font-family: var(--font-mono);
             font-size: 1.1rem; 
             line-height: 1.8; 
@@ -780,7 +801,7 @@
             padding-bottom: 200px;
         }
 
-        /* STRIP GOOGLE DOCS INLINE BLACK TEXT & BACKGROUNDS WHILE PRESERVING CARET */
+        /* STRIP INLINE BLACK TEXT & BACKGROUNDS */
         .editor * {
             color: var(--text-color);
             background-color: transparent !important;
@@ -877,7 +898,6 @@
                         box-shadow 0.35s ease;
         }
 
-        /* Hide ghost guide when launchpad is active */
         #launchpad-view.active ~ #workspace-view .margin-ghost-guide {
             display: none !important;
         }
@@ -939,6 +959,81 @@
         }
 
         /* ------------------------------------------------------------------
+           4.4 LEFT MARGIN EXPIRATION WARNING CARD (ALWAYS VISIBLE IN THEATER)
+        ------------------------------------------------------------------ */
+        .left-margin-alert-card {
+            position: fixed;
+            top: 50%;
+            left: max(16px, calc((100vw - var(--canvas-width)) / 4 - 110px));
+            width: 220px;
+            transform: translateY(-50%);
+            background: rgba(18, 20, 28, 0.95);
+            border: 1px solid #ef4444;
+            border-radius: 8px;
+            padding: 16px 14px;
+            box-shadow: 0 4px 25px rgba(239, 68, 68, 0.25);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            text-align: center;
+            font-family: var(--font-mono);
+            user-select: none;
+            animation: pulseAlert 2.5s infinite alternate;
+        }
+
+        @keyframes pulseAlert {
+            0% { box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
+            100% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.5); }
+        }
+
+        .left-margin-alert-title {
+            color: #ef4444;
+            font-size: 0.72rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .left-margin-alert-desc {
+            font-size: 0.71rem;
+            color: var(--text-color);
+            line-height: 1.4;
+        }
+
+        .left-margin-download-btn {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid #ef4444;
+            color: #ffffff;
+            padding: 6px 10px;
+            font-size: 0.74rem;
+            font-family: var(--font-mono);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .left-margin-download-btn:hover {
+            background: #ef4444;
+            color: #ffffff;
+        }
+
+        .left-margin-reconnect-btn {
+            background: transparent;
+            border: none;
+            color: var(--muted-color);
+            font-size: 0.68rem;
+            font-family: var(--font-mono);
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        .left-margin-reconnect-btn:hover {
+            color: var(--text-color);
+        }
+
+        /* ------------------------------------------------------------------
            4.5 NARRATIVE PARAGRAPH SPACING ENGINE (ISOLATED INDENTATION)
         ------------------------------------------------------------------ */
         body.mode-narrative .editor {
@@ -948,7 +1043,7 @@
         body.mode-narrative .editor div, 
         body.mode-narrative .editor p {
             margin-bottom: 1.5em;
-            text-indent: 0; /* Prevents global inheritance across paragraphs */
+            text-indent: 0;
             transition: margin-bottom 0.2s ease, margin-top 0.2s ease;
         }
 
@@ -1057,6 +1152,7 @@
         ------------------------------------------------------------------ */
         @media (max-width: 1180px) {
             .margin-ghost-guide { display: none !important; }
+            .left-margin-alert-card { left: 16px; top: 80px; transform: none; }
         }
 
         @media (max-width: 600px) {
@@ -1075,15 +1171,8 @@
                 gap: 8px;
             }
 
-            .doc-left {
-                order: 1;
-                gap: 8px;
-            }
-
-            .header-logo-container {
-                width: 75px;
-            }
-
+            .doc-left { order: 1; gap: 8px; }
+            .header-logo-container { width: 75px; }
             .inline-theme-picker { display: flex; gap: 4px; }
 
             .header-center-hub {
@@ -1098,11 +1187,7 @@
                 font-size: 0.8rem; 
             }
 
-            .sync-status {
-                order: 2;
-                gap: 6px;
-            }
-
+            .sync-status { order: 2; gap: 6px; }
             #save-indicator { display: none; }
 
             main { padding: 0 10px; }
@@ -1117,6 +1202,7 @@
             .footer-center { order: 2; }
             .stats-right { display: none; }
             .margin-list-widget { display: none !important; }
+            .left-margin-alert-card { left: 10px; right: 10px; width: calc(100vw - 20px); top: 60px; }
         }
     </style>
 </head>
@@ -1125,7 +1211,6 @@
     <div id="launchpad-view" class="app-view active">
         <div class="brand-header">
             <div class="brand-logo-frame">
-                <!-- Widescreen Vector Logo Main Asset Frame -->
                 <svg width="100%" height="100%" viewBox="0 0 2102 340" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
                     <g transform="matrix(4.16667,0,0,4.16667,-875.209,-2882.7)">
                         <g transform="matrix(1.13216,0,0,1.13216,51.044,-99.6933)">
@@ -1144,7 +1229,6 @@
             <p>Distraction-free storytelling.</p>
         </div>
 
-        <!-- Collapsible Header Theme Picker Unit -->
         <div class="collapsible-theme-hub" id="theme-accordion-hub">
             <button class="theme-accordion-toggle" onclick="toggleThemeAccordion()">
                 <div class="theme-square-group">
@@ -1166,44 +1250,33 @@
             </div>
         </div>
         
-        <!-- STREAMLINED SUITE CARDS CONTAINER -->
         <div class="suite-options">
-            
-            <!-- NARRATIVE CARD -->
             <div class="suite-card" id="card-narrative">
                 <div class="suite-card-icon-frame">
-                    <!-- Custom SVG: Fountain Pen Nib Concept -->
                     <svg width="415" height="631" viewBox="0 0 415 631" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd" clip-rule="evenodd" d="M185.196 625.063C191.792 627.87 199.112 623.03 199.112 615.862V313.092V290.984C189.62 288.084 181.83 281.288 177.603 272.461C175.397 267.854 174.161 262.694 174.161 257.245C174.161 251.796 175.397 246.636 177.603 242.029C181.83 233.202 189.62 226.406 199.112 223.505C202.377 222.507 205.844 221.971 209.436 221.971C211.64 221.971 213.796 222.173 215.888 222.559C224.604 224.171 232.196 228.986 237.397 235.738C241.983 241.691 244.71 249.149 244.71 257.245C244.71 265.341 241.983 272.799 237.397 278.752C232.196 285.504 224.604 290.319 215.888 291.93V313.665V615.862C215.888 623.03 223.208 627.87 229.804 625.063L251.553 615.808C255.393 614.174 257.814 610.329 257.628 606.161L257.605 605.637C254.803 542.849 278.453 475.063 310.048 415.168C341.555 355.439 380.322 304.761 406.206 276.562L406.823 275.89C411.067 271.266 410.053 263.922 404.715 260.622L403.938 260.142C313.234 204.07 287.489 107.039 285.999 66.284L285.973 65.5581C285.777 60.1808 281.361 55.9228 275.98 55.9228H260.196H252.453H165.558H158.675H139.02C133.639 55.9228 129.223 60.1808 129.027 65.5581L129.001 66.284C127.511 107.039 101.766 204.07 11.0619 260.142L10.2852 260.622C4.94741 263.922 3.93315 271.266 8.17667 275.89L8.79423 276.562C34.6779 304.761 73.4449 355.439 104.952 415.168C136.547 475.063 160.197 542.849 157.395 605.637L157.372 606.161C157.186 610.329 159.607 614.174 163.447 615.808L185.196 625.063ZM149.748 77.4316H158.675H165.558H252.453H260.196H265.252C270.198 125.065 298.531 214.257 381.933 271.468C355.474 301.937 320.235 349.757 291.024 405.133C264.916 454.625 243.204 510.942 237.397 566.749V306.678C254.607 296.922 266.219 278.44 266.219 257.245C266.219 240.05 258.576 224.64 246.502 214.227C243.694 211.805 240.645 209.653 237.397 207.812C230.915 204.137 223.638 201.701 215.888 200.824C213.771 200.585 211.618 200.462 209.436 200.462C205.91 200.462 202.459 200.783 199.112 201.398C191.258 202.841 183.968 205.9 177.603 210.217C175.78 211.453 174.032 212.793 172.369 214.227C160.295 224.64 152.653 240.05 152.653 257.245C152.653 276.808 162.546 294.061 177.603 304.273V566.749C171.796 510.942 150.084 454.625 123.976 405.133C94.765 349.757 59.5264 301.937 33.0672 271.468C116.469 214.257 144.802 125.065 149.748 77.4316Z" fill="currentColor"/>
                         <path d="M129.423 9.99999C129.423 4.47714 133.9 0 139.423 0H276.007C281.53 0 286.007 4.47715 286.007 10V20.1123C286.007 25.6351 281.53 30.1123 276.007 30.1123H139.423C133.9 30.1123 129.423 25.6351 129.423 20.1123V9.99999Z" fill="currentColor"/>
                     </svg>
                 </div>
-
                 <h2>Narrative 85</h2>
                 <p class="card-desc">An unencumbered environment tailored for essays, prose, and long-form storytelling. Features smart paragraph spacing, multi-tier list indentation, and automated RTF formatting exports.</p>
-
                 <div class="write-btn-wrapper">
                     <button class="suite-write-btn" onclick="triggerSuiteWrite('narrative', event)">write</button>
                 </div>
             </div>
             
-            <!-- SCREENPLAY CARD -->
             <div class="suite-card" id="card-screenplay">
                 <div class="suite-card-icon-frame">
-                    <!-- Custom SVG: Production Clapperboard Concept -->
                     <svg width="533" height="506" viewBox="0 0 533 506" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M465.419 0.698792C478.556 -2.4666 491.895 5.40773 495.413 18.5357L512.236 81.3209L512.356 81.8218C513.429 86.8279 510.53 91.8496 505.658 93.4234L505.165 93.5689L46.7954 216.388H522.388L522.903 216.401C528.186 216.669 532.388 221.038 532.388 226.388V480.388C532.388 493.979 521.542 505.038 508.034 505.38L507.388 505.388H45.3882C31.5812 505.388 20.3884 494.195 20.3882 480.388V223.496H20.27L0.85791 151.051C-2.71551 137.715 5.19922 124.007 18.5356 120.433L464.793 0.857971L465.419 0.698792ZM45.3882 480.388H507.388V313.388H45.3882V480.388ZM442.388 408.388H110.388V390.388H442.388V408.388ZM442.388 372.388H110.388V354.388H442.388V372.388ZM45.3882 288.388H131.741L104.605 241.388H45.3882V288.388ZM160.608 288.388H279.741L252.605 241.388H133.473L160.608 288.388ZM308.608 288.388H427.741L400.605 241.388H281.473L308.608 288.388ZM456.608 288.388H507.388V241.388H429.473L456.608 288.388ZM25.0063 144.581L37.9478 192.878L94.1909 177.807L109.133 122.039L25.0063 144.581ZM137.017 114.568L122.076 170.336L237.148 139.502L252.09 83.7339L137.017 114.568ZM279.974 76.2623L265.033 132.03L380.105 101.196L395.047 45.4283L279.974 76.2623ZM422.931 37.9576L407.99 93.7252L484.205 73.3023L471.264 25.0064L422.931 37.9576Z" fill="currentColor"/>
                     </svg>
                 </div>
-
                 <h2>Screenplay 85</h2>
                 <p class="card-desc">A rigid screenplay layout engine adhering to industry standard formatting. Effortlessly flows through sluglines, action, characters, and dialogue using automatic Tab and Enter key mechanics.</p>
-
                 <div class="write-btn-wrapper">
                     <button class="suite-write-btn" onclick="triggerSuiteWrite('screenplay', event)">write</button>
                 </div>
             </div>
-
         </div>
 
         <span style="font-size: 0.65rem; color: var(--muted-color); margin-top: 75px; opacity: 0.6; letter-spacing: 0.5px; text-transform: uppercase;">
@@ -1225,7 +1298,6 @@
                 <div id="panel-local-content" class="tab-panel-view active">
                     <button class="picker-action-btn" id="new-doc-btn">+ Create Fresh Document</button>
                     
-                    <!-- REFINED AUTO-BACKUP CONTROL BOX -->
                     <div class="auto-backup-control-box">
                         <div class="auto-backup-header">
                             <span class="auto-backup-title">Auto-Backup Downloads</span>
@@ -1244,6 +1316,12 @@
 
                     <div class="document-list-title">Recent Local Drafts <span class="limit-subtext" id="local-limit-tag">(limit: 10)</span></div>
                     <div class="document-scroll-list" id="local-docs-target"></div>
+
+                    <!-- DROP ZONE TO RESTORE FILES -->
+                    <div class="restore-drop-zone" id="restore-drop-zone">
+                        📥 Drop saved scribe85 file (.rtf, .fountain, .txt) here to restore
+                        <input type="file" id="manual-file-input" style="display: none;" accept=".rtf,.fountain,.txt,.html">
+                    </div>
                 </div>
 
                 <div id="panel-cloud-content" class="tab-panel-view">
@@ -1287,7 +1365,6 @@
                 </button>
             </div>
 
-            <!-- Collapsible Header Theme Picker Unit -->
             <div class="collapsible-theme-hub" id="theme-accordion-hub-workspace">
                 <button class="theme-accordion-toggle" onclick="toggleThemeAccordion()">
                     <div class="theme-square-group">
@@ -1308,17 +1385,22 @@
             </div>
         </header>
 
-        <!-- RIGHT MARGIN GHOST SHORTCUT GUIDE CARD (INSIDE WORKSPACE VIEW) -->
+        <!-- LEFT MARGIN EXPIRATION WARNING (PERSISTENT & VISIBLE IN THEATER MODE) -->
+        <div class="left-margin-alert-card" id="left-margin-alert">
+            <div class="left-margin-alert-title">⚠️ Cloud Sync Offline</div>
+            <div class="left-margin-alert-desc">Your Google Drive session has expired. Save a backup copy to your disk to safeguard your edits.</div>
+            <button class="left-margin-download-btn" onclick="executeManualDownloadBackup()">↓ Download Document</button>
+            <button class="left-margin-reconnect-btn" onclick="triggerGoogleAuth(true)">Reconnect Drive</button>
+        </div>
+
+        <!-- RIGHT MARGIN GHOST SHORTCUT GUIDE CARD -->
         <div class="margin-ghost-guide chrome-element" id="margin-ghost-guide">
             <div class="ghost-guide-title" id="ghost-guide-title">Narrative Shortcuts</div>
-            <div class="ghost-guide-list" id="ghost-guide-list">
-                <!-- Dynamically populated based on mode -->
-            </div>
+            <div class="ghost-guide-list" id="ghost-guide-list"></div>
         </div>
 
         <main id="workspace-main">
             <div class="editor-container">
-                <!-- MARGIN LIST TOGGLE WIDGET -->
                 <div class="margin-list-widget" id="margin-list-widget">
                     <button class="margin-widget-btn" id="btn-bullet-toggle" title="Toggle Bulleted List">
                         <svg viewBox="0 0 24 24">
@@ -1368,18 +1450,17 @@
         const SCOPES = 'https://www.googleapis.com/auth/drive.file';
 
         // --- GLOBAL RUNTIME STATE ---
-        let currentSuiteMode = 'narrative'; // 'narrative' or 'screenplay'
+        let currentSuiteMode = 'narrative';
         let autoBackupIntervalTimer = null;
         let isAutoBackupEnabled = false;
         let autoBackupMinutes = 10;
+        let tokenRenewalTimer = null;
 
-        // --- ACCORDION THEME TOGGLE FOR LANDING SCREEN ---
         function toggleThemeAccordion() {
             const hub = document.getElementById('theme-accordion-hub');
             hub.classList.toggle('expanded');
         }
 
-        // --- GHOST SHORTCUT GUIDE CARD RENDERER ---
         function renderGhostMarginGuide() {
             const titleEl = document.getElementById('ghost-guide-title');
             const listEl = document.getElementById('ghost-guide-list');
@@ -1412,7 +1493,6 @@
             }
         }
 
-        // Open Document Picker Modal
         function openPickerModal(event) {
             if (event) event.preventDefault();
             configureWorkspaceUIPresentation();
@@ -1463,6 +1543,7 @@
         }
 
         function disconnectGoogleAccount() {
+            hideLeftMarginAlert();
             if (accessToken && typeof google !== 'undefined') {
                 google.accounts.oauth2.revoke(accessToken, () => {
                     accessToken = null;
@@ -1526,6 +1607,7 @@
         const zenAlertTitle = document.getElementById('zen-alert-title');
         const zenAlertText = document.getElementById('zen-alert-text');
         const modalContextTitle = document.getElementById('modal-context-title');
+        const leftMarginAlert = document.getElementById('left-margin-alert');
 
         // Margin List Widget Elements
         const marginListWidget = document.getElementById('margin-list-widget');
@@ -1534,6 +1616,8 @@
 
         // Target Containers
         const localDocsTarget = document.getElementById('local-docs-target');
+        const restoreDropZone = document.getElementById('restore-drop-zone');
+        const manualFileInput = document.getElementById('manual-file-input');
 
         // Buttons
         const closePickerBtn = document.getElementById('close-picker-btn');
@@ -1559,6 +1643,48 @@
         let tokenClient;
         let accessToken = null;
         let cloudSaveDebounceTimer;
+
+        // --- SESSION EXPIRATION & LEFT MARGIN NOTIFICATION SYSTEM ---
+        function showLeftMarginAlert() {
+            leftMarginAlert.style.display = 'flex';
+        }
+
+        function hideLeftMarginAlert() {
+            leftMarginAlert.style.display = 'none';
+        }
+
+        function executeManualDownloadBackup() {
+            const content = editor.innerHTML;
+            const title = docTitle ? docTitle.value : 'scribe85-backup';
+            exportDocumentToDisk(title, content, currentSuiteMode);
+        }
+
+        function handleAuthError() {
+            accessToken = null;
+            localStorage.removeItem('zensuite_google_access_token');
+            localStorage.removeItem('zensuite_google_token_exp');
+            pickerModifierSync();
+            saveIndicator.textContent = "• Cloud Session Expired";
+            showLeftMarginAlert();
+        }
+
+        function scheduleTokenRenewal(expiresInMs) {
+            if (tokenRenewalTimer) clearTimeout(tokenRenewalTimer);
+            const refreshLeadTimeMs = Math.max(expiresInMs - (5 * 60 * 1000), 10000);
+
+            tokenRenewalTimer = setTimeout(() => {
+                trySilentTokenRefresh();
+            }, refreshLeadTimeMs);
+        }
+
+        function trySilentTokenRefresh() {
+            if (!tokenClient) return;
+            try {
+                tokenClient.requestAccessToken({ prompt: '' });
+            } catch (err) {
+                handleAuthError();
+            }
+        }
 
         // --- ROUTE & URL PARAMETER SYNC ENGINE ---
         function updateUrlParameters(docId, mode) {
@@ -1607,15 +1733,12 @@
             saveIndicator.textContent = "• Local Disk Backup Triggered";
         }
 
-        // Request Persistent Storage to prevent macOS/Chrome Cache Purges
         async function requestPersistentStorage() {
             if (navigator.storage && navigator.storage.persist) {
-                const isPersisted = await navigator.storage.persist();
-                console.log(`Persistent storage status: ${isPersisted}`);
+                await navigator.storage.persist();
             }
         }
 
-        // --- SYSTEM ALERTS ---
         function showZenAlert(title, text) {
             zenAlertTitle.textContent = title;
             zenAlertText.textContent = text;
@@ -1759,9 +1882,6 @@
 
         window.addEventListener('mousemove', showUIChromeOnInteraction);
 
-        /* ------------------------------------------------------------------
-           DYNAMIC LINE SPACING CALCULATOR FOR INDENTED LIST GROUPS
-        ------------------------------------------------------------------ */
         function applyDynamicListSpacing() {
             const blocks = Array.from(editor.children);
             
@@ -1792,7 +1912,7 @@
             });
         }
 
-        // --- INLINE MARKDOWN AUTO-CONVERTER (*bold* & _italics_) WITH ZERO-WIDTH STYLE ISOLATION ---
+        // --- INLINE MARKDOWN AUTO-CONVERTER ---
         function processInlineMarkdownFormatting() {
             const selection = window.getSelection();
             if (!selection.rangeCount) return;
@@ -1805,14 +1925,12 @@
             let html = currentBlock.innerHTML;
             let modified = false;
 
-            // Convert *bold* -> <b>bold</b> + Zero-Width Space (\u200B)
             const boldRegex = /(?<!\w)\*([^*]+)\*(?!\w)/g;
             if (boldRegex.test(html)) {
                 currentBlock.innerHTML = html.replace(boldRegex, '<b>$1</b>&#8203;');
                 modified = true;
             }
 
-            // Convert _italics_ -> <i>italics</i> + Zero-Width Space (\u200B)
             const italicRegex = /(?<!\w)_([^_]+)_(?!\w)/g;
             if (italicRegex.test(currentBlock.innerHTML)) {
                 currentBlock.innerHTML = currentBlock.innerHTML.replace(italicRegex, '<i>$1</i>&#8203;');
@@ -1898,12 +2016,10 @@
             const editorRect = editor.getBoundingClientRect();
             const firstBlockRect = firstBlock.getBoundingClientRect();
 
-            // Position widget strictly vertically aligned with top of the selected block
             const topOffset = firstBlockRect.top - editorRect.top + editor.scrollTop;
             marginListWidget.style.top = `${Math.max(0, topOffset)}px`;
             marginListWidget.style.display = 'flex';
 
-            // Check if all selected blocks currently share a list type
             const isAllBullets = selectedBlocks.every(b => (b.dataset.listType === 'bullet' || /^•\s/.test(b.innerText.trim())));
             const isAllNumbers = selectedBlocks.every(b => (b.dataset.listType === 'number' || /^\d+[\.\)]\s/.test(b.innerText.trim())));
 
@@ -1922,12 +2038,9 @@
 
             selectedBlocks.forEach((block, idx) => {
                 let text = block.innerText ? block.innerText.replace(/\u200B/g, "").trim() : "";
-                
-                // Strip existing bullet/number prefixes
                 text = text.replace(/^([•\-\*]|\d+[\.\)])\s+/, "");
 
                 if (turningOff) {
-                    // Revert to clean flush-left prose
                     block.dataset.listType = "none";
                     block.dataset.indent = "0";
                     block.dataset.firstLineIndent = "false";
@@ -1936,7 +2049,6 @@
                     block.textContent = text === "" ? "" : text;
                     if (block.textContent === "") block.innerHTML = "<br>";
                 } else {
-                    // Apply list formatting
                     block.dataset.listType = type;
                     block.dataset.indent = "1";
                     block.dataset.firstLineIndent = "false";
@@ -1955,12 +2067,12 @@
         }
 
         btnBulletToggle.addEventListener('mousedown', (e) => {
-            e.preventDefault(); // Retains active selection range
+            e.preventDefault();
             toggleListFormatting('bullet');
         });
 
         btnNumberToggle.addEventListener('mousedown', (e) => {
-            e.preventDefault(); // Retains active selection range
+            e.preventDefault();
             toggleListFormatting('number');
         });
 
@@ -1970,7 +2082,7 @@
             }
         });
 
-        // --- CLEAN PASTE SANITIZER: REMOVES EXTERNAL FONTS/COLORS/EFFECTS WHILE PRESERVING STRUCTURE ---
+        // --- ROBUST PARAGRAPH & INDENT PRESERVING PASTE SANITIZER ---
         editor.addEventListener('paste', (e) => {
             e.preventDefault();
             const clipboard = e.clipboardData || window.clipboardData;
@@ -1982,7 +2094,6 @@
             selection.deleteFromDocument();
             const range = selection.getRangeAt(0);
 
-            // Clean inline elements recursively, retaining only semantic <b> and <i> tags
             function sanitizeInlineNodes(node) {
                 const fragment = document.createDocumentFragment();
                 Array.from(node.childNodes).forEach(child => {
@@ -2011,8 +2122,6 @@
             if (htmlText) {
                 const tempDiv = document.createElement('div');
                 tempDiv.innerHTML = htmlText;
-
-                // Strip Microsoft / Google Docs conditional header tags & style blocks
                 tempDiv.querySelectorAll('style, script, meta, link, xml').forEach(el => el.remove());
 
                 const blockElements = tempDiv.querySelectorAll('p, div, li, h1, h2, h3, h4, h5, h6, tr, blockquote');
@@ -2025,7 +2134,6 @@
                             div.setAttribute('data-element', 'action');
                         }
 
-                        // Inspect incoming indentation style (e.g., from word processors)
                         const stylePadding = parseInt(block.style.paddingLeft || block.style.marginLeft || "0", 10);
                         const computedIndent = Math.min(Math.floor(stylePadding / 24), 5);
                         
@@ -2034,7 +2142,6 @@
                             div.style.paddingLeft = `${computedIndent * 30}px`;
                         }
 
-                        // Detect list item prefixes
                         const rawText = block.innerText ? block.innerText.trim() : "";
                         if (/^•\s/.test(rawText) || block.tagName.toLowerCase() === 'li') {
                             div.dataset.listType = "bullet";
@@ -2066,43 +2173,34 @@
                 range.insertNode(fragment);
             } else if (plainText) {
                 const lines = plainText.split(/\r\n|\r|\n/);
-                if (lines.length === 1) {
-                    const textNode = document.createTextNode(lines[0]);
-                    range.insertNode(textNode);
-                    range.setStartAfter(textNode);
-                    range.collapse(true);
-                    selection.removeAllRanges();
-                    selection.addRange(range);
-                } else {
-                    const fragment = document.createDocumentFragment();
-                    lines.forEach((line) => {
-                        const div = document.createElement('div');
-                        if (currentSuiteMode === 'screenplay') {
-                            div.setAttribute('data-element', 'action');
-                        }
-                        
-                        // Detect and apply leading tab indentation
-                        const leadingTabs = (line.match(/^(\t|\s{4})+/) || [""])[0];
-                        const indentLevel = leadingTabs ? Math.floor(leadingTabs.length / (leadingTabs.includes('\t') ? 1 : 4)) : 0;
-                        const cleanLine = line.replace(/^(\t|\s{4})+/, "");
+                const fragment = document.createDocumentFragment();
 
-                        if (indentLevel > 0 && currentSuiteMode === 'narrative') {
-                            div.dataset.indent = indentLevel;
-                            div.style.paddingLeft = `${indentLevel * 30}px`;
-                        }
+                lines.forEach((line) => {
+                    const div = document.createElement('div');
+                    if (currentSuiteMode === 'screenplay') {
+                        div.setAttribute('data-element', 'action');
+                    }
+                    
+                    const leadingTabs = (line.match(/^(\t|\s{4})+/) || [""])[0];
+                    const indentLevel = leadingTabs ? Math.floor(leadingTabs.length / (leadingTabs.includes('\t') ? 1 : 4)) : 0;
+                    const cleanLine = line.replace(/^(\t|\s{4})+/, "");
 
-                        if (/^•\s/.test(cleanLine)) div.dataset.listType = "bullet";
-                        if (/^\d+[\.\)]\s/.test(cleanLine)) div.dataset.listType = "number";
+                    if (indentLevel > 0 && currentSuiteMode === 'narrative') {
+                        div.dataset.indent = indentLevel;
+                        div.style.paddingLeft = `${indentLevel * 30}px`;
+                    }
 
-                        if (cleanLine.trim() === '') {
-                            div.innerHTML = '<br>';
-                        } else {
-                            div.textContent = cleanLine;
-                        }
-                        fragment.appendChild(div);
-                    });
-                    range.insertNode(fragment);
-                }
+                    if (/^•\s/.test(cleanLine)) div.dataset.listType = "bullet";
+                    if (/^\d+[\.\)]\s/.test(cleanLine)) div.dataset.listType = "number";
+
+                    if (cleanLine.trim() === '') {
+                        div.innerHTML = '<br>';
+                    } else {
+                        div.textContent = cleanLine;
+                    }
+                    fragment.appendChild(div);
+                });
+                range.insertNode(fragment);
             }
 
             if (currentSuiteMode === 'narrative') {
@@ -2112,41 +2210,122 @@
             saveDocument();
         });
 
-        // --- NORMALIZED CLIPBOARD EXPORT: STRIPS GLOW EFFECTS AND THEME COLORS ON COPY ---
+        // --- NORMALIZED CLIPBOARD EXPORT (PRESERVES RETURNS & INDENTS) ---
         editor.addEventListener('copy', (e) => {
             const selection = window.getSelection();
             if (!selection.rangeCount || selection.isCollapsed) return;
 
-            const clonedRange = selection.getRangeAt(0).cloneContents();
-            const tempDiv = document.createElement('div');
-            tempDiv.appendChild(clonedRange);
+            const selectedBlocks = getSelectedBlocks();
+            let plainTextLines = [];
+            let htmlFragments = [];
 
-            // Clean DOM fragment to ensure exported rich text is standard black without screen theme glows
-            function cleanseStylesForClipboard(element) {
-                Array.from(element.children).forEach(child => {
-                    child.style.color = '#000000';
-                    child.style.textShadow = 'none';
-                    child.style.filter = 'none';
-                    child.style.backgroundColor = 'transparent';
-                    cleanseStylesForClipboard(child);
+            if (selectedBlocks.length > 0) {
+                selectedBlocks.forEach(block => {
+                    let text = block.innerText ? block.innerText.replace(/\u200B/g, "") : "";
+                    const indent = parseInt(block.dataset.indent || "0", 10);
+                    const indentPrefix = "\t".repeat(indent);
+                    
+                    plainTextLines.push(indentPrefix + text);
+
+                    const clone = block.cloneNode(true);
+                    clone.style.color = '#000000';
+                    clone.style.textShadow = 'none';
+                    clone.style.filter = 'none';
+                    clone.style.backgroundColor = 'transparent';
+                    if (indent > 0) {
+                        clone.style.paddingLeft = `${indent * 30}px`;
+                    }
+                    htmlFragments.push(clone.outerHTML);
                 });
+            } else {
+                plainTextLines.push(selection.toString().replace(/\u200B/g, ""));
             }
 
-            cleanseStylesForClipboard(tempDiv);
-
-            const plainText = selection.toString().replace(/\u200B/g, "");
-            const sanitizedHtml = `<div style="color: #000000 !important; background-color: transparent !important; text-shadow: none !important;">${tempDiv.innerHTML.replace(/\u200B/g, "")}</div>`;
+            const plainText = plainTextLines.join('\n\n');
+            const sanitizedHtml = `<div style="color: #000000 !important; background-color: transparent !important; text-shadow: none !important;">${htmlFragments.join('')}</div>`;
 
             e.clipboardData.setData('text/plain', plainText);
             e.clipboardData.setData('text/html', sanitizedHtml);
             e.preventDefault();
         });
 
+        // --- FILE RESTORATION DRAG-AND-DROP & INPUT HANDLERS ---
+        restoreDropZone.addEventListener('click', () => {
+            manualFileInput.click();
+        });
+
+        restoreDropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            restoreDropZone.classList.add('dragover');
+        });
+
+        restoreDropZone.addEventListener('dragleave', () => {
+            restoreDropZone.classList.remove('dragover');
+        });
+
+        restoreDropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            restoreDropZone.classList.remove('dragover');
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                processRestoredFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        manualFileInput.addEventListener('change', (e) => {
+            if (e.target.files && e.target.files.length > 0) {
+                processRestoredFile(e.target.files[0]);
+            }
+        });
+
+        function processRestoredFile(file) {
+            const fileName = file.name;
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                const content = e.target.result;
+                let parsedContent = "";
+                let detectedMode = fileName.endsWith('.fountain') ? 'screenplay' : 'narrative';
+
+                if (fileName.endsWith('.rtf')) {
+                    // Extract plaintext paragraphs from RTF
+                    const rawLines = content.replace(/\\par/g, '\n').replace(/\{.*?\}/g, '').replace(/\\[a-z0-9]+/g, '').split('\n');
+                    parsedContent = rawLines.map(l => l.trim() ? `<div>${l.trim()}</div>` : '').filter(l => l !== '').join('');
+                } else if (fileName.endsWith('.fountain') || fileName.endsWith('.txt')) {
+                    const lines = content.split(/\r?\n/);
+                    parsedContent = lines.map(line => {
+                        const trimmed = line.trim();
+                        if (!trimmed) return '<div><br></div>';
+                        if (detectedMode === 'screenplay' && /^(INT\.|EXT\.|EST\.)/i.test(trimmed)) {
+                            return `<div data-element="scene-heading">${trimmed.toUpperCase()}</div>`;
+                        }
+                        return `<div>${trimmed}</div>`;
+                    }).join('');
+                } else {
+                    parsedContent = content;
+                }
+
+                currentSuiteMode = detectedMode;
+                currentLocalFileId = "local_" + Date.now();
+                currentDriveFileId = null;
+
+                editor.innerHTML = parsedContent || "<div>Start typing here...</div>";
+                if (docTitle) docTitle.value = fileName;
+
+                saveDocument();
+                configureWorkspaceUIPresentation();
+                pickerModal.style.display = 'none';
+                launchpadView.classList.remove('active');
+                workspaceView.classList.add('active');
+                showZenAlert("Document Restored", `Successfully imported "${fileName}" into ${currentSuiteMode} mode.`);
+            };
+
+            reader.readAsText(file);
+        }
+
         // --- UNIFIED KEYBOARD INPUT INTERCEPTOR ENGINE ---
         editor.addEventListener('keydown', (e) => {
             const selection = window.getSelection();
 
-            // A. NARRATIVE MODE KEYBOARD ENGINE (ISOLATED FIRST-LINE & BLOCK INDENTS + SAFE SPLIT)
             if (currentSuiteMode === 'narrative') {
                 const isModifier = e.metaKey || e.ctrlKey;
                 if (isModifier && e.key.toLowerCase() === 'b') { e.preventDefault(); document.execCommand('bold', false, null); saveDocument(); return; }
@@ -2158,7 +2337,6 @@
                 let currentBlock = range.startContainer;
                 if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
                 
-                // Climb up to the direct child div of the editor
                 while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
                     currentBlock = currentBlock.parentNode;
                 }
@@ -2180,12 +2358,10 @@
                 const currentIndent = parseInt(currentBlock.dataset.indent || "0", 10);
                 const hasFirstLineIndent = currentBlock.dataset.firstLineIndent === "true";
 
-                // Tab & Shift + Tab: Strictly target ONLY this active block
                 if (e.key === 'Tab') {
                     e.preventDefault();
 
                     if (e.shiftKey) {
-                        // --- SHIFT + TAB (OUTDENT / STEP BACK) ---
                         if (currentIndent > 1) {
                             const newIndent = currentIndent - 1;
                             currentBlock.dataset.indent = newIndent;
@@ -2201,17 +2377,14 @@
                             currentBlock.style.paddingLeft = "0px";
                         }
                     } else {
-                        // --- STANDARD TAB (INDENT) ---
                         const text = currentBlock.innerText ? currentBlock.innerText.trim() : "";
                         const isListPattern = /^(\d+[\.\)]|[-*•])\s/.test(text);
 
                         if (!hasFirstLineIndent && currentIndent === 0 && !isListPattern) {
-                            // 1st Tab: First line indent ONLY for this paragraph
                             currentBlock.dataset.firstLineIndent = "true";
                             currentBlock.style.textIndent = "2em";
                             currentBlock.style.paddingLeft = "0px";
                         } else {
-                            // 2nd+ Tab or List Item: Multi-tier block indent
                             currentBlock.dataset.firstLineIndent = "false";
                             currentBlock.style.textIndent = "0px";
                             const newIndent = currentIndent + 1;
@@ -2225,13 +2398,11 @@
                     return;
                 }
 
-                // Enter Key Management: Clean mid-paragraph splits and non-inherited fresh lines
                 if (e.key === 'Enter') {
                     e.preventDefault();
 
                     const textContent = currentBlock.innerText ? currentBlock.innerText.replace(/\u200B/g, "").trim() : "";
 
-                    // Empty Enter on Indented Line -> Step-down / Outdent
                     if (textContent === "" || /^([•\-\*]|\d+[\.\)])\s*$/.test(textContent)) {
                         if (currentIndent > 0) {
                             const newIndent = currentIndent - 1;
@@ -2251,7 +2422,6 @@
                         }
                     }
 
-                    // Create new clean paragraph
                     const newBlock = document.createElement('div');
                     newBlock.dataset.firstLineIndent = "false";
                     newBlock.style.textIndent = "0px";
@@ -2280,7 +2450,6 @@
                         newBlock.style.paddingLeft = "0px";
                     }
 
-                    // Safe Deep Split: Extracts everything from caret to the end of the block
                     const splitRange = selection.getRangeAt(0).cloneRange();
                     splitRange.selectNodeContents(currentBlock);
                     splitRange.setStart(range.startContainer, range.startOffset);
@@ -2298,19 +2467,16 @@
                         }
                     }
 
-                    // If remaining original block became empty, retain line-break placeholder
                     if (currentBlock.innerHTML.trim() === "" || currentBlock.innerText.replace(/\u200B/g, "").trim() === "") {
                         currentBlock.innerHTML = '<br>';
                     }
 
-                    // Insert new split paragraph immediately after current one
                     if (currentBlock.nextSibling) {
                         editor.insertBefore(newBlock, currentBlock.nextSibling);
                     } else {
                         editor.appendChild(newBlock);
                     }
 
-                    // Position caret at the beginning of the newly split line
                     const newRange = document.createRange();
                     if (listPrefix && newBlock.firstChild) {
                         newRange.setStart(newBlock.firstChild, listPrefix.length);
@@ -2328,7 +2494,6 @@
                 return;
             }
 
-            // B. SCREENPLAY MODE KEYBOARD ENGINE (WITH SAFE SPLIT & REVERSE CYCLE)
             if (!selection.rangeCount) return;
 
             const range = selection.getRangeAt(0);
@@ -2351,7 +2516,6 @@
                 let nextType = 'character';
 
                 if (e.shiftKey) {
-                    // Reverse Cycle (Shift + Tab)
                     if (currentType === 'action') nextType = 'scene-heading';
                     else if (currentType === 'scene-heading') nextType = 'transition';
                     else if (currentType === 'transition') nextType = 'dialogue';
@@ -2359,7 +2523,6 @@
                     else if (currentType === 'parenthetical') nextType = 'character';
                     else if (currentType === 'character') nextType = 'action';
                 } else {
-                    // Forward Cycle (Tab)
                     if (currentType === 'action') nextType = 'character';
                     else if (currentType === 'character') nextType = 'parenthetical';
                     else if (currentType === 'parenthetical') nextType = 'dialogue';
@@ -2526,7 +2689,6 @@
             return rtf;
         }
 
-        // --- AUTO-SCROLL TYPEWRITER CURSOR TRACKER ---
         function scrollToCursor() {
             const selection = window.getSelection();
             if (!selection.rangeCount) return;
@@ -2592,7 +2754,6 @@
             }
         }
 
-        // In-Modal Rename Logic
         function requestDocumentRename(fileId, currentTitle, storageType) {
             zenAlertTitle.textContent = "Rename Document";
             zenAlertText.textContent = `Enter a new file title for "${currentTitle}":`;
@@ -2647,6 +2808,10 @@
                 headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: newTitle })
             })
+            .then(res => {
+                if (res.status === 401 || res.status === 403) { handleAuthError(); throw new Error("Auth expired"); }
+                return res.json();
+            })
             .then(() => {
                 saveIndicator.textContent = "• File Renamed";
                 if (currentDriveFileId === fileId && docTitle) {
@@ -2657,7 +2822,6 @@
             .catch(() => showZenAlert("Cloud Error", "Failed to update filename on Google Drive."));
         }
 
-        // --- CONTROLLED DOCUMENT DELETION ROUTER ---
         function requestDocumentDeletion(fileId, title, storageType) {
             const storageLabel = storageType === 'cloud' ? 'Google Cloud Drive storage directory' : 'browser sandbox partition';
             const confirmationText = `Are you absolutely certain you want to permanently delete "${title}"? This process will wipe the file from your ${storageLabel} and cannot be undone.`;
@@ -2708,7 +2872,8 @@
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${accessToken}` }
             })
-            .then(() => {
+            .then(res => {
+                if (res.status === 401 || res.status === 403) { handleAuthError(); throw new Error("Auth expired"); }
                 saveIndicator.textContent = "• Cloud Archive Updated";
                 if (currentDriveFileId === fileId) {
                     currentDriveFileId = null;
@@ -2831,7 +2996,6 @@
             const cachedTheme = localStorage.getItem('zensuite_saved_theme');
             if (cachedTheme) { applyAppTheme(cachedTheme); }
 
-            // Hydrate Backup Settings
             const savedBackupState = localStorage.getItem('zensuite_autobackup_enabled');
             if (savedBackupState === 'true') {
                 isAutoBackupEnabled = true;
@@ -2844,7 +3008,6 @@
             }
             configureAutoBackupTimer();
 
-            // Check URL Query Parameters First
             const urlParams = new URLSearchParams(window.location.search);
             const urlDocId = urlParams.get('doc');
             const urlMode = urlParams.get('mode');
@@ -2873,7 +3036,6 @@
                 document.body.classList.remove('distraction-free');
             }
 
-            // Restore Cached Google Auth Token if Valid
             const shouldPersist = localStorage.getItem('zensuite_persist_google_auth') !== 'false';
             const cachedToken = localStorage.getItem('zensuite_google_access_token');
             const tokenExp = parseInt(localStorage.getItem('zensuite_google_token_exp') || '0', 10);
@@ -2881,6 +3043,7 @@
             if (shouldPersist && cachedToken && Date.now() < tokenExp) {
                 accessToken = cachedToken;
                 pickerModifierSync();
+                scheduleTokenRenewal(tokenExp - Date.now());
             }
 
             if (typeof google !== 'undefined') {
@@ -2888,16 +3051,23 @@
                     client_id: CLIENT_ID,
                     scope: SCOPES,
                     callback: (tokenResponse) => {
-                        if (tokenResponse.error !== undefined) return;
+                        if (tokenResponse.error !== undefined) {
+                            handleAuthError();
+                            return;
+                        }
                         accessToken = tokenResponse.access_token;
+                        hideLeftMarginAlert();
                         
-                        // Cache token for 55 minutes
+                        const expiresInMs = (tokenResponse.expires_in ? parseInt(tokenResponse.expires_in, 10) : 3600) * 1000;
+                        const expirationTime = Date.now() + expiresInMs;
+
                         if (localStorage.getItem('zensuite_persist_google_auth') !== 'false') {
                             localStorage.setItem('zensuite_google_access_token', accessToken);
-                            localStorage.setItem('zensuite_google_token_exp', Date.now() + (55 * 60 * 1000));
+                            localStorage.setItem('zensuite_google_token_exp', expirationTime.toString());
                         }
 
                         pickerModifierSync();
+                        scheduleTokenRenewal(expiresInMs);
                         
                         const tabToggleCloud = document.getElementById('tab-toggle-cloud');
                         if (tabToggleCloud && tabToggleCloud.classList.contains('active')) {
@@ -2906,9 +3076,8 @@
                     },
                 });
 
-                // Silently refresh token in background if session was saved but token expired
                 if (shouldPersist && (!accessToken || Date.now() >= tokenExp) && cachedToken) {
-                    triggerGoogleAuth(false);
+                    trySilentTokenRefresh();
                 }
             }
         };
@@ -2924,7 +3093,10 @@
             fetch(`https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id, name, modifiedTime)&orderBy=modifiedTime desc`, {
                 headers: { 'Authorization': `Bearer ${accessToken}` }
             })
-            .then(res => res.json())
+            .then(res => {
+                if (res.status === 401 || res.status === 403) { handleAuthError(); throw new Error("Auth expired"); }
+                return res.json();
+            })
             .then(data => {
                 if (data.files && data.files.length > 0) {
                     targetNode.innerHTML = ''; 
@@ -2981,7 +3153,10 @@
             fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
                 headers: { 'Authorization': `Bearer ${accessToken}` }
             })
-            .then(res => res.text())
+            .then(res => {
+                if (res.status === 401 || res.status === 403) { handleAuthError(); throw new Error("Auth expired"); }
+                return res.text();
+            })
             .then(content => {
                 editor.innerHTML = content;
                 if (docTitle) docTitle.value = fileName;
@@ -3013,6 +3188,8 @@
         }
 
         function createDriveFile() {
+            if (!accessToken) return;
+
             const metadata = { 
                 name: (docTitle ? docTitle.value : '') || (currentSuiteMode === 'screenplay' ? 'untitledScript.fountain' : 'untitledProse.rtf'), 
                 mimeType: 'text/plain',
@@ -3030,13 +3207,25 @@
                 headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': `multipart/related; boundary=${boundary}` },
                 body: multipartRequestBody
             })
-            .then(res => res.json())
+            .then(res => {
+                if (res.status === 401 || res.status === 403) { handleAuthError(); throw new Error("Auth expired"); }
+                return res.json();
+            })
             .then(file => {
                 currentDriveFileId = file.id;
-                saveDocument(); 
+                
+                let db = getLocalDatabase();
+                const item = db.find(i => i.id === currentLocalFileId);
+                if (item) {
+                    item.driveId = file.id;
+                    localStorage.setItem('zensuite_local_db', JSON.stringify(db));
+                }
+
+                saveIndicator.textContent = "• Fully Synced Cloud & Local";
+                pickerModifierSync();
                 listDriveFiles(); 
             })
-            .catch(() => saveIndicator.textContent = "• Replication dropped.");
+            .catch(() => { saveIndicator.textContent = "• Replication dropped."; });
         }
 
         function updateDriveFile() {
@@ -3047,22 +3236,20 @@
                 headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: docTitle ? docTitle.value : '' })
             })
-            .then(() => {
+            .then(res => {
+                if (res.status === 401 || res.status === 403) { handleAuthError(); throw new Error("Auth expired"); }
                 return fetch(`https://www.googleapis.com/upload/drive/v3/files/${currentDriveFileId}?uploadType=media`, {
                     method: 'PATCH',
                     headers: { 'Authorization': `Bearer ${accessToken}`, 'Content-Type': 'text/plain' },
                     body: editor.innerHTML
                 });
             })
-            .then(() => { 
-                if (!document.body.classList.contains('distraction-free')) {
-                    saveIndicator.textContent = "• Fully Synced Cloud & Local"; 
-                }
+            .then(res => {
+                if (res && (res.status === 401 || res.status === 403)) { handleAuthError(); throw new Error("Auth expired"); }
+                saveIndicator.textContent = "• Fully Synced Cloud & Local"; 
             })
             .catch(() => { 
-                if (!document.body.classList.contains('distraction-free')) {
-                    saveIndicator.textContent = "• Replication dropped."; 
-                }
+                saveIndicator.textContent = "• Replication dropped."; 
             });
         }
 
