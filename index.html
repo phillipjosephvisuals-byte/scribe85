@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>scribe85 Workspace</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -37,6 +37,7 @@
             width: 100vw;
             overflow: hidden; 
             transition: background-color 0.4s ease, color 0.4s ease;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .app-view {
@@ -60,6 +61,7 @@
             background: radial-gradient(circle at center, rgba(255,255,255,0.03) 0%, rgba(0,0,0,0.2) 100%), var(--bg-color);
             overflow-y: auto;
             padding: 40px 0;
+            transition: all 0.4s ease;
         }
 
         .brand-header {
@@ -72,6 +74,7 @@
             padding: 0 50px;
             margin-bottom: 15px;
             margin-top: 40px;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
         }
  
         .brand-logo-frame {
@@ -84,7 +87,7 @@
             color: var(--accent-color);
             margin-bottom: 5px;
             margin-top: 15px;
-            transition: color 0.4s ease;
+            transition: color 0.4s ease, transform 0.4s ease;
         }
 
         .brand-logo-frame svg {
@@ -107,6 +110,7 @@
             text-align: center;
             width: 100%;
             margin-top: 2px;
+            transition: opacity 0.3s ease;
         }
 
         .collapsible-theme-hub {
@@ -117,6 +121,7 @@
             max-width: 760px;
             margin-top: 10px;
             margin-bottom: 25px;
+            transition: all 0.4s ease;
         }
 
         .theme-accordion-toggle {
@@ -184,7 +189,6 @@
         .t-matrix { background: #000500; color: #33ff33; border-color: #33ff33; text-shadow: 0 0 2px #33ff33; }
         .t-cobalt { background: #000080; color: #ffffff; border-color: rgba(255,255,255,0.2); }
 
-        /* Subtle inward shrink effect for theme buttons */
         .theme-card:hover { 
             transform: scale(0.96); 
             border-color: var(--accent-color);
@@ -213,6 +217,7 @@
             text-align: center;
             transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+            cursor: pointer;
         }
 
         .suite-card:hover {
@@ -267,6 +272,7 @@
             width: 100%;
             margin-bottom: 24px;
             flex-grow: 1;
+            transition: opacity 0.3s ease;
         }
 
         .write-btn-wrapper {
@@ -297,6 +303,16 @@
             color: var(--bg-color);
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.35);
             transform: scale(1.04);
+        }
+
+        .launchpad-footer-tag {
+            font-size: 0.65rem; 
+            color: var(--muted-color); 
+            margin-top: 75px; 
+            opacity: 0.6; 
+            letter-spacing: 0.5px; 
+            text-transform: uppercase;
+            text-align: center;
         }
 
         /* ------------------------------------------------------------------
@@ -482,59 +498,20 @@
         }
         .doc-list-item:hover { background: rgba(255, 255, 255, 0.03); color: var(--accent-color); }
         
-        .list-download-btn {
+        .list-download-btn, .list-rename-btn, .list-delete-btn {
             background: transparent;
             border: none;
             color: var(--muted-color);
             cursor: pointer;
             font-family: var(--font-mono);
-            font-size: 0.80rem;
+            font-size: 0.75rem;
             padding: 2px 6px;
             border-radius: 4px;
             transition: all 0.2s ease;
         }
-        .list-download-btn:hover {
-            color: var(--accent-color);
-            background: rgba(56, 189, 248, 0.1);
-        }
-
-        .list-rename-btn {
-            background: transparent;
-            border: 1px solid transparent;
-            color: var(--muted-color);
-            cursor: pointer;
-            font-family: var(--font-mono);
-            font-size: 0.70rem;
-            text-transform: uppercase;
-            padding: 2px 6px;
-            margin-right: 4px;
-            border-radius: 4px;
-            transition: all 0.2s ease;
-        }
-        .list-rename-btn:hover {
-            color: var(--accent-color);
-            border-color: rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .list-delete-btn {
-            background: transparent;
-            border: 1px solid transparent;
-            color: var(--muted-color);
-            cursor: pointer;
-            font-family: var(--font-mono);
-            font-size: 0.70rem;
-            text-transform: uppercase;
-            padding: 2px 6px;
-            margin-right: 6px;
-            border-radius: 4px;
-            transition: all 0.2s ease;
-        }
-        .list-delete-btn:hover {
-            color: #ef4444; 
-            border-color: rgba(239, 68, 68, 0.4);
-            background: rgba(239, 68, 68, 0.08);
-        }
+        .list-download-btn:hover { color: var(--accent-color); background: rgba(56, 189, 248, 0.1); }
+        .list-rename-btn:hover { color: var(--accent-color); border-color: rgba(255, 255, 255, 0.2); background: rgba(255, 255, 255, 0.05); }
+        .list-delete-btn:hover { color: #ef4444; border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.08); }
         
         .modal-close-btn { background: transparent; border: none; color: var(--muted-color); font-family: var(--font-mono); font-size: 0.8rem; cursor: pointer; display: block; text-align: center; width: 100%; padding-top: 5px; }
         .modal-close-btn:hover { color: var(--text-color); }
@@ -667,9 +644,40 @@
         .doc-left { 
             display: flex; 
             align-items: center; 
-            gap: 18px; 
+            gap: 14px; 
             justify-self: start; 
         } 
+
+        .history-controls {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .history-btn {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--muted-color);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .history-btn:hover:not(:disabled) {
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+            background: rgba(255, 255, 255, 0.08);
+            text-shadow: var(--text-glow);
+        }
+
+        .history-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            border-color: transparent;
+        }
 
         .inline-theme-picker {
             display: flex;
@@ -722,7 +730,6 @@
             transition: color 0.3s ease;
         }
 
-        /* Timeout slow-blinking indicator */
         #save-indicator.sync-offline {
             color: #ef4444;
             animation: pulseSyncText 2.5s infinite alternate ease-in-out;
@@ -1162,31 +1169,147 @@
         #element-status-tag { color: var(--accent-color); font-weight: bold; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
 
         /* ------------------------------------------------------------------
-           6. RESPONSIVE MEDIA QUERIES
+           6. RESPONSIVE MEDIA QUERIES & MOBILE SPECIFIC RULES
         ------------------------------------------------------------------ */
         @media (max-width: 1180px) {
             .margin-ghost-guide { display: none !important; }
             .left-margin-alert-card { left: 16px; top: 80px; transform: none; }
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
             body { font-size: 16px; }
-            .brand-header { padding: 0 15px; margin-top: 20px; }
-            .brand-header h1 { font-size: 1.8rem; }
-            .suite-options { flex-direction: column; gap: 15px; }
 
+            /* Interactive Mobile Landing Hub */
+            #launchpad-view {
+                padding: 20px 16px;
+                justify-content: flex-start;
+            }
+
+            .brand-header {
+                padding: 0;
+                margin-top: 10px;
+                margin-bottom: 5px;
+            }
+
+            .brand-header h1 { font-size: 2rem; }
+            .brand-header p { font-size: 0.85rem; }
+
+            .collapsible-theme-hub {
+                margin-top: 5px;
+                margin-bottom: 20px;
+            }
+
+            /* Compact Side-by-Side Mobile Selection Grid */
+            .suite-options {
+                flex-direction: row;
+                gap: 12px;
+                padding: 0;
+                align-items: stretch;
+            }
+
+            .suite-card {
+                padding: 16px 12px;
+                border-radius: 10px;
+                cursor: pointer;
+                transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+
+            .suite-card-icon-frame {
+                width: 44px;
+                height: 44px;
+                margin-bottom: 10px;
+            }
+
+            .suite-card h2 {
+                font-size: 0.95rem;
+                margin-bottom: 0;
+                white-space: nowrap;
+            }
+
+            /* Default unselected state on mobile hides long blurb & CTA */
+            #launchpad-view:not(.mobile-sifted) .suite-card p.card-desc,
+            #launchpad-view:not(.mobile-sifted) .suite-card .write-btn-wrapper {
+                display: none;
+            }
+
+            /* Shifted state once user taps one of the tools */
+            #launchpad-view.mobile-sifted .brand-header {
+                margin-top: 0;
+                margin-bottom: 2px;
+                transform: scale(0.85);
+            }
+
+            #launchpad-view.mobile-sifted .brand-header p {
+                display: none;
+            }
+
+            #launchpad-view.mobile-sifted .collapsible-theme-hub {
+                margin-bottom: 15px;
+            }
+
+            #launchpad-view.mobile-sifted .suite-options {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            #launchpad-view.mobile-sifted .suite-card.mobile-unselected {
+                opacity: 0.45;
+                transform: scale(0.98);
+                padding: 12px 16px;
+                flex-direction: row;
+                justify-content: flex-start;
+                gap: 12px;
+            }
+
+            #launchpad-view.mobile-sifted .suite-card.mobile-unselected .suite-card-icon-frame {
+                width: 28px;
+                height: 28px;
+                margin-bottom: 0;
+            }
+
+            #launchpad-view.mobile-sifted .suite-card.mobile-unselected p.card-desc,
+            #launchpad-view.mobile-sifted .suite-card.mobile-unselected .write-btn-wrapper {
+                display: none;
+            }
+
+            #launchpad-view.mobile-sifted .suite-card.mobile-active {
+                opacity: 1;
+                border-color: var(--accent-color);
+                box-shadow: 0 0 16px rgba(255, 255, 255, 0.08);
+                padding: 24px 18px;
+            }
+
+            #launchpad-view.mobile-sifted .suite-card.mobile-active p.card-desc {
+                display: block;
+                font-size: 0.8rem;
+                margin-top: 10px;
+                margin-bottom: 16px;
+                text-align: left;
+            }
+
+            #launchpad-view.mobile-sifted .suite-card.mobile-active .write-btn-wrapper {
+                display: flex;
+            }
+
+            /* Workspace Header and Footer Collapsing */
             header {
                 display: flex;
                 flex-wrap: wrap;
                 justify-content: space-between;
                 align-items: center;
-                padding: 10px 15px;
+                padding: 10px 14px;
                 gap: 8px;
             }
 
-            .doc-left { order: 1; gap: 8px; }
-            .header-logo-container { width: 75px; }
+            .doc-left { 
+                order: 1; 
+                gap: 8px; 
+            }
+            
+            .header-logo-container { width: 68px; }
             .inline-theme-picker { display: flex; gap: 4px; }
+            .history-controls { display: flex; gap: 3px; }
+            .history-btn { font-size: 0.65rem; padding: 2px 5px; }
 
             .header-center-hub {
                 order: 3;
@@ -1196,26 +1319,33 @@
 
             .doc-title { 
                 width: 100%; 
-                max-width: 220px; 
-                font-size: 0.8rem; 
+                max-width: 240px; 
+                font-size: 0.82rem; 
             }
 
             .sync-status { order: 2; gap: 6px; }
             #save-indicator { display: none; }
 
-            main { padding: 0 10px; }
-            .editor { font-size: 0.95rem; padding-top: 15px; }
+            main { padding: 0 12px; }
+            .editor { font-size: 0.98rem; padding-top: 20px; padding-bottom: 160px; }
 
             footer {
-                padding: 10px 15px;
-                font-size: 0.7rem;
-                grid-template-columns: 1fr auto;
+                padding: 10px 14px;
+                font-size: 0.72rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
             }
 
+            .stats-left { gap: 10px; }
             .footer-center { order: 2; }
             .stats-right { display: none; }
             .margin-list-widget { display: none !important; }
             .left-margin-alert-card { left: 10px; right: 10px; width: calc(100vw - 20px); top: 60px; }
+            
+            .launchpad-footer-tag {
+                margin-top: 30px;
+            }
         }
     </style>
 </head>
@@ -1264,8 +1394,8 @@
             </div>
         </div>
         
-        <div class="suite-options">
-            <div class="suite-card" id="card-narrative">
+        <div class="suite-options" id="suite-options-container">
+            <div class="suite-card" id="card-narrative" onclick="handleSuiteCardSelection('narrative', event)">
                 <div class="suite-card-icon-frame">
                     <svg width="415" height="631" viewBox="0 0 415 631" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd" clip-rule="evenodd" d="M185.196 625.063C191.792 627.87 199.112 623.03 199.112 615.862V313.092V290.984C189.62 288.084 181.83 281.288 177.603 272.461C175.397 267.854 174.161 262.694 174.161 257.245C174.161 251.796 175.397 246.636 177.603 242.029C181.83 233.202 189.62 226.406 199.112 223.505C202.377 222.507 205.844 221.971 209.436 221.971C211.64 221.971 213.796 222.173 215.888 222.559C224.604 224.171 232.196 228.986 237.397 235.738C241.983 241.691 244.71 249.149 244.71 257.245C244.71 265.341 241.983 272.799 237.397 278.752C232.196 285.504 224.604 290.319 215.888 291.93V313.665V615.862C215.888 623.03 223.208 627.87 229.804 625.063L251.553 615.808C255.393 614.174 257.814 610.329 257.628 606.161L257.605 605.637C254.803 542.849 278.453 475.063 310.048 415.168C341.555 355.439 380.322 304.761 406.206 276.562L406.823 275.89C411.067 271.266 410.053 263.922 404.715 260.622L403.938 260.142C313.234 204.07 287.489 107.039 285.999 66.284L285.973 65.5581C285.777 60.1808 281.361 55.9228 275.98 55.9228H260.196H252.453H165.558H158.675H139.02C133.639 55.9228 129.223 60.1808 129.027 65.5581L129.001 66.284C127.511 107.039 101.766 204.07 11.0619 260.142L10.2852 260.622C4.94741 263.922 3.93315 271.266 8.17667 275.89L8.79423 276.562C34.6779 304.761 73.4449 355.439 104.952 415.168C136.547 475.063 160.197 542.849 157.395 605.637L157.372 606.161C157.186 610.329 159.607 614.174 163.447 615.808L185.196 625.063ZM149.748 77.4316H158.675H165.558H252.453H260.196H265.252C270.198 125.065 298.531 214.257 381.933 271.468C355.474 301.937 320.235 349.757 291.024 405.133C264.916 454.625 243.204 510.942 237.397 566.749V306.678C254.607 296.922 266.219 278.44 266.219 257.245C266.219 240.05 258.576 224.64 246.502 214.227C243.694 211.805 240.645 209.653 237.397 207.812C230.915 204.137 223.638 201.701 215.888 200.824C213.771 200.585 211.618 200.462 209.436 200.462C205.91 200.462 202.459 200.783 199.112 201.398C191.258 202.841 183.968 205.9 177.603 210.217C175.78 211.453 174.032 212.793 172.369 214.227C160.295 224.64 152.653 240.05 152.653 257.245C152.653 276.808 162.546 294.061 177.603 304.273V566.749C171.796 510.942 150.084 454.625 123.976 405.133C94.765 349.757 59.5264 301.937 33.0672 271.468C116.469 214.257 144.802 125.065 149.748 77.4316Z" fill="currentColor"/>
@@ -1279,7 +1409,7 @@
                 </div>
             </div>
             
-            <div class="suite-card" id="card-screenplay">
+            <div class="suite-card" id="card-screenplay" onclick="handleSuiteCardSelection('screenplay', event)">
                 <div class="suite-card-icon-frame">
                     <svg width="533" height="506" viewBox="0 0 533 506" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M465.419 0.698792C478.556 -2.4666 491.895 5.40773 495.413 18.5357L512.236 81.3209L512.356 81.8218C513.429 86.8279 510.53 91.8496 505.658 93.4234L505.165 93.5689L46.7954 216.388H522.388L522.903 216.401C528.186 216.669 532.388 221.038 532.388 226.388V480.388C532.388 493.979 521.542 505.038 508.034 505.38L507.388 505.388H45.3882C31.5812 505.388 20.3884 494.195 20.3882 480.388V223.496H20.27L0.85791 151.051C-2.71551 137.715 5.19922 124.007 18.5356 120.433L464.793 0.857971L465.419 0.698792ZM45.3882 480.388H507.388V313.388H45.3882V480.388ZM442.388 408.388H110.388V390.388H442.388V408.388ZM442.388 372.388H110.388V354.388H442.388V372.388ZM45.3882 288.388H131.741L104.605 241.388H45.3882V288.388ZM160.608 288.388H279.741L252.605 241.388H133.473L160.608 288.388ZM308.608 288.388H427.741L400.605 241.388H281.473L308.608 288.388ZM456.608 288.388H507.388V241.388H429.473L456.608 288.388ZM25.0063 144.581L37.9478 192.878L94.1909 177.807L109.133 122.039L25.0063 144.581ZM137.017 114.568L122.076 170.336L237.148 139.502L252.09 83.7339L137.017 114.568ZM279.974 76.2623L265.033 132.03L380.105 101.196L395.047 45.4283L279.974 76.2623ZM422.931 37.9576L407.99 93.7252L484.205 73.3023L471.264 25.0064L422.931 37.9576Z" fill="currentColor"/>
@@ -1293,7 +1423,7 @@
             </div>
         </div>
 
-        <span style="font-size: 0.65rem; color: var(--muted-color); margin-top: 75px; opacity: 0.6; letter-spacing: 0.5px; text-transform: uppercase;">
+        <span class="launchpad-footer-tag">
             &copy; 2026 Phillip Joseph Villarreal. All Rights Reserved.
         </span>
     </div>
@@ -1387,6 +1517,12 @@
                     <div class="theme-square sq-matrix" title="Matrix Green" onclick="applyAppTheme('matrix')"></div>
                     <div class="theme-square sq-cobalt" title="Retro Cobalt" onclick="applyAppTheme('cobalt')"></div>
                 </div>
+
+                <!-- UNDO / REDO HISTORY ENGINE BUTTONS -->
+                <div class="history-controls">
+                    <button class="history-btn" id="btn-undo" title="Undo (Ctrl+Z)" onclick="performUndo()" disabled>↶</button>
+                    <button class="history-btn" id="btn-redo" title="Redo (Ctrl+Y)" onclick="performRedo()" disabled>↷</button>
+                </div>
             </div>
 
             <!-- DOCUMENT TITLE INPUT -->
@@ -1471,9 +1607,116 @@
         let autoBackupMinutes = 10;
         let tokenRenewalTimer = null;
 
+        // --- UNDO / REDO CIRCULAR HISTORY ENGINE ---
+        const MAX_HISTORY_STEPS = 50;
+        let historyStack = [];
+        let historyIndex = -1;
+        let isHistoryLocked = false;
+
+        const btnUndo = document.getElementById('btn-undo');
+        const btnRedo = document.getElementById('btn-redo');
+
+        function recordHistorySnapshot() {
+            if (isHistoryLocked) return;
+            const content = editor.innerHTML;
+            
+            // Avoid duplicate contiguous states
+            if (historyIndex >= 0 && historyStack[historyIndex].content === content) {
+                return;
+            }
+
+            // Drop any redo forward branches
+            historyStack = historyStack.slice(0, historyIndex + 1);
+
+            // Push snapshot
+            historyStack.push({
+                content: content,
+                mode: currentSuiteMode
+            });
+
+            // Enforce circular history bounds
+            if (historyStack.length > MAX_HISTORY_STEPS) {
+                historyStack.shift();
+            } else {
+                historyIndex++;
+            }
+
+            updateHistoryButtonsUI();
+        }
+
+        function performUndo() {
+            if (historyIndex > 0) {
+                historyIndex--;
+                applyHistorySnapshot(historyStack[historyIndex]);
+            }
+        }
+
+        function performRedo() {
+            if (historyIndex < historyStack.length - 1) {
+                historyIndex++;
+                applyHistorySnapshot(historyStack[historyIndex]);
+            }
+        }
+
+        function applyHistorySnapshot(snapshot) {
+            if (!snapshot) return;
+            isHistoryLocked = true;
+
+            editor.innerHTML = snapshot.content;
+            if (snapshot.mode && snapshot.mode !== currentSuiteMode) {
+                currentSuiteMode = snapshot.mode;
+                configureWorkspaceUIPresentation();
+            }
+
+            updateAnalytics(editor.innerText);
+            if (currentSuiteMode === 'narrative') applyDynamicListSpacing();
+            if (currentSuiteMode === 'screenplay') updateLiveElementTag();
+            saveDocument();
+
+            isHistoryLocked = false;
+            updateHistoryButtonsUI();
+        }
+
+        function updateHistoryButtonsUI() {
+            btnUndo.disabled = historyIndex <= 0;
+            btnRedo.disabled = historyIndex >= historyStack.length - 1;
+        }
+
         function toggleThemeAccordion() {
             const hub = document.getElementById('theme-accordion-hub');
             hub.classList.toggle('expanded');
+        }
+
+        // --- RESPONSIVE MOBILE SELECTION CONTROLLER ---
+        function handleSuiteCardSelection(mode, event) {
+            const isMobile = window.innerWidth <= 768;
+            const launchpad = document.getElementById('launchpad-view');
+            const cardNarrative = document.getElementById('card-narrative');
+            const cardScreenplay = document.getElementById('card-screenplay');
+
+            if (!isMobile) {
+                currentSuiteMode = mode;
+                openPickerModal(event);
+                return;
+            }
+
+            if (!launchpad.classList.contains('mobile-sifted')) {
+                // First tap shifts layout into focus mode
+                launchpad.classList.add('mobile-sifted');
+            }
+
+            currentSuiteMode = mode;
+            if (mode === 'narrative') {
+                cardNarrative.classList.add('mobile-active');
+                cardNarrative.classList.remove('mobile-unselected');
+                cardScreenplay.classList.add('mobile-unselected');
+                cardScreenplay.classList.remove('mobile-active');
+            } else {
+                cardScreenplay.classList.add('mobile-active');
+                cardScreenplay.classList.remove('mobile-unselected');
+                cardNarrative.classList.add('mobile-unselected');
+                cardNarrative.classList.remove('mobile-active');
+            }
         }
 
         function renderGhostMarginGuide() {
@@ -1483,6 +1726,7 @@
             if (currentSuiteMode === 'narrative') {
                 titleEl.textContent = "Narrative Guide";
                 listEl.innerHTML = `
+                    <div class="ghost-guide-row"><span>Undo / Redo</span><code>Ctrl+Z / Y</code></div>
                     <div class="ghost-guide-row"><span>Bold selection</span><code>Ctrl + B</code></div>
                     <div class="ghost-guide-row"><span>Italicize</span><code>Ctrl + I</code></div>
                     <div class="ghost-guide-row"><span>Bold syntax</span><code>*text*</code></div>
@@ -1496,6 +1740,7 @@
             } else {
                 titleEl.textContent = "Screenplay Guide";
                 listEl.innerHTML = `
+                    <div class="ghost-guide-row"><span>Undo / Redo</span><code>Ctrl+Z / Y</code></div>
                     <div class="ghost-guide-row"><span>Slugline</span><code>Tab x0</code></div>
                     <div class="ghost-guide-row"><span>Action</span><code>Tab x0</code></div>
                     <div class="ghost-guide-row"><span>Character</span><code>Tab x1</code></div>
@@ -1869,6 +2114,10 @@
                 saveDocument();
             }
 
+            historyStack = [];
+            historyIndex = -1;
+            recordHistorySnapshot();
+
             updateUrlParameters(currentLocalFileId, currentSuiteMode);
             updateAnalytics(editor.innerText);
             if (currentSuiteMode === 'screenplay') updateLiveElementTag();
@@ -2083,6 +2332,7 @@
             applyDynamicListSpacing();
             updateAnalytics(editor.innerText);
             saveDocument();
+            recordHistorySnapshot();
             updateMarginListWidget();
         }
 
@@ -2103,237 +2353,231 @@
         });
 
         // --- ROBUST PARAGRAPH & INDENT PRESERVING PASTE SANITIZER ---
-editor.addEventListener('paste', (e) => {
-    e.preventDefault();
-    const clipboard = e.clipboardData || window.clipboardData;
-    const plainText = clipboard.getData('text/plain');
-    const htmlText = clipboard.getData('text/html');
+        editor.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const clipboard = e.clipboardData || window.clipboardData;
+            const plainText = clipboard.getData('text/plain');
+            const htmlText = clipboard.getData('text/html');
 
-    const selection = window.getSelection();
-    if (!selection.rangeCount) return;
-    selection.deleteFromDocument();
-    const range = selection.getRangeAt(0);
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return;
+            selection.deleteFromDocument();
+            const range = selection.getRangeAt(0);
 
-    function sanitizeInlineNodes(node) {
-        const fragment = document.createDocumentFragment();
-        Array.from(node.childNodes).forEach(child => {
-            if (child.nodeType === Node.TEXT_NODE) {
-                fragment.appendChild(document.createTextNode(child.textContent));
-            } else if (child.nodeType === Node.ELEMENT_NODE) {
-                const tag = child.tagName.toLowerCase();
-                if (tag === 'b' || tag === 'strong') {
-                    const b = document.createElement('b');
-                    b.appendChild(sanitizeInlineNodes(child));
-                    fragment.appendChild(b);
-                } else if (tag === 'i' || tag === 'em') {
-                    const i = document.createElement('i');
-                    i.appendChild(sanitizeInlineNodes(child));
-                    fragment.appendChild(i);
-                } else if (tag === 'br') {
-                    fragment.appendChild(document.createElement('br'));
-                } else {
-                    fragment.appendChild(sanitizeInlineNodes(child));
-                }
-            }
-        });
-        return fragment;
-    }
-
-    if (htmlText) {
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = htmlText;
-        tempDiv.querySelectorAll('style, script, meta, link, xml').forEach(el => el.remove());
-
-        // Select top-level content containers only to prevent parent + child duplication
-        const blockSelector = 'p, div, li, h1, h2, h3, h4, h5, h6, tr, blockquote';
-        let rawBlocks = Array.from(tempDiv.querySelectorAll(blockSelector));
-        
-        // Filter out any parent block that contains other selectable blocks inside it
-        let distinctBlocks = rawBlocks.filter(block => {
-            return !block.querySelector(blockSelector);
-        });
-
-        const fragment = document.createDocumentFragment();
-
-        if (distinctBlocks.length > 0) {
-            distinctBlocks.forEach(block => {
-                const div = document.createElement('div');
-                if (currentSuiteMode === 'screenplay') {
-                    div.setAttribute('data-element', 'action');
-                }
-
-                let computedIndent = 0;
-                const pLeft = parseInt(block.style.paddingLeft || "0", 10);
-                const mLeft = parseInt(block.style.marginLeft || "0", 10);
-                const textIndent = parseInt(block.style.textIndent || "0", 10);
-                const isFirstLineIndented = textIndent > 0 || block.dataset.firstLineIndent === "true";
-
-                if (pLeft > 0) computedIndent = Math.round(pLeft / 30);
-                else if (mLeft > 0) computedIndent = Math.round(mLeft / 30);
-
-                if (block.dataset && block.dataset.indent) {
-                    computedIndent = parseInt(block.dataset.indent, 10);
-                }
-
-                if (currentSuiteMode === 'narrative') {
-                    if (computedIndent > 0) {
-                        div.dataset.indent = computedIndent;
-                        div.style.paddingLeft = `${computedIndent * 30}px`;
+            function sanitizeInlineNodes(node) {
+                const fragment = document.createDocumentFragment();
+                Array.from(node.childNodes).forEach(child => {
+                    if (child.nodeType === Node.TEXT_NODE) {
+                        fragment.appendChild(document.createTextNode(child.textContent));
+                    } else if (child.nodeType === Node.ELEMENT_NODE) {
+                        const tag = child.tagName.toLowerCase();
+                        if (tag === 'b' || tag === 'strong') {
+                            const b = document.createElement('b');
+                            b.appendChild(sanitizeInlineNodes(child));
+                            fragment.appendChild(b);
+                        } else if (tag === 'i' || tag === 'em') {
+                            const i = document.createElement('i');
+                            i.appendChild(sanitizeInlineNodes(child));
+                            fragment.appendChild(i);
+                        } else if (tag === 'br') {
+                            fragment.appendChild(document.createElement('br'));
+                        } else {
+                            fragment.appendChild(sanitizeInlineNodes(child));
+                        }
                     }
-                    if (isFirstLineIndented) {
+                });
+                return fragment;
+            }
+
+            if (htmlText) {
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = htmlText;
+                tempDiv.querySelectorAll('style, script, meta, link, xml').forEach(el => el.remove());
+
+                const blockSelector = 'p, div, li, h1, h2, h3, h4, h5, h6, tr, blockquote';
+                let rawBlocks = Array.from(tempDiv.querySelectorAll(blockSelector));
+                
+                let distinctBlocks = rawBlocks.filter(block => {
+                    return !block.querySelector(blockSelector);
+                });
+
+                const fragment = document.createDocumentFragment();
+
+                if (distinctBlocks.length > 0) {
+                    distinctBlocks.forEach(block => {
+                        const div = document.createElement('div');
+                        if (currentSuiteMode === 'screenplay') {
+                            div.setAttribute('data-element', 'action');
+                        }
+
+                        let computedIndent = 0;
+                        const pLeft = parseInt(block.style.paddingLeft || "0", 10);
+                        const mLeft = parseInt(block.style.marginLeft || "0", 10);
+                        const textIndent = parseInt(block.style.textIndent || "0", 10);
+                        const isFirstLineIndented = textIndent > 0 || block.dataset.firstLineIndent === "true";
+
+                        if (pLeft > 0) computedIndent = Math.round(pLeft / 30);
+                        else if (mLeft > 0) computedIndent = Math.round(mLeft / 30);
+
+                        if (block.dataset && block.dataset.indent) {
+                            computedIndent = parseInt(block.dataset.indent, 10);
+                        }
+
+                        if (currentSuiteMode === 'narrative') {
+                            if (computedIndent > 0) {
+                                div.dataset.indent = computedIndent;
+                                div.style.paddingLeft = `${computedIndent * 30}px`;
+                            }
+                            if (isFirstLineIndented) {
+                                div.dataset.firstLineIndent = "true";
+                                div.style.textIndent = "2em";
+                            }
+                        }
+
+                        const rawText = block.innerText ? block.innerText.trim() : "";
+                        if (/^•\s/.test(rawText) || block.tagName.toLowerCase() === 'li') {
+                            div.dataset.listType = "bullet";
+                        } else if (/^\d+[\.\)]\s/.test(rawText)) {
+                            div.dataset.listType = "number";
+                        }
+
+                        const sanitizedContent = sanitizeInlineNodes(block);
+                        if (!sanitizedContent.textContent.trim()) {
+                            div.innerHTML = '<br>';
+                        } else {
+                            div.appendChild(sanitizedContent);
+                        }
+
+                        fragment.appendChild(div);
+                    });
+                } else {
+                    const div = document.createElement('div');
+                    if (currentSuiteMode === 'screenplay') div.setAttribute('data-element', 'action');
+                    const sanitizedContent = sanitizeInlineNodes(tempDiv);
+                    if (!sanitizedContent.textContent.trim()) {
+                        div.innerHTML = '<br>';
+                    } else {
+                        div.appendChild(sanitizedContent);
+                    }
+                    fragment.appendChild(div);
+                }
+
+                range.insertNode(fragment);
+            } else if (plainText) {
+                const lines = plainText.split(/\r\n|\r|\n/);
+                const fragment = document.createDocumentFragment();
+
+                lines.forEach((line) => {
+                    const div = document.createElement('div');
+                    if (currentSuiteMode === 'screenplay') {
+                        div.setAttribute('data-element', 'action');
+                    }
+                    
+                    const tabMatch = line.match(/^(\t+)/);
+                    const spaceMatch = line.match(/^( {4,})/);
+                    let indentLevel = 0;
+
+                    if (tabMatch) {
+                        indentLevel = tabMatch[1].length;
+                    } else if (spaceMatch) {
+                        indentLevel = Math.floor(spaceMatch[1].length / 4);
+                    }
+
+                    const cleanLine = line.replace(/^(\t+| {4,})/, "");
+
+                    if (indentLevel === 1 && currentSuiteMode === 'narrative') {
                         div.dataset.firstLineIndent = "true";
                         div.style.textIndent = "2em";
+                    } else if (indentLevel > 1 && currentSuiteMode === 'narrative') {
+                        div.dataset.indent = indentLevel;
+                        div.style.paddingLeft = `${indentLevel * 30}px`;
                     }
-                }
 
-                const rawText = block.innerText ? block.innerText.trim() : "";
-                if (/^•\s/.test(rawText) || block.tagName.toLowerCase() === 'li') {
-                    div.dataset.listType = "bullet";
-                } else if (/^\d+[\.\)]\s/.test(rawText)) {
-                    div.dataset.listType = "number";
-                }
+                    if (/^•\s/.test(cleanLine)) div.dataset.listType = "bullet";
+                    if (/^\d+[\.\)]\s/.test(cleanLine)) div.dataset.listType = "number";
 
-                const sanitizedContent = sanitizeInlineNodes(block);
-                if (!sanitizedContent.textContent.trim()) {
-                    div.innerHTML = '<br>';
-                } else {
-                    div.appendChild(sanitizedContent);
-                }
-
-                fragment.appendChild(div);
-            });
-        } else {
-            const div = document.createElement('div');
-            if (currentSuiteMode === 'screenplay') div.setAttribute('data-element', 'action');
-            const sanitizedContent = sanitizeInlineNodes(tempDiv);
-            if (!sanitizedContent.textContent.trim()) {
-                div.innerHTML = '<br>';
-            } else {
-                div.appendChild(sanitizedContent);
-            }
-            fragment.appendChild(div);
-        }
-
-        range.insertNode(fragment);
-    } else if (plainText) {
-        const lines = plainText.split(/\r\n|\r|\n/);
-        const fragment = document.createDocumentFragment();
-
-        lines.forEach((line) => {
-            const div = document.createElement('div');
-            if (currentSuiteMode === 'screenplay') {
-                div.setAttribute('data-element', 'action');
-            }
-            
-            const tabMatch = line.match(/^(\t+)/);
-            const spaceMatch = line.match(/^( {4,})/);
-            let indentLevel = 0;
-
-            if (tabMatch) {
-                indentLevel = tabMatch[1].length;
-            } else if (spaceMatch) {
-                indentLevel = Math.floor(spaceMatch[1].length / 4);
+                    if (cleanLine.trim() === '') {
+                        div.innerHTML = '<br>';
+                    } else {
+                        div.textContent = cleanLine;
+                    }
+                    fragment.appendChild(div);
+                });
+                range.insertNode(fragment);
             }
 
-            const cleanLine = line.replace(/^(\t+| {4,})/, "");
-
-            if (indentLevel === 1 && currentSuiteMode === 'narrative') {
-                div.dataset.firstLineIndent = "true";
-                div.style.textIndent = "2em";
-            } else if (indentLevel > 1 && currentSuiteMode === 'narrative') {
-                div.dataset.indent = indentLevel;
-                div.style.paddingLeft = `${indentLevel * 30}px`;
+            if (currentSuiteMode === 'narrative') {
+                applyDynamicListSpacing();
             }
-
-            if (/^•\s/.test(cleanLine)) div.dataset.listType = "bullet";
-            if (/^\d+[\.\)]\s/.test(cleanLine)) div.dataset.listType = "number";
-
-            if (cleanLine.trim() === '') {
-                div.innerHTML = '<br>';
-            } else {
-                div.textContent = cleanLine;
-            }
-            fragment.appendChild(div);
+            updateAnalytics(editor.innerText);
+            saveDocument();
+            recordHistorySnapshot();
         });
-        range.insertNode(fragment);
-    }
-
-    if (currentSuiteMode === 'narrative') {
-        applyDynamicListSpacing();
-    }
-    updateAnalytics(editor.innerText);
-    saveDocument();
-});
 
         // --- NORMALIZED CLIPBOARD EXPORT (EXACT SELECTION PRESERVATION) ---
-editor.addEventListener('copy', (e) => {
-  const selection = window.getSelection();
-  if (!selection.rangeCount || selection.isCollapsed) return;
+        editor.addEventListener('copy', (e) => {
+            const selection = window.getSelection();
+            if (!selection.rangeCount || selection.isCollapsed) return;
 
-  const range = selection.getRangeAt(0);
-  const selectedBlocks = getSelectedBlocks();
+            const range = selection.getRangeAt(0);
+            const selectedBlocks = getSelectedBlocks();
 
-  let plainTextLines = [];
-  let htmlFragments = [];
+            let plainTextLines = [];
+            let htmlFragments = [];
 
-  if (selectedBlocks.length > 0) {
-    selectedBlocks.forEach((block, index) => {
-      // Create a range scoped specifically to the intersection of this block and user selection
-      const blockRange = document.createRange();
-      blockRange.selectNodeContents(block);
+            if (selectedBlocks.length > 0) {
+                selectedBlocks.forEach((block, index) => {
+                    const blockRange = document.createRange();
+                    blockRange.selectNodeContents(block);
 
-      if (index === 0) {
-        // First block: start at selection start
-        blockRange.setStart(range.startContainer, range.startOffset);
-      }
-      if (index === selectedBlocks.length - 1) {
-        // Last block: end at selection end
-        blockRange.setEnd(range.endContainer, range.endOffset);
-      }
+                    if (index === 0) {
+                        blockRange.setStart(range.startContainer, range.startOffset);
+                    }
+                    if (index === selectedBlocks.length - 1) {
+                        blockRange.setEnd(range.endContainer, range.endOffset);
+                    }
 
-      // Extract only the highlighted DOM/Text fragment
-      const fragment = blockRange.cloneContents();
-      const tempDiv = document.createElement('div');
-      tempDiv.appendChild(fragment);
+                    const fragment = blockRange.cloneContents();
+                    const tempDiv = document.createElement('div');
+                    tempDiv.appendChild(fragment);
 
-      let text = tempDiv.innerText ? tempDiv.innerText.replace(/\u200B/g, '') : '';
-      if (!text && !tempDiv.innerHTML) return;
+                    let text = tempDiv.innerText ? tempDiv.innerText.replace(/\u200B/g, '') : '';
+                    if (!text && !tempDiv.innerHTML) return;
 
-      const indent = parseInt(block.dataset.indent || '0', 10);
-      const isFirstLineIndent = block.dataset.firstLineIndent === 'true';
+                    const indent = parseInt(block.dataset.indent || '0', 10);
+                    const isFirstLineIndent = block.dataset.firstLineIndent === 'true';
 
-      let indentPrefix = '';
-      if (isFirstLineIndent && index === 0) {
-        indentPrefix = '\t';
-      } else if (indent > 0) {
-        indentPrefix = '\t'.repeat(indent);
-      }
+                    let indentPrefix = '';
+                    if (isFirstLineIndent && index === 0) {
+                        indentPrefix = '\t';
+                    } else if (indent > 0) {
+                        indentPrefix = '\t'.repeat(indent);
+                    }
 
-      plainTextLines.push(indentPrefix + text);
+                    plainTextLines.push(indentPrefix + text);
 
-      // Construct clean HTML wrapper with retained indentation styling
-      const clone = document.createElement('div');
-      clone.style.color = '#000000';
-      clone.style.textShadow = 'none';
-      clone.style.filter = 'none';
-      clone.style.backgroundColor = 'transparent';
-      if (isFirstLineIndent) clone.style.textIndent = '2em';
-      if (indent > 0) clone.style.paddingLeft = `${indent * 30}px`;
-      clone.innerHTML = tempDiv.innerHTML;
+                    const clone = document.createElement('div');
+                    clone.style.color = '#000000';
+                    clone.style.textShadow = 'none';
+                    clone.style.filter = 'none';
+                    clone.style.backgroundColor = 'transparent';
+                    if (isFirstLineIndent) clone.style.textIndent = '2em';
+                    if (indent > 0) clone.style.paddingLeft = `${indent * 30}px`;
+                    clone.innerHTML = tempDiv.innerHTML;
 
-      htmlFragments.push(clone.outerHTML);
-    });
-  } else {
-    plainTextLines.push(selection.toString().replace(/\u200B/g, ''));
-  }
+                    htmlFragments.push(clone.outerHTML);
+                });
+            } else {
+                plainTextLines.push(selection.toString().replace(/\u200B/g, ''));
+            }
 
-  const plainText = plainTextLines.join('\n\n');
-  const sanitizedHtml = `<div style="color: #000000 !important; background-color: transparent !important; text-shadow: none !important;">${htmlFragments.join('')}</div>`;
+            const plainText = plainTextLines.join('\n\n');
+            const sanitizedHtml = `<div style="color: #000000 !important; background-color: transparent !important; text-shadow: none !important;">${htmlFragments.join('')}</div>`;
 
-  e.clipboardData.setData('text/plain', plainText);
-  e.clipboardData.setData('text/html', sanitizedHtml);
-  e.preventDefault();
-});
+            e.clipboardData.setData('text/plain', plainText);
+            e.clipboardData.setData('text/html', sanitizedHtml);
+            e.preventDefault();
+        });
 
         // --- FILE RESTORATION DRAG-AND-DROP & INPUT HANDLERS ---
         restoreDropZone.addEventListener('click', () => {
@@ -2397,6 +2641,10 @@ editor.addEventListener('copy', (e) => {
                 if (docTitle) docTitle.value = fileName;
 
                 saveDocument();
+                historyStack = [];
+                historyIndex = -1;
+                recordHistorySnapshot();
+
                 configureWorkspaceUIPresentation();
                 pickerModal.style.display = 'none';
                 launchpadView.classList.remove('active');
@@ -2458,12 +2706,29 @@ editor.addEventListener('copy', (e) => {
 
         // --- UNIFIED KEYBOARD INPUT INTERCEPTOR ENGINE ---
         editor.addEventListener('keydown', (e) => {
+            const isModifier = e.metaKey || e.ctrlKey;
+
+            // Global Undo / Redo Shortcuts
+            if (isModifier && e.key.toLowerCase() === 'z') {
+                e.preventDefault();
+                if (e.shiftKey) {
+                    performRedo();
+                } else {
+                    performUndo();
+                }
+                return;
+            }
+            if (isModifier && e.key.toLowerCase() === 'y') {
+                e.preventDefault();
+                performRedo();
+                return;
+            }
+
             const selection = window.getSelection();
 
             if (currentSuiteMode === 'narrative') {
-                const isModifier = e.metaKey || e.ctrlKey;
-                if (isModifier && e.key.toLowerCase() === 'b') { e.preventDefault(); document.execCommand('bold', false, null); saveDocument(); return; }
-                if (isModifier && e.key.toLowerCase() === 'i') { e.preventDefault(); document.execCommand('italic', false, null); saveDocument(); return; }
+                if (isModifier && e.key.toLowerCase() === 'b') { e.preventDefault(); document.execCommand('bold', false, null); saveDocument(); recordHistorySnapshot(); return; }
+                if (isModifier && e.key.toLowerCase() === 'i') { e.preventDefault(); document.execCommand('italic', false, null); saveDocument(); recordHistorySnapshot(); return; }
 
                 if (!selection.rangeCount) return;
 
@@ -2529,6 +2794,7 @@ editor.addEventListener('copy', (e) => {
 
                     applyDynamicListSpacing();
                     saveDocument();
+                    recordHistorySnapshot();
                     return;
                 }
 
@@ -2546,12 +2812,14 @@ editor.addEventListener('copy', (e) => {
                             currentBlock.innerHTML = "<br>";
                             applyDynamicListSpacing();
                             saveDocument();
+                            recordHistorySnapshot();
                             return;
                         } else if (hasFirstLineIndent) {
                             currentBlock.dataset.firstLineIndent = "false";
                             currentBlock.style.textIndent = "0px";
                             currentBlock.innerHTML = "<br>";
                             saveDocument();
+                            recordHistorySnapshot();
                             return;
                         }
                     }
@@ -2623,6 +2891,7 @@ editor.addEventListener('copy', (e) => {
 
                     applyDynamicListSpacing();
                     saveDocument();
+                    recordHistorySnapshot();
                     return;
                 }
                 return;
@@ -2669,6 +2938,7 @@ editor.addEventListener('copy', (e) => {
                     currentBlock.setAttribute('data-element', nextType);
                     updateLiveElementTag();
                     saveDocument();
+                    recordHistorySnapshot();
                 }
             }
 
@@ -2715,6 +2985,7 @@ editor.addEventListener('copy', (e) => {
 
                 updateLiveElementTag();
                 saveDocument();
+                recordHistorySnapshot();
             }
         });
 
@@ -3056,6 +3327,10 @@ editor.addEventListener('copy', (e) => {
             localStorage.setItem(`zensuite_current_active_${currentSuiteMode}_id`, fileId);
             localStorage.setItem('zensuite_view_state', 'workspace');
             
+            historyStack = [];
+            historyIndex = -1;
+            recordHistorySnapshot();
+
             updateUrlParameters(fileId, currentSuiteMode);
             updateAnalytics(editor.innerText);
             pickerModifierSync();
@@ -3255,6 +3530,10 @@ editor.addEventListener('copy', (e) => {
                 currentLocalFileId = existing ? existing.id : "local_" + Date.now();
 
                 saveDocument(); 
+                historyStack = [];
+                historyIndex = -1;
+                recordHistorySnapshot();
+
                 updateUrlParameters(currentLocalFileId, currentSuiteMode);
                 pickerModifierSync();
 
@@ -3360,6 +3639,7 @@ editor.addEventListener('copy', (e) => {
             triggerCloudSave(); 
         }
 
+        let historyDebounceTimer;
         editor.addEventListener('input', () => {
             processInlineMarkdownFormatting(); 
             updateAnalytics(editor.innerText);
@@ -3384,6 +3664,9 @@ editor.addEventListener('copy', (e) => {
             
             saveDocument();
             scrollToCursor();
+
+            clearTimeout(historyDebounceTimer);
+            historyDebounceTimer = setTimeout(recordHistorySnapshot, 400);
         });
     </script>
 </body>
