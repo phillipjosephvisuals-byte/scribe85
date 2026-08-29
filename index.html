@@ -616,7 +616,7 @@
             transform: translateY(8px);
         }
 
-        body.distraction-free .margin-ghost-guide {
+        body.distraction-free .margin-ghost-guide-wrapper {
             opacity: 0 !important;
             pointer-events: none;
             transform: translateY(-50%) scale(0.98);
@@ -628,6 +628,31 @@
             display: flex;
             flex-direction: column;
             position: relative;
+        }
+
+        /* Mobile Chrome Drawer Toggle Button */
+        .mobile-chrome-activator {
+            display: none;
+            position: fixed;
+            top: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 120;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 3px 14px;
+            color: var(--muted-color);
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+            transition: all 0.2s ease;
+        }
+
+        .mobile-chrome-activator svg {
+            width: 18px;
+            height: 10px;
+            stroke: currentColor;
+            display: block;
         }
 
         header {
@@ -647,37 +672,6 @@
             gap: 14px; 
             justify-self: start; 
         } 
-
-        .history-controls {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .history-btn {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--muted-color);
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-family: var(--font-mono);
-            font-size: 0.72rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .history-btn:hover:not(:disabled) {
-            color: var(--accent-color);
-            border-color: var(--accent-color);
-            background: rgba(255, 255, 255, 0.08);
-            text-shadow: var(--text-glow);
-        }
-
-        .history-btn:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-            border-color: transparent;
-        }
 
         .inline-theme-picker {
             display: flex;
@@ -720,7 +714,7 @@
         .sync-status { 
             display: flex; 
             align-items: center; 
-            gap: 12px; 
+            gap: 10px; 
             justify-self: end; 
         }
 
@@ -897,22 +891,69 @@
         }
 
         /* ------------------------------------------------------------------
-           4.3 RIGHT MARGIN GHOST SHORTCUT GUIDE CARD
+           4.3 RIGHT MARGIN GHOST SHORTCUT GUIDE & UNDO/REDO WRAPPER
         ------------------------------------------------------------------ */
-        .margin-ghost-guide {
+        .margin-ghost-guide-wrapper {
             position: fixed;
             top: 50%;
             right: max(16px, calc((100vw - var(--canvas-width)) / 4 - 110px));
             width: 220px;
             transform: translateY(-50%) scale(1);
             transform-origin: center right;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 15;
+            transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
+                        transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Large Clean Desktop Undo/Redo Controls placed directly above Guide */
+        .desktop-history-row {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .desktop-history-btn {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--muted-color);
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-family: var(--font-mono);
+            font-size: 1.15rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(3px);
+        }
+
+        .desktop-history-btn:hover:not(:disabled) {
+            color: var(--accent-color);
+            border-color: var(--accent-color);
+            background: rgba(255, 255, 255, 0.08);
+            text-shadow: var(--text-glow);
+            transform: translateY(-2px);
+        }
+
+        .desktop-history-btn:disabled {
+            opacity: 0.25;
+            cursor: not-allowed;
+            border-color: rgba(255, 255, 255, 0.04);
+        }
+
+        .margin-ghost-guide {
+            width: 100%;
             background: rgba(255, 255, 255, 0.015);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 8px;
             padding: 16px 16px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(3px);
-            z-index: 15;
             opacity: 0.22;
             cursor: default;
             user-select: none;
@@ -923,13 +964,13 @@
                         box-shadow 0.35s ease;
         }
 
-        #launchpad-view.active ~ #workspace-view .margin-ghost-guide {
+        #launchpad-view.active ~ #workspace-view .margin-ghost-guide-wrapper {
             display: none !important;
         }
 
-        .margin-ghost-guide:hover {
+        .margin-ghost-guide-wrapper:hover .margin-ghost-guide {
             opacity: 1 !important;
-            transform: translateY(-50%) scale(1.03);
+            transform: scale(1.02);
             border-color: var(--accent-color);
             background: rgba(0, 0, 0, 0.65);
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8), 0 0 12px rgba(255, 255, 255, 0.05);
@@ -968,7 +1009,7 @@
             transition: color 0.3s ease;
         }
 
-        .margin-ghost-guide:hover .ghost-guide-row span {
+        .margin-ghost-guide-wrapper:hover .ghost-guide-row span {
             color: var(--text-color);
         }
 
@@ -1168,18 +1209,59 @@
 
         #element-status-tag { color: var(--accent-color); font-weight: bold; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
 
+        .mobile-footer-action-btn {
+            display: none;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-color);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .mobile-history-center {
+            display: none;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .mobile-history-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.15rem;
+            cursor: pointer;
+            padding: 2px 8px;
+        }
+
+        .mobile-history-btn:disabled {
+            opacity: 0.25;
+            cursor: not-allowed;
+        }
+
         /* ------------------------------------------------------------------
-           6. RESPONSIVE MEDIA QUERIES & MOBILE SPECIFIC RULES
+           6. RESPONSIVE MEDIA QUERIES (ACCORDING TO WIREFRAME)
         ------------------------------------------------------------------ */
         @media (max-width: 1180px) {
-            .margin-ghost-guide { display: none !important; }
+            .margin-ghost-guide-wrapper { display: none !important; }
             .left-margin-alert-card { left: 16px; top: 80px; transform: none; }
         }
 
         @media (max-width: 768px) {
             body { font-size: 16px; }
 
-            /* Interactive Mobile Landing Hub */
+            /* Mobile Pull-Tab Chrome Activator (Right Wireframe) */
+            .mobile-chrome-activator {
+                display: block;
+            }
+
+            body.distraction-free .mobile-chrome-activator {
+                opacity: 0.6;
+            }
+
+            /* Responsive Landing Hub */
             #launchpad-view {
                 padding: 20px 16px;
                 justify-content: flex-start;
@@ -1199,7 +1281,6 @@
                 margin-bottom: 20px;
             }
 
-            /* Compact Side-by-Side Mobile Selection Grid */
             .suite-options {
                 flex-direction: row;
                 gap: 12px;
@@ -1226,13 +1307,11 @@
                 white-space: nowrap;
             }
 
-            /* Default unselected state on mobile hides long blurb & CTA */
             #launchpad-view:not(.mobile-sifted) .suite-card p.card-desc,
             #launchpad-view:not(.mobile-sifted) .suite-card .write-btn-wrapper {
                 display: none;
             }
 
-            /* Shifted state once user taps one of the tools */
             #launchpad-view.mobile-sifted .brand-header {
                 margin-top: 0;
                 margin-bottom: 2px;
@@ -1291,54 +1370,85 @@
                 display: flex;
             }
 
-            /* Workspace Header and Footer Collapsing */
+            /* ------------------------------------------------------------------
+               MOBILE WORKSPACE HEADER (Matching Left Wireframe)
+            ------------------------------------------------------------------ */
             header {
                 display: flex;
-                flex-wrap: wrap;
+                flex-direction: column;
+                padding: 10px 16px;
+                gap: 6px;
+            }
+
+            .mobile-header-top-row {
+                display: flex;
+                width: 100%;
                 justify-content: space-between;
                 align-items: center;
-                padding: 10px 14px;
-                gap: 8px;
             }
 
             .doc-left { 
-                order: 1; 
                 gap: 8px; 
             }
             
-            .header-logo-container { width: 68px; }
+            .header-logo-container { width: 70px; }
             .inline-theme-picker { display: flex; gap: 4px; }
-            .history-controls { display: flex; gap: 3px; }
-            .history-btn { font-size: 0.65rem; padding: 2px 5px; }
+            .desktop-history-row { display: none !important; }
 
             .header-center-hub {
-                order: 3;
                 width: 100%;
-                margin-top: 4px;
+                margin-top: 2px;
             }
 
             .doc-title { 
                 width: 100%; 
-                max-width: 240px; 
-                font-size: 0.82rem; 
+                max-width: 100%; 
+                font-size: 0.88rem; 
+                text-align: center;
             }
 
-            .sync-status { order: 2; gap: 6px; }
-            #save-indicator { display: none; }
+            .sync-status { 
+                gap: 6px; 
+            }
+            #save-indicator { font-size: 0.70rem; }
 
-            main { padding: 0 12px; }
-            .editor { font-size: 0.98rem; padding-top: 20px; padding-bottom: 160px; }
+            main { padding: 0 16px; }
+            .editor { font-size: 1rem; padding-top: 15px; padding-bottom: 140px; }
 
+            /* ------------------------------------------------------------------
+               MOBILE WORKSPACE FOOTER (Matching Left Wireframe)
+            ------------------------------------------------------------------ */
             footer {
-                padding: 10px 14px;
+                padding: 8px 16px;
                 font-size: 0.72rem;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
             }
 
-            .stats-left { gap: 10px; }
-            .footer-center { order: 2; }
+            .stats-left {
+                border: 1px solid rgba(255, 255, 255, 0.25);
+                border-radius: 6px;
+                padding: 4px 8px;
+                font-weight: bold;
+                color: var(--text-color);
+            }
+
+            .stats-left span#char-count-wrapper { display: none; }
+            .stats-left span#word-count-wrapper { display: inline; }
+
+            .footer-center {
+                display: none; /* Files modal moved into Guide modal or accessible from top */
+            }
+
+            .mobile-history-center {
+                display: flex;
+            }
+
+            .mobile-footer-action-btn {
+                display: inline-block;
+            }
+
             .stats-right { display: none; }
             .margin-list-widget { display: none !important; }
             .left-margin-alert-card { left: 10px; right: 10px; width: calc(100vw - 20px); top: 60px; }
@@ -1478,6 +1588,18 @@
         </div>
     </div>
 
+    <!-- MOBILE GUIDE MODAL POPUP -->
+    <div id="mobile-guide-modal" class="modal-overlay">
+        <div class="modal-box" style="height: auto; max-height: 85vh;">
+            <h3 id="mobile-guide-modal-title">Markdown Guide</h3>
+            <div class="modal-scroll-well" style="margin-bottom: 20px;">
+                <div class="ghost-guide-list" id="mobile-guide-modal-list"></div>
+            </div>
+            <button class="picker-action-btn" onclick="openPickerModal(event)" style="margin-bottom: 10px;">📁 Open Document Manager</button>
+            <button class="modal-close-btn" onclick="closeMobileGuideModal()">← Back to Editor</button>
+        </div>
+    </div>
+
     <div id="zen-alert-overlay" class="alert-overlay">
         <div class="alert-box">
             <h4 id="zen-alert-title">System Alert</h4>
@@ -1491,48 +1613,51 @@
 
     <!-- WORKSPACE VIEW -->
     <div id="workspace-view" class="app-view">
-        <header class="chrome-element">
-            <div class="doc-left">
-                <button class="header-logo-container" id="return-home-btn" title="Return to scribe85 Launchpad">
-                   <svg width="100%" height="100%" viewBox="0 0 2102 340" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-                        <g transform="matrix(4.16667,0,0,4.16667,-875.209,-2882.7)">
-                            <g transform="matrix(1.13216,0,0,1.13216,51.044,-99.6933)">
-                                <path d="M140.445,728.643C140.445,725.605 142.908,723.142 145.945,723.142C158.55,723.142 188.445,723.142 188.445,723.142L188.445,735.142L153.885,735.142L153.885,741.142L188.445,741.142L188.445,765.642C188.445,768.68 185.982,771.142 182.945,771.142C170.34,771.142 140.445,771.142 140.445,771.142L140.445,759.142L175.005,759.142L175.005,753.142L140.445,753.142L140.445,728.643Z" style="fill-rule:nonzero;"/>
-                                <path d="M200.445,723.142L248.445,723.142L248.445,735.142L213.885,735.142L213.885,759.142L248.445,759.142L248.445,771.142L200.445,771.142L200.445,723.142Z" style="fill-rule:nonzero;"/>
-                                <path d="M260.445,723.142L296.445,723.142L296.445,735.142L273.885,735.142L273.885,771.142L260.445,771.142L260.445,723.142Z" style="fill-rule:nonzero;"/>
-                                <path d="M308.445,723.142L321.885,723.142L321.885,771.142L308.445,771.142L308.445,723.142ZM308.445,699.142L321.885,699.142L321.885,711.142L308.445,711.142L308.445,699.142Z" style="fill-rule:nonzero;"/>
-                                <path d="M333.885,699.142L347.325,699.142L347.325,723.142L376.385,723.142C377.843,723.142 379.242,723.722 380.274,724.753C381.305,725.785 381.885,727.184 381.885,728.643C381.885,741.247 381.885,771.142 381.885,771.142L354.885,771.142L347.325,763.582L347.325,771.142L333.885,771.142L333.885,699.142ZM347.325,735.142L347.325,759.142L368.445,759.142L368.445,735.142L347.325,735.142Z" style="fill-rule:nonzero;"/>
-                                <path d="M393.885,723.142L441.885,723.142L441.885,753.142L407.325,753.142L407.325,759.142L441.885,759.142L441.885,771.142L393.885,771.142L393.885,723.142ZM407.325,735.142L407.325,741.142L428.445,741.142L428.445,735.142L407.325,735.142Z" style="fill-rule:nonzero;"/>
-                                <path d="M477.885,704.643C477.885,701.605 480.348,699.142 483.385,699.142C495.99,699.142 525.885,699.142 525.885,699.142L525.885,729.142L519.885,735.142L525.885,741.142L525.885,765.642C525.885,768.68 523.422,771.142 520.385,771.142C507.78,771.142 477.885,771.142 477.885,771.142L477.885,741.142L483.885,735.142L477.885,729.142L477.885,704.643ZM491.325,711.142L491.325,729.142L512.445,729.142L512.445,711.142L491.325,711.142ZM491.325,741.142L491.325,759.142L512.445,759.142L512.445,741.142L491.325,741.142Z" style="fill-rule:nonzero;"/>
-                                <path d="M537.885,699.142L585.885,699.142L585.885,705.642C585.885,707.101 585.305,708.5 584.274,709.531C583.242,710.563 581.843,711.142 580.385,711.142C570.632,711.142 551.325,711.142 551.325,711.142L551.325,729.142L576.885,729.142L585.885,738.142L585.885,762.142L576.885,771.142L537.885,771.142L537.885,764.643C537.885,763.184 538.464,761.785 539.496,760.753C540.528,759.722 541.927,759.142 543.385,759.142C553.138,759.142 572.445,759.142 572.445,759.142L572.445,741.142L537.885,741.142L537.885,699.142Z" style="fill-rule:nonzero;"/>
-                            </g>
-                        </g>
-                    </svg>
-                </button>
+        <!-- Mobile Chrome Activator Top Pull-Tab -->
+        <button class="mobile-chrome-activator" onclick="toggleMobileChrome(event)" title="Toggle Navigation Bar">
+            <svg viewBox="0 0 24 14" fill="none">
+                <path d="M2 3L12 11L22 3" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </button>
 
-                <!-- THEME SQUARES GROUPED ON THE LEFT -->
-                <div class="inline-theme-picker">
-                    <div class="theme-square sq-dark" title="Classic Dark" onclick="applyAppTheme('dark')"></div>
-                    <div class="theme-square sq-amber" title="Amber CRT" onclick="applyAppTheme('amber')"></div>
-                    <div class="theme-square sq-matrix" title="Matrix Green" onclick="applyAppTheme('matrix')"></div>
-                    <div class="theme-square sq-cobalt" title="Retro Cobalt" onclick="applyAppTheme('cobalt')"></div>
+        <header class="chrome-element">
+            <div class="mobile-header-top-row">
+                <div class="doc-left">
+                    <button class="header-logo-container" id="return-home-btn" title="Return to scribe85 Launchpad">
+                       <svg width="100%" height="100%" viewBox="0 0 2102 340" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+                            <g transform="matrix(4.16667,0,0,4.16667,-875.209,-2882.7)">
+                                <g transform="matrix(1.13216,0,0,1.13216,51.044,-99.6933)">
+                                    <path d="M140.445,728.643C140.445,725.605 142.908,723.142 145.945,723.142C158.55,723.142 188.445,723.142 188.445,723.142L188.445,735.142L153.885,735.142L153.885,741.142L188.445,741.142L188.445,765.642C188.445,768.68 185.982,771.142 182.945,771.142C170.34,771.142 140.445,771.142 140.445,771.142L140.445,759.142L175.005,759.142L175.005,753.142L140.445,753.142L140.445,728.643Z" style="fill-rule:nonzero;"/>
+                                    <path d="M200.445,723.142L248.445,723.142L248.445,735.142L213.885,735.142L213.885,759.142L248.445,759.142L248.445,771.142L200.445,771.142L200.445,723.142Z" style="fill-rule:nonzero;"/>
+                                    <path d="M260.445,723.142L296.445,723.142L296.445,735.142L273.885,735.142L273.885,771.142L260.445,771.142L260.445,723.142Z" style="fill-rule:nonzero;"/>
+                                    <path d="M308.445,723.142L321.885,723.142L321.885,771.142L308.445,771.142L308.445,723.142ZM308.445,699.142L321.885,699.142L321.885,711.142L308.445,711.142L308.445,699.142Z" style="fill-rule:nonzero;"/>
+                                    <path d="M333.885,699.142L347.325,699.142L347.325,723.142L376.385,723.142C377.843,723.142 379.242,723.722 380.274,724.753C381.305,725.785 381.885,727.184 381.885,728.643C381.885,741.247 381.885,771.142 381.885,771.142L354.885,771.142L347.325,763.582L347.325,771.142L333.885,771.142L333.885,699.142ZM347.325,735.142L347.325,759.142L368.445,759.142L368.445,735.142L347.325,735.142Z" style="fill-rule:nonzero;"/>
+                                    <path d="M393.885,723.142L441.885,723.142L441.885,753.142L407.325,753.142L407.325,759.142L441.885,759.142L441.885,771.142L393.885,771.142L393.885,723.142ZM407.325,735.142L407.325,741.142L428.445,741.142L428.445,735.142L407.325,735.142Z" style="fill-rule:nonzero;"/>
+                                    <path d="M477.885,704.643C477.885,701.605 480.348,699.142 483.385,699.142C495.99,699.142 525.885,699.142 525.885,699.142L525.885,729.142L519.885,735.142L525.885,741.142L525.885,765.642C525.885,768.68 523.422,771.142 520.385,771.142C507.78,771.142 477.885,771.142 477.885,771.142L477.885,741.142L483.885,735.142L477.885,729.142L477.885,704.643ZM491.325,711.142L491.325,729.142L512.445,729.142L512.445,711.142L491.325,711.142ZM491.325,741.142L491.325,759.142L512.445,759.142L512.445,741.142L491.325,741.142Z" style="fill-rule:nonzero;"/>
+                                    <path d="M537.885,699.142L585.885,699.142L585.885,705.642C585.885,707.101 585.305,708.5 584.274,709.531C583.242,710.563 581.843,711.142 580.385,711.142C570.632,711.142 551.325,711.142 551.325,711.142L551.325,729.142L576.885,729.142L585.885,738.142L585.885,762.142L576.885,771.142L537.885,771.142L537.885,764.643C537.885,763.184 538.464,761.785 539.496,760.753C540.528,759.722 541.927,759.142 543.385,759.142C553.138,759.142 572.445,759.142 572.445,759.142L572.445,741.142L537.885,741.142L537.885,699.142Z" style="fill-rule:nonzero;"/>
+                                </g>
+                            </g>
+                        </svg>
+                    </button>
+
+                    <!-- THEME SQUARES GROUPED ON THE LEFT -->
+                    <div class="inline-theme-picker">
+                        <div class="theme-square sq-dark" title="Classic Dark" onclick="applyAppTheme('dark')"></div>
+                        <div class="theme-square sq-amber" title="Amber CRT" onclick="applyAppTheme('amber')"></div>
+                        <div class="theme-square sq-matrix" title="Matrix Green" onclick="applyAppTheme('matrix')"></div>
+                        <div class="theme-square sq-cobalt" title="Retro Cobalt" onclick="applyAppTheme('cobalt')"></div>
+                    </div>
                 </div>
 
-                <!-- UNDO / REDO HISTORY ENGINE BUTTONS -->
-                <div class="history-controls">
-                    <button class="history-btn" id="btn-undo" title="Undo (Ctrl+Z)" onclick="performUndo()" disabled>↶</button>
-                    <button class="history-btn" id="btn-redo" title="Redo (Ctrl+Y)" onclick="performRedo()" disabled>↷</button>
+                <div class="sync-status">
+                    <span id="save-indicator">Synced</span>
+                    <div class="sync-dot" id="sync-dot"></div>
                 </div>
             </div>
 
             <!-- DOCUMENT TITLE INPUT -->
             <div class="header-center-hub">
                 <input type="text" class="doc-title" spellcheck="false" placeholder="untitled">
-            </div>
-
-            <div class="sync-status">
-                <div class="sync-dot" id="sync-dot"></div>
-                <span id="save-indicator">Ready</span>
             </div>
         </header>
 
@@ -1544,10 +1669,17 @@
             <button class="left-margin-reconnect-btn" onclick="triggerGoogleAuth(true)">Reconnect Drive</button>
         </div>
 
-        <!-- RIGHT MARGIN GHOST SHORTCUT GUIDE CARD -->
-        <div class="margin-ghost-guide chrome-element" id="margin-ghost-guide">
-            <div class="ghost-guide-title" id="ghost-guide-title">Narrative Shortcuts</div>
-            <div class="ghost-guide-list" id="ghost-guide-list"></div>
+        <!-- RIGHT MARGIN GHOST SHORTCUT GUIDE & DESKTOP UNDO/REDO WRAPPER -->
+        <div class="margin-ghost-guide-wrapper chrome-element" id="margin-ghost-guide-wrapper">
+            <div class="desktop-history-row">
+                <button class="desktop-history-btn" id="btn-undo-desktop" title="Undo (Ctrl+Z)" onclick="performUndo()" disabled>↶</button>
+                <button class="desktop-history-btn" id="btn-redo-desktop" title="Redo (Ctrl+Y)" onclick="performRedo()" disabled>↷</button>
+            </div>
+
+            <div class="margin-ghost-guide" id="margin-ghost-guide">
+                <div class="ghost-guide-title" id="ghost-guide-title">Narrative Shortcuts</div>
+                <div class="ghost-guide-list" id="ghost-guide-list"></div>
+            </div>
         </div>
 
         <main id="workspace-main">
@@ -1581,13 +1713,22 @@
 
         <footer class="chrome-element">
             <div class="stats-left">
-                <span>Words: <strong id="word-count">0</strong></span>
-                <span>Characters: <strong id="char-count">0</strong></span>
+                <span id="word-count-wrapper"><strong id="word-count">0</strong></span>
+                <span id="char-count-wrapper" style="margin-left: 12px;">Characters: <strong id="char-count">0</strong></span>
             </div>
 
             <div class="footer-center">
                 <button class="footer-files-btn" onclick="openPickerModal(event)">Files</button>
             </div>
+
+            <!-- Mobile Centered Undo / Redo -->
+            <div class="mobile-history-center">
+                <button class="mobile-history-btn" id="btn-undo-mobile" title="Undo" onclick="performUndo()" disabled>↶</button>
+                <button class="mobile-history-btn" id="btn-redo-mobile" title="Redo" onclick="performRedo()" disabled>↷</button>
+            </div>
+
+            <!-- Mobile Right-aligned Markdown Guide Activator -->
+            <button class="mobile-footer-action-btn" onclick="openMobileGuideModal(event)">Guide</button>
 
             <div class="stats-right">
                 <span id="element-status-tag" style="display: none; margin-right: 15px;">Element: Action</span>
@@ -1613,28 +1754,26 @@
         let historyIndex = -1;
         let isHistoryLocked = false;
 
-        const btnUndo = document.getElementById('btn-undo');
-        const btnRedo = document.getElementById('btn-redo');
+        const btnUndoDesktop = document.getElementById('btn-undo-desktop');
+        const btnRedoDesktop = document.getElementById('btn-redo-desktop');
+        const btnUndoMobile = document.getElementById('btn-undo-mobile');
+        const btnRedoMobile = document.getElementById('btn-redo-mobile');
 
         function recordHistorySnapshot() {
             if (isHistoryLocked) return;
             const content = editor.innerHTML;
             
-            // Avoid duplicate contiguous states
             if (historyIndex >= 0 && historyStack[historyIndex].content === content) {
                 return;
             }
 
-            // Drop any redo forward branches
             historyStack = historyStack.slice(0, historyIndex + 1);
 
-            // Push snapshot
             historyStack.push({
                 content: content,
                 mode: currentSuiteMode
             });
 
-            // Enforce circular history bounds
             if (historyStack.length > MAX_HISTORY_STEPS) {
                 historyStack.shift();
             } else {
@@ -1678,13 +1817,38 @@
         }
 
         function updateHistoryButtonsUI() {
-            btnUndo.disabled = historyIndex <= 0;
-            btnRedo.disabled = historyIndex >= historyStack.length - 1;
+            const cannotUndo = historyIndex <= 0;
+            const cannotRedo = historyIndex >= historyStack.length - 1;
+
+            if (btnUndoDesktop) btnUndoDesktop.disabled = cannotUndo;
+            if (btnRedoDesktop) btnRedoDesktop.disabled = cannotRedo;
+            if (btnUndoMobile) btnUndoMobile.disabled = cannotUndo;
+            if (btnRedoMobile) btnRedoMobile.disabled = cannotRedo;
         }
 
         function toggleThemeAccordion() {
             const hub = document.getElementById('theme-accordion-hub');
             hub.classList.toggle('expanded');
+        }
+
+        function toggleMobileChrome(event) {
+            if (event) event.stopPropagation();
+            document.body.classList.toggle('distraction-free');
+        }
+
+        function openMobileGuideModal(event) {
+            if (event) event.stopPropagation();
+            const modal = document.getElementById('mobile-guide-modal');
+            const titleEl = document.getElementById('mobile-guide-modal-title');
+            const listEl = document.getElementById('mobile-guide-modal-list');
+
+            titleEl.textContent = currentSuiteMode === 'narrative' ? 'Narrative Guide' : 'Screenplay Guide';
+            listEl.innerHTML = document.getElementById('ghost-guide-list').innerHTML;
+            modal.style.display = 'flex';
+        }
+
+        function closeMobileGuideModal() {
+            document.getElementById('mobile-guide-modal').style.display = 'none';
         }
 
         // --- RESPONSIVE MOBILE SELECTION CONTROLLER ---
@@ -1701,7 +1865,6 @@
             }
 
             if (!launchpad.classList.contains('mobile-sifted')) {
-                // First tap shifts layout into focus mode
                 launchpad.classList.add('mobile-sifted');
             }
 
@@ -1755,6 +1918,7 @@
 
         function openPickerModal(event) {
             if (event) event.preventDefault();
+            closeMobileGuideModal();
             configureWorkspaceUIPresentation();
             listLocalFiles(); 
             if (accessToken) { listDriveFiles(); }
@@ -1907,7 +2071,7 @@
         // --- SESSION EXPIRATION & LEFT MARGIN NOTIFICATION SYSTEM ---
         function showLeftMarginAlert() {
             leftMarginAlert.style.display = 'flex';
-            saveIndicator.textContent = "• cloud not synced";
+            saveIndicator.textContent = "cloud not synced";
             saveIndicator.classList.add('sync-offline');
             syncDot.classList.remove('connected');
             syncDot.classList.add('offline');
@@ -1995,7 +2159,7 @@
 
             const title = docTitle ? docTitle.value : 'scribe85-backup';
             exportDocumentToDisk(`${title}_AUTO_BACKUP`, content, currentSuiteMode);
-            saveIndicator.textContent = "• Local Disk Backup Triggered";
+            saveIndicator.textContent = "Local Backup Saved";
         }
 
         async function requestPersistentStorage() {
@@ -2107,7 +2271,7 @@
             localStorage.setItem('zensuite_view_state', 'workspace');
 
             if (originTab === 'cloud' && accessToken) {
-                saveIndicator.textContent = "• Allocating Cloud Node...";
+                saveIndicator.textContent = "Allocating Node...";
                 createDriveFile(); 
             } else {
                 currentDriveFileId = null;
@@ -3208,7 +3372,7 @@
 
         function executeCloudRename(fileId, newTitle) {
             if (!accessToken) return;
-            saveIndicator.textContent = "• Renaming Cloud Asset...";
+            saveIndicator.textContent = "Renaming...";
 
             fetch(`https://www.googleapis.com/drive/v3/files/${fileId}`, {
                 method: 'PATCH',
@@ -3220,7 +3384,7 @@
                 return res.json();
             })
             .then(() => {
-                saveIndicator.textContent = "• File Renamed";
+                saveIndicator.textContent = "Renamed";
                 if (currentDriveFileId === fileId && docTitle) {
                     docTitle.value = newTitle;
                 }
@@ -3273,7 +3437,7 @@
 
         function executeCloudWipe(fileId) {
             if (!accessToken) return;
-            saveIndicator.textContent = "• Transmitting Wipe Command...";
+            saveIndicator.textContent = "Wiping...";
             
             fetch(`https://www.googleapis.com/drive/v3/files/${fileId}`, {
                 method: 'DELETE',
@@ -3281,7 +3445,7 @@
             })
             .then(res => {
                 if (res.status === 401 || res.status === 403) { handleAuthError(); throw new Error("Auth expired"); }
-                saveIndicator.textContent = "• Cloud Archive Updated";
+                saveIndicator.textContent = "Wiped";
                 if (currentDriveFileId === fileId) {
                     currentDriveFileId = null;
                     updateUrlParameters(null, null);
@@ -3345,10 +3509,10 @@
         function pickerModifierSync() {
             if (currentDriveFileId && accessToken) {
                 syncDot.className = 'sync-dot connected';
-                if (cloudStatus) cloudStatus.textContent = "Cloud: Connected";
+                saveIndicator.textContent = "Synced";
             } else {
                 syncDot.className = 'sync-dot';
-                if (cloudStatus) cloudStatus.textContent = accessToken ? "Cloud: Ready" : "Cloud: Local Only";
+                saveIndicator.textContent = accessToken ? "Ready" : "Local";
             }
         }
 
@@ -3511,7 +3675,7 @@
 
         function fetchDocumentFromDrive(fileId, fileName) {
             if (!accessToken) return;
-            saveIndicator.textContent = "• Synchronizing Pipeline...";
+            saveIndicator.textContent = "Syncing...";
 
             fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
                 headers: { 'Authorization': `Bearer ${accessToken}` }
@@ -3537,7 +3701,7 @@
                 updateUrlParameters(currentLocalFileId, currentSuiteMode);
                 pickerModifierSync();
 
-                saveIndicator.textContent = "• Fully Synced Cloud & Local";
+                saveIndicator.textContent = "Synced";
                 pickerModal.style.display = 'none';
                 launchpadView.classList.remove('active');
                 workspaceView.classList.add('active');
@@ -3547,7 +3711,7 @@
 
         function triggerCloudSave() {
             if (!accessToken) return;
-            saveIndicator.textContent = "• Replicating Cloud Core...";
+            saveIndicator.textContent = "Saving...";
             clearTimeout(cloudSaveDebounceTimer);
             cloudSaveDebounceTimer = setTimeout(() => {
                 if (currentDriveFileId) { updateDriveFile(); } else { createDriveFile(); }
@@ -3588,11 +3752,11 @@
                     localStorage.setItem('zensuite_local_db', JSON.stringify(db));
                 }
 
-                saveIndicator.textContent = "• Fully Synced Cloud & Local";
+                saveIndicator.textContent = "Synced";
                 pickerModifierSync();
                 listDriveFiles(); 
             })
-            .catch(() => { saveIndicator.textContent = "• Replication dropped."; });
+            .catch(() => { saveIndicator.textContent = "Failed"; });
         }
 
         function updateDriveFile() {
@@ -3613,10 +3777,10 @@
             })
             .then(res => {
                 if (res && (res.status === 401 || res.status === 403)) { handleAuthError(); throw new Error("Auth expired"); }
-                saveIndicator.textContent = "• Fully Synced Cloud & Local"; 
+                saveIndicator.textContent = "Synced"; 
             })
             .catch(() => { 
-                saveIndicator.textContent = "• Replication dropped."; 
+                saveIndicator.textContent = "Failed"; 
             });
         }
 
@@ -3645,7 +3809,7 @@
             updateAnalytics(editor.innerText);
             
             clearTimeout(idleTimer);
-            idleTimer = setTimeout(startTypingDistractionHide, 1000);
+            idleTimer = setTimeout(startTypingDistractionHide, 1000); 
             
             if (currentSuiteMode === 'screenplay') {
                 const selection = window.getSelection();
