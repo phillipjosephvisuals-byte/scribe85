@@ -616,7 +616,6 @@
             transform: translateY(8px);
         }
 
-        /* Theater mode fade state for right margin guide */
         body.distraction-free .margin-ghost-guide-wrapper .margin-ghost-guide {
             opacity: 0.22 !important;
         }
@@ -947,7 +946,6 @@
 
         .margin-ghost-guide {
             width: 100%;
-            /* Default state now reflects its illuminated/hover appearance */
             background: rgba(0, 0, 0, 0.65);
             border: 1px solid var(--accent-color);
             border-radius: 8px;
@@ -1014,6 +1012,13 @@
             font-size: 0.68rem;
             border: 1px solid rgba(255, 255, 255, 0.1);
             white-space: nowrap;
+        }
+
+        .guide-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.12);
+            margin: 8px 0;
+            width: 100%;
         }
 
         /* ------------------------------------------------------------------
@@ -1695,7 +1700,7 @@
         <main id="workspace-main">
             <div class="editor-container">
                 <!-- Live Screenplay Element Indicator Tag -->
-                <div class="left-margin-element-indicator" id="left-margin-element-indicator">Slug Line</div>
+                <div class="left-margin-element-indicator" id="left-margin-element-indicator">1. Slug Line</div>
 
                 <div class="margin-list-widget" id="margin-list-widget">
                     <button class="margin-widget-btn" id="btn-bullet-toggle" title="Toggle Bulleted List">
@@ -1744,7 +1749,7 @@
             <button class="mobile-footer-action-btn" onclick="openMobileGuideModal(event)">Guide</button>
 
             <div class="stats-right">
-                <span id="element-status-tag" style="display: none; margin-right: 15px;">Element: Slug Line</span>
+                <span id="element-status-tag" style="display: none; margin-right: 15px;">Element: 1. Slug Line</span>
                 <span id="read-time">0 min read</span>
             </div>
         </footer>
@@ -1916,10 +1921,17 @@
             } else {
                 titleEl.textContent = "Screenplay Guide";
                 listEl.innerHTML = `
+                    <div style="font-size: 0.71rem; color: var(--muted-color); margin-bottom: 6px; line-height: 1.4;">Elements work on a cycle. Press <strong>Return</strong> repeatedly to advance through the cycle until you reach your target element:</div>
+                    <div class="ghost-guide-row"><span>1. Slug Line</span><code>Cycle</code></div>
+                    <div class="ghost-guide-row"><span>2. Character</span><code>Cycle</code></div>
+                    <div class="ghost-guide-row"><span>3. Parenthetical</span><code>Cycle</code></div>
+                    <div class="ghost-guide-row"><span>4. Dialogue</span><code>Cycle</code></div>
+                    <div class="ghost-guide-row"><span>5. Transition</span><code>Cycle</code></div>
+                    <div class="guide-divider"></div>
                     <div class="ghost-guide-row"><span>Undo / Redo</span><code>Ctrl+Z / Y</code></div>
-                    <div class="ghost-guide-row"><span>Cycle Element</span><code>Tab</code></div>
-                    <div class="ghost-guide-row"><span>Reverse Cycle</span><code>Shift+Tab</code></div>
-                    <div class="ghost-guide-row"><span>Auto-Advance</span><code>Return</code></div>
+                    <div class="ghost-guide-row"><span>Advance cycle</span><code>Tab</code></div>
+                    <div class="ghost-guide-row"><span>Reverse cycle</span><code>Shift+Tab</code></div>
+                    <div class="ghost-guide-row"><span>Auto-advance</span><code>Return</code></div>
                 `;
             }
         }
@@ -2367,7 +2379,6 @@
             let html = currentBlock.innerHTML;
             let modified = false;
 
-            // Strict single-underscore / single-asterisk checks preventing consecutive chaining merger
             const boldRegex = /(?<!\w|\*)\*([^*]+)\*(?!\w|\*)/g;
             if (boldRegex.test(html)) {
                 currentBlock.innerHTML = html.replace(boldRegex, '<b>$1</b>&#8203;');
@@ -3083,29 +3094,27 @@
             if (currentBlock === editor || !currentBlock || !currentBlock.hasAttribute) {
                 document.execCommand('formatBlock', false, 'div');
                 currentBlock = editor.firstElementChild;
-                if (currentBlock) currentBlock.setAttribute('data-element', 'scene-description');
+                if (currentBlock) currentBlock.setAttribute('data-element', 'scene-heading');
             }
 
-            const currentType = currentBlock ? (currentBlock.getAttribute('data-element') || 'scene-description') : 'scene-description';
+            const currentType = currentBlock ? (currentBlock.getAttribute('data-element') || 'scene-heading') : 'scene-heading';
 
             if (e.key === 'Tab') {
                 e.preventDefault();
                 let nextType = 'character';
 
                 if (e.shiftKey) {
-                    if (currentType === 'scene-description') nextType = 'scene-heading';
-                    else if (currentType === 'scene-heading') nextType = 'transition';
+                    if (currentType === 'scene-heading') nextType = 'transition';
                     else if (currentType === 'transition') nextType = 'dialogue';
                     else if (currentType === 'dialogue') nextType = 'parenthetical';
                     else if (currentType === 'parenthetical') nextType = 'character';
-                    else if (currentType === 'character') nextType = 'scene-description';
+                    else if (currentType === 'character') nextType = 'scene-heading';
                 } else {
-                    if (currentType === 'scene-description') nextType = 'character';
+                    if (currentType === 'scene-heading') nextType = 'character';
                     else if (currentType === 'character') nextType = 'parenthetical';
                     else if (currentType === 'parenthetical') nextType = 'dialogue';
                     else if (currentType === 'dialogue') nextType = 'transition';
                     else if (currentType === 'transition') nextType = 'scene-heading';
-                    else if (currentType === 'scene-heading') nextType = 'scene-description';
                 }
 
                 if (currentBlock) {
@@ -3180,15 +3189,22 @@
             }
             if (currentBlock && currentBlock.hasAttribute && currentBlock.hasAttribute('data-element')) {
                 const tag = currentBlock.getAttribute('data-element');
-                const formattedName = tag === 'scene-heading' ? 'Slug Line' : tag.replace('-', ' ');
-                elementStatusTag.textContent = `Element: ${formattedName}`;
+                let numberedLabel = "1. Slug Line";
+                if (tag === 'scene-heading') numberedLabel = "1. Slug Line";
+                else if (tag === 'character') numberedLabel = "2. Character";
+                else if (tag === 'parenthetical') numberedLabel = "3. Parenthetical";
+                else if (tag === 'dialogue') numberedLabel = "4. Dialogue";
+                else if (tag === 'transition') numberedLabel = "5. Transition";
+                else if (tag === 'scene-description') numberedLabel = "Scene Description";
+
+                elementStatusTag.textContent = `Element: ${numberedLabel}`;
                 if (leftMarginElementIndicator) {
-                    leftMarginElementIndicator.textContent = formattedName;
+                    leftMarginElementIndicator.textContent = numberedLabel;
                 }
             } else {
-                elementStatusTag.textContent = "Element: Scene Description";
+                elementStatusTag.textContent = "Element: 1. Slug Line";
                 if (leftMarginElementIndicator) {
-                    leftMarginElementIndicator.textContent = "Scene Description";
+                    leftMarginElementIndicator.textContent = "1. Slug Line";
                 }
             }
         }
