@@ -1104,10 +1104,10 @@
             color: var(--text-color);
         }
 
-        /* Left Margin Live Screenplay Element Indicator Tag Pinned to Cursor Line */
+        /* Left Margin Live Screenplay Element Indicator Tag (Right-aligned, expanding leftwards) */
         .left-margin-element-indicator {
             position: absolute;
-            left: -150px;
+            right: calc(var(--canvas-width) + 20px);
             top: 40px;
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.12);
@@ -1124,10 +1124,33 @@
             pointer-events: none;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             white-space: nowrap;
+            text-align: right;
             transition: top 0.1s ease-out;
         }
 
         body.mode-screenplay .left-margin-element-indicator {
+            display: block;
+        }
+
+        /* Faded Next-Line Element Navigation Prompt */
+        .next-line-navigation-prompt {
+            position: absolute;
+            right: calc(var(--canvas-width) + 20px);
+            background: transparent;
+            color: var(--muted-color);
+            padding: 2px 6px;
+            font-size: 0.65rem;
+            font-family: var(--font-mono);
+            opacity: 0.45;
+            display: none;
+            z-index: 20;
+            pointer-events: none;
+            white-space: nowrap;
+            text-align: right;
+            transition: top 0.1s ease-out;
+        }
+
+        body.mode-screenplay .next-line-navigation-prompt {
             display: block;
         }
 
@@ -1280,6 +1303,7 @@
             .margin-ghost-guide-wrapper { display: none !important; }
             .left-margin-alert-card { left: 16px; top: 80px; transform: none; }
             .left-margin-element-indicator { display: none !important; }
+            .next-line-navigation-prompt { display: none !important; }
         }
 
         @media (max-width: 768px) {
@@ -1711,6 +1735,8 @@
             <div class="editor-container">
                 <!-- Live Screenplay Element Indicator Tag -->
                 <div class="left-margin-element-indicator" id="left-margin-element-indicator">1. Slug Line</div>
+                <!-- Faded Next-Line Navigation Prompt -->
+                <div class="next-line-navigation-prompt" id="next-line-navigation-prompt"></div>
 
                 <div class="margin-list-widget" id="margin-list-widget">
                     <button class="margin-widget-btn" id="btn-bullet-toggle" title="Toggle Bulleted List">
@@ -1932,12 +1958,12 @@
                 titleEl.textContent = "Screenplay Guide";
                 listEl.innerHTML = `
                     <div style="font-size: 0.71rem; color: var(--muted-color); margin-bottom: 6px; line-height: 1.4;">Elements work on a cycle. Press <strong>Return</strong> repeatedly to advance through the cycle until you reach your target element:</div>
-                    <div class="ghost-guide-row"><span>1. Slug Line</code></div>
-                    <div class="ghost-guide-row"><span>2. Scene Description</code></div>
-                    <div class="ghost-guide-row"><span>3. Character</code></div>
-                    <div class="ghost-guide-row"><span>4. Parenthetical</code></div>
-                    <div class="ghost-guide-row"><span>5. Dialogue</code></div>
-                    <div class="ghost-guide-row"><span>6. Transition</code></div>
+                    <div class="ghost-guide-row"><span>1. Slug Line</span><code>Cycle</code></div>
+                    <div class="ghost-guide-row"><span>2. Scene Description</span><code>Cycle</code></div>
+                    <div class="ghost-guide-row"><span>3. Character</span><code>Cycle</code></div>
+                    <div class="ghost-guide-row"><span>4. Parenthetical</span><code>Cycle</code></div>
+                    <div class="ghost-guide-row"><span>5. Dialogue</span><code>Cycle</code></div>
+                    <div class="ghost-guide-row"><span>6. Transition</span><code>Cycle</code></div>
                     <div class="guide-divider"></div>
                     <div class="ghost-guide-row"><span>Undo / Redo</span><code>Ctrl+Z / Y</code></div>
                     <div class="ghost-guide-row"><span>Advance cycle</span><code>Tab</code></div>
@@ -2064,6 +2090,7 @@
         const modalContextTitle = document.getElementById('modal-context-title');
         const leftMarginAlert = document.getElementById('left-margin-alert');
         const leftMarginElementIndicator = document.getElementById('left-margin-element-indicator');
+        const nextLineNavigationPrompt = document.getElementById('next-line-navigation-prompt');
 
         // Margin List Widget Elements
         const marginListWidget = document.getElementById('margin-list-widget');
@@ -3108,7 +3135,6 @@
                 if (currentBlock) currentBlock.setAttribute('data-element', 'scene-heading');
             }
 
-            // Updated cycle: Slug Line (scene-heading) -> Scene Description -> Character -> Parenthetical -> Dialogue -> Transition
             const currentType = currentBlock ? (currentBlock.getAttribute('data-element') || 'scene-heading') : 'scene-heading';
 
             if (e.key === 'Tab') {
@@ -3212,18 +3238,36 @@
                 else if (tag === 'transition') numberedLabel = "6. Transition";
 
                 elementStatusTag.textContent = `Element: ${numberedLabel}`;
-                if (leftMarginElementIndicator) {
+                if (leftMarginElementIndicator && nextLineNavigationPrompt) {
                     leftMarginElementIndicator.textContent = numberedLabel;
+
+                    // Determine next element outcomes for Return vs Tab hints
+                    let returnTarget = "Scene Description";
+                    let tabTarget = "Scene Description";
+
+                    if (tag === 'scene-heading') { returnTarget = "Scene Description"; tabTarget = "Scene Description"; }
+                    else if (tag === 'scene-description') { returnTarget = "Scene Description"; tabTarget = "Character"; }
+                    else if (tag === 'character') { returnTarget = "Dialogue"; tabTarget = "Parenthetical"; }
+                    else if (tag === 'parenthetical') { returnTarget = "Dialogue"; tabTarget = "Dialogue"; }
+                    else if (tag === 'dialogue') { returnTarget = "Character"; tabTarget = "Transition"; }
+                    else if (tag === 'transition') { returnTarget = "Slug Line"; tabTarget = "Slug Line"; }
+
+                    nextLineNavigationPrompt.textContent = `↵ Return: ${returnTarget} | ⇥ Tab: ${tabTarget}`;
+
                     const editorRect = editor.getBoundingClientRect();
                     const blockRect = currentBlock.getBoundingClientRect();
                     const topOffset = blockRect.top - editorRect.top + editor.scrollTop;
+                    
                     leftMarginElementIndicator.style.top = `${Math.max(0, topOffset)}px`;
+                    nextLineNavigationPrompt.style.top = `${Math.max(0, topOffset + 32)}px`;
                 }
             } else {
                 elementStatusTag.textContent = "Element: 1. Slug Line";
-                if (leftMarginElementIndicator) {
+                if (leftMarginElementIndicator && nextLineNavigationPrompt) {
                     leftMarginElementIndicator.textContent = "1. Slug Line";
                     leftMarginElementIndicator.style.top = `40px`;
+                    nextLineNavigationPrompt.textContent = `↵ Return: Scene Description | ⇥ Tab: Scene Description`;
+                    nextLineNavigationPrompt.style.top = `72px`;
                 }
             }
         }
@@ -3542,7 +3586,7 @@
             localStorage.setItem('zensuite_active_suite_mode', currentSuiteMode);
             localStorage.setItem(`zensuite_current_active_${currentSuiteMode}_id`, fileId);
             localStorage.setItem('zensuite_view_state', 'workspace');
-             
+            
             historyStack = [];
             historyIndex = -1;
             recordHistorySnapshot();
@@ -3552,7 +3596,7 @@
             pickerModifierSync();
             if (currentSuiteMode === 'screenplay') updateLiveElementTag();
             renderGhostMarginGuide();
-             
+            
             pickerModal.style.display = 'none';
             launchpadView.classList.remove('active');
             workspaceView.classList.add('active');
@@ -3636,7 +3680,7 @@
                         }
                         accessToken = tokenResponse.access_token;
                         hideLeftMarginAlert();
-                         
+                        
                         const expiresInMs = (tokenResponse.expires_in ? parseInt(tokenResponse.expires_in, 10) : 3600) * 1000;
                         const expirationTime = Date.now() + expiresInMs;
 
@@ -3647,7 +3691,7 @@
 
                         pickerModifierSync();
                         scheduleTokenRenewal(expiresInMs);
-                         
+                        
                         const tabToggleCloud = document.getElementById('tab-toggle-cloud');
                         if (tabToggleCloud && tabToggleCloud.classList.contains('active')) {
                             renderCloudTabInterface();
@@ -3663,12 +3707,12 @@
 
         function listDriveFiles() {
             if (!accessToken) return;
-             
+            
             const targetNode = document.getElementById('cloud-docs-target-node');
             if (!targetNode) return;
-             
+            
             const query = encodeURIComponent(`appProperties has { key='suiteMode' and value='${currentSuiteMode}' } and trashed = false`);
-             
+            
             fetch(`https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id, name, modifiedTime)&orderBy=modifiedTime desc`, {
                 headers: { 'Authorization': `Bearer ${accessToken}` }
             })
@@ -3690,7 +3734,7 @@
                                 <button class="list-download-btn" title="Download Document">↓</button>
                             </div>
                         `;
-                         
+                        
                         item.querySelector('.load-trigger').addEventListener('click', () => { 
                             fetchDocumentFromDrive(file.id, file.name); 
                         });
@@ -3740,7 +3784,7 @@
                 editor.innerHTML = content;
                 if (docTitle) docTitle.value = fileName;
                 currentDriveFileId = fileId;
-                 
+                
                 const db = getLocalDatabase();
                 const existing = db.find(i => i.driveId === fileId);
                 currentLocalFileId = existing ? existing.id : "local_" + Date.now();
@@ -3778,7 +3822,7 @@
                 mimeType: 'text/plain',
                 appProperties: { suiteMode: currentSuiteMode }
             };
-             
+            
             const fileContent = editor.innerHTML; 
             const boundary = 'foo_bar_baz';
             const delimiter = `\r\n--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n`;
@@ -3796,7 +3840,7 @@
             })
             .then(file => {
                 currentDriveFileId = file.id;
-                 
+                
                 let db = getLocalDatabase();
                 const item = db.find(i => i.id === currentLocalFileId);
                 if (item) {
@@ -3839,7 +3883,7 @@
         // --- CORE AUTO-SAVE PIPELINES ---
         function saveDocument() {
             if (!workspaceView.classList.contains('active')) return; 
-             
+            
             const fileRecord = {
                 id: currentLocalFileId,
                 title: (docTitle ? docTitle.value : '') || (currentSuiteMode === 'screenplay' ? 'untitledScript.fountain' : 'untitledProse.rtf'),
@@ -3851,7 +3895,7 @@
             saveToLocalDatabase(fileRecord);
             localStorage.setItem(`zensuite_current_active_${currentSuiteMode}_id`, currentLocalFileId);
             updateUrlParameters(currentLocalFileId, currentSuiteMode);
-             
+            
             triggerCloudSave(); 
         }
 
@@ -3859,10 +3903,10 @@
         editor.addEventListener('input', () => {
             processInlineMarkdownFormatting(); 
             updateAnalytics(editor.innerText);
-             
+            
             clearTimeout(idleTimer);
             idleTimer = setTimeout(startTypingDistractionHide, 1000); 
-             
+            
             if (currentSuiteMode === 'screenplay') {
                 const selection = window.getSelection();
                 if (selection.rangeCount > 0) {
@@ -3871,13 +3915,13 @@
                     while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
                         currentBlock = currentBlock.parentNode;
                     }
-                     
+                    
                     if (currentBlock && currentBlock.getAttribute('data-element') === 'character') {
                         highlightFirstCharacterAppearance(currentBlock.innerText);
                     }
                 }
             }
-             
+            
             saveDocument();
             scrollToCursor();
 
