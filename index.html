@@ -12,17 +12,17 @@
 
     <style>
         /* ------------------------------------------------------------------
-           1. CORE DESIGN SYSTEM & THEME TOKENS
+            1. CORE DESIGN SYSTEM & THEME TOKENS
         ------------------------------------------------------------------ */
         :root {
-            --bg-color: #12141c;       
-            --text-color: #e2e8f0;     
+            --bg-color: #12141c;      
+            --text-color: #e2e8f0;    
             --muted-color: #64748b;    
             --accent-color: #ffffff;
             --text-glow: 0 0 8px rgba(255,255,255,0.6);
             --font-mono: 'JetBrains Mono', monospace;
             --font-script: 'Courier Prime', monospace;
-            --canvas-width: 680px;     
+            --canvas-width: 680px;    
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -52,7 +52,7 @@
         }
 
         /* ------------------------------------------------------------------
-           2. THE LAUNCHPAD LANDING SCREEN
+            2. THE LAUNCHPAD LANDING SCREEN
         ------------------------------------------------------------------ */
         #launchpad-view {
             justify-content: center;
@@ -195,7 +195,7 @@
         }
 
         /* ------------------------------------------------------------------
-           CLEAN STREAMLINED SUITE CARDS
+            CLEAN STREAMLINED SUITE CARDS
         ------------------------------------------------------------------ */
         .suite-options {
             display: flex;
@@ -316,7 +316,7 @@
         }
 
         /* ------------------------------------------------------------------
-           3. FLOATING PICKER MODAL DIALOG CONTAINER
+            3. FLOATING PICKER MODAL DIALOG CONTAINER
         ------------------------------------------------------------------ */
         .modal-overlay {
             position: fixed;
@@ -517,7 +517,7 @@
         .modal-close-btn:hover { color: var(--text-color); }
 
         /* ------------------------------------------------------------------
-           REACTIVE SYSTEM ALERT DESIGN
+            REACTIVE SYSTEM ALERT DESIGN
         ------------------------------------------------------------------ */
         .alert-overlay {
             position: fixed;
@@ -599,7 +599,7 @@
         }
 
         /* ------------------------------------------------------------------
-           4. WORKSPACE STYLES
+            4. WORKSPACE STYLES
         ------------------------------------------------------------------ */
         .chrome-element {
             transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
@@ -616,10 +616,12 @@
             transform: translateY(8px);
         }
 
-        body.distraction-free .margin-ghost-guide-wrapper {
-            opacity: 0 !important;
-            pointer-events: none;
-            transform: translateY(-50%) scale(0.98);
+        /* Faded opacity state for right-margin guide during theater/writing mode */
+        body.distraction-free .margin-ghost-guide-wrapper .margin-ghost-guide {
+            opacity: 0.22 !important;
+            background: rgba(255, 255, 255, 0.015);
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
         }
 
         #workspace-view {
@@ -834,7 +836,7 @@
         }
 
         /* ------------------------------------------------------------------
-           4.2 MARGIN LIST FORMATTING WIDGET
+            4.2 MARGIN LIST FORMATTING WIDGET
         ------------------------------------------------------------------ */
         .margin-list-widget {
             position: absolute;
@@ -891,7 +893,7 @@
         }
 
         /* ------------------------------------------------------------------
-           4.3 RIGHT MARGIN GHOST SHORTCUT GUIDE & UNDO/REDO WRAPPER
+            4.3 RIGHT MARGIN GHOST SHORTCUT GUIDE & UNDO/REDO WRAPPER
         ------------------------------------------------------------------ */
         .margin-ghost-guide-wrapper {
             position: fixed;
@@ -948,13 +950,13 @@
 
         .margin-ghost-guide {
             width: 100%;
-            background: rgba(255, 255, 255, 0.015);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(0, 0, 0, 0.65);
+            border: 1px solid var(--accent-color);
             border-radius: 8px;
             padding: 16px 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8), 0 0 12px rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(3px);
-            opacity: 0.22;
+            opacity: 1;
             cursor: default;
             user-select: none;
             transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
@@ -1004,13 +1006,9 @@
         }
 
         .ghost-guide-row span {
-            color: var(--muted-color);
+            color: var(--text-color);
             font-size: 0.71rem;
             transition: color 0.3s ease;
-        }
-
-        .margin-ghost-guide-wrapper:hover .ghost-guide-row span {
-            color: var(--text-color);
         }
 
         .ghost-guide-row code {
@@ -1024,8 +1022,15 @@
             white-space: nowrap;
         }
 
+        .guide-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.12);
+            margin: 8px 0;
+            width: 100%;
+        }
+
         /* ------------------------------------------------------------------
-           4.4 LEFT MARGIN EXPIRATION WARNING CARD
+            4.4 LEFT MARGIN EXPIRATION WARNING CARD & ELEMENT INDICATOR
         ------------------------------------------------------------------ */
         .left-margin-alert-card {
             position: fixed;
@@ -1099,8 +1104,58 @@
             color: var(--text-color);
         }
 
+        /* Left Margin Live Screenplay Element Indicator Tag (Right-aligned, expanding leftwards) */
+        .left-margin-element-indicator {
+            position: absolute;
+            right: calc(var(--canvas-width) + 20px);
+            top: 40px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: var(--accent-color);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-family: var(--font-mono);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            backdrop-filter: blur(4px);
+            display: none;
+            z-index: 20;
+            pointer-events: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            white-space: nowrap;
+            text-align: right;
+            transition: top 0.1s ease-out;
+        }
+
+        body.mode-screenplay .left-margin-element-indicator {
+            display: block;
+        }
+
+        /* Faded Next-Line Element Navigation Prompt */
+        .next-line-navigation-prompt {
+            position: absolute;
+            right: calc(var(--canvas-width) + 20px);
+            background: transparent;
+            color: var(--muted-color);
+            padding: 2px 6px;
+            font-size: 0.65rem;
+            font-family: var(--font-mono);
+            opacity: 0.45;
+            display: none;
+            z-index: 20;
+            pointer-events: none;
+            white-space: nowrap;
+            text-align: right;
+            transition: top 0.1s ease-out;
+        }
+
+        body.mode-screenplay .next-line-navigation-prompt {
+            display: block;
+        }
+
         /* ------------------------------------------------------------------
-           4.5 NARRATIVE & SCREENPLAY FORMATTING
+            4.5 NARRATIVE & SCREENPLAY FORMATTING
         ------------------------------------------------------------------ */
         body.mode-narrative .editor div, 
         body.mode-narrative .editor p {
@@ -1137,7 +1192,7 @@
             font-weight: bold;
         }
 
-        body.mode-screenplay div[data-element="action"] {
+        body.mode-screenplay div[data-element="scene-description"] {
             text-transform: none;
             text-align: left;
             margin-bottom: 14pt;
@@ -1242,17 +1297,18 @@
         }
 
         /* ------------------------------------------------------------------
-           6. RESPONSIVE MEDIA QUERIES (ACCORDING TO WIREFRAME)
+            6. RESPONSIVE MEDIA QUERIES (ACCORDING TO WIREFRAME)
         ------------------------------------------------------------------ */
         @media (max-width: 1180px) {
             .margin-ghost-guide-wrapper { display: none !important; }
             .left-margin-alert-card { left: 16px; top: 80px; transform: none; }
+            .left-margin-element-indicator { display: none !important; }
+            .next-line-navigation-prompt { display: none !important; }
         }
 
         @media (max-width: 768px) {
             body { font-size: 16px; }
 
-            /* Mobile Pull-Tab Chrome Activator (Right Wireframe) */
             .mobile-chrome-activator {
                 display: block;
             }
@@ -1261,7 +1317,6 @@
                 opacity: 0.6;
             }
 
-            /* Responsive Landing Hub */
             #launchpad-view {
                 padding: 20px 16px;
                 justify-content: flex-start;
@@ -1370,9 +1425,6 @@
                 display: flex;
             }
 
-            /* ------------------------------------------------------------------
-               MOBILE WORKSPACE HEADER (Matching Left Wireframe)
-            ------------------------------------------------------------------ */
             header {
                 display: flex;
                 flex-direction: column;
@@ -1415,9 +1467,6 @@
             main { padding: 0 16px; }
             .editor { font-size: 1rem; padding-top: 15px; padding-bottom: 140px; }
 
-            /* ------------------------------------------------------------------
-               MOBILE WORKSPACE FOOTER (Matching Left Wireframe)
-            ------------------------------------------------------------------ */
             footer {
                 padding: 8px 16px;
                 font-size: 0.72rem;
@@ -1438,7 +1487,7 @@
             .stats-left span#word-count-wrapper { display: inline; }
 
             .footer-center {
-                display: none; /* Files modal moved into Guide modal or accessible from top */
+                display: none; 
             }
 
             .mobile-history-center {
@@ -1526,7 +1575,7 @@
                     </svg>
                 </div>
                 <h2>Screenplay 85</h2>
-                <p class="card-desc">A rigid screenplay layout engine adhering to industry standard formatting. Effortlessly flows through sluglines, action, characters, and dialogue using automatic Tab and Enter key mechanics.</p>
+                <p class="card-desc">A rigid screenplay layout engine adhering to industry standard formatting. Effortlessly flows through sluglines, scene descriptions, characters, and dialogue using automatic Tab and Enter key mechanics.</p>
                 <div class="write-btn-wrapper">
                     <button class="suite-write-btn" onclick="triggerSuiteWrite('screenplay', event)">write</button>
                 </div>
@@ -1684,6 +1733,11 @@
 
         <main id="workspace-main">
             <div class="editor-container">
+                <!-- Live Screenplay Element Indicator Tag -->
+                <div class="left-margin-element-indicator" id="left-margin-element-indicator">1. Slug Line</div>
+                <!-- Faded Next-Line Navigation Prompt -->
+                <div class="next-line-navigation-prompt" id="next-line-navigation-prompt"></div>
+
                 <div class="margin-list-widget" id="margin-list-widget">
                     <button class="margin-widget-btn" id="btn-bullet-toggle" title="Toggle Bulleted List">
                         <svg viewBox="0 0 24 24">
@@ -1731,7 +1785,7 @@
             <button class="mobile-footer-action-btn" onclick="openMobileGuideModal(event)">Guide</button>
 
             <div class="stats-right">
-                <span id="element-status-tag" style="display: none; margin-right: 15px;">Element: Action</span>
+                <span id="element-status-tag" style="display: none; margin-right: 15px;">Element: 1. Slug Line</span>
                 <span id="read-time">0 min read</span>
             </div>
         </footer>
@@ -1903,15 +1957,18 @@
             } else {
                 titleEl.textContent = "Screenplay Guide";
                 listEl.innerHTML = `
+                    <div style="font-size: 0.71rem; color: var(--muted-color); margin-bottom: 6px; line-height: 1.4;">Elements work on a cycle. Press <strong>Return</strong> repeatedly to advance through the cycle until you reach your target element:</div>
+                    <div class="ghost-guide-row"><span>1. Slug Line</div>
+                    <div class="ghost-guide-row"><span>2. Scene Description</div>
+                    <div class="ghost-guide-row"><span>3. Character</div>
+                    <div class="ghost-guide-row"><span>4. Parenthetical</div>
+                    <div class="ghost-guide-row"><span>5. Dialogue</div>
+                    <div class="ghost-guide-row"><span>6. Transition</div>
+                    <div class="guide-divider"></div>
                     <div class="ghost-guide-row"><span>Undo / Redo</span><code>Ctrl+Z / Y</code></div>
-                    <div class="ghost-guide-row"><span>Slugline</span><code>Tab x0</code></div>
-                    <div class="ghost-guide-row"><span>Action</span><code>Tab x0</code></div>
-                    <div class="ghost-guide-row"><span>Character</span><code>Tab x1</code></div>
-                    <div class="ghost-guide-row"><span>Parenthetical</span><code>Tab x2</code></div>
-                    <div class="ghost-guide-row"><span>Dialogue</span><code>Tab x3</code></div>
-                    <div class="ghost-guide-row"><span>Transition</span><code>Tab x4</code></div>
+                    <div class="ghost-guide-row"><span>Advance cycle</span><code>Tab</code></div>
                     <div class="ghost-guide-row"><span>Reverse cycle</span><code>Shift+Tab</code></div>
-                    <div class="ghost-guide-row"><span>Auto-advance</span><code>Enter</code></div>
+                    <div class="ghost-guide-row"><span>Auto-advance</span><code>Return</code></div>
                 `;
             }
         }
@@ -2032,6 +2089,8 @@
         const zenAlertText = document.getElementById('zen-alert-text');
         const modalContextTitle = document.getElementById('modal-context-title');
         const leftMarginAlert = document.getElementById('left-margin-alert');
+        const leftMarginElementIndicator = document.getElementById('left-margin-element-indicator');
+        const nextLineNavigationPrompt = document.getElementById('next-line-navigation-prompt');
 
         // Margin List Widget Elements
         const marginListWidget = document.getElementById('margin-list-widget');
@@ -2186,7 +2245,7 @@
             
             if (themeName === 'dark') {
                 root.style.setProperty('--bg-color', '#12141c');
-                root.style.setProperty('--text-color', '#ffffff');     
+                root.style.setProperty('--text-color', '#ffffff');    
                 root.style.setProperty('--muted-color', '#94a3b8');    
                 root.style.setProperty('--accent-color', '#ffffff');   
                 root.style.setProperty('--text-glow', '0 0 8px rgba(255,255,255,0.6)');
@@ -2358,13 +2417,13 @@
             let html = currentBlock.innerHTML;
             let modified = false;
 
-            const boldRegex = /(?<!\w)\*([^*]+)\*(?!\w)/g;
+            const boldRegex = /(?<!\w|\*)\*([^*]+)\*(?!\w|\*)/g;
             if (boldRegex.test(html)) {
                 currentBlock.innerHTML = html.replace(boldRegex, '<b>$1</b>&#8203;');
                 modified = true;
             }
 
-            const italicRegex = /(?<!\w)_([^_]+)_(?!\w)/g;
+            const italicRegex = /(?<!\w|_)(?<!__)_([^_]+)_(?!_[^_])/g;
             if (italicRegex.test(currentBlock.innerHTML)) {
                 currentBlock.innerHTML = currentBlock.innerHTML.replace(italicRegex, '<i>$1</i>&#8203;');
                 modified = true;
@@ -2571,7 +2630,7 @@
                     distinctBlocks.forEach(block => {
                         const div = document.createElement('div');
                         if (currentSuiteMode === 'screenplay') {
-                            div.setAttribute('data-element', 'action');
+                            div.setAttribute('data-element', 'scene-description');
                         }
 
                         let computedIndent = 0;
@@ -2616,7 +2675,7 @@
                     });
                 } else {
                     const div = document.createElement('div');
-                    if (currentSuiteMode === 'screenplay') div.setAttribute('data-element', 'action');
+                    if (currentSuiteMode === 'screenplay') div.setAttribute('data-element', 'scene-description');
                     const sanitizedContent = sanitizeInlineNodes(tempDiv);
                     if (!sanitizedContent.textContent.trim()) {
                         div.innerHTML = '<br>';
@@ -2634,7 +2693,7 @@
                 lines.forEach((line) => {
                     const div = document.createElement('div');
                     if (currentSuiteMode === 'screenplay') {
-                        div.setAttribute('data-element', 'action');
+                        div.setAttribute('data-element', 'scene-description');
                     }
                     
                     const tabMatch = line.match(/^(\t+)/);
@@ -2791,7 +2850,7 @@
                         if (detectedMode === 'screenplay' && /^(INT\.|EXT\.|EST\.)/i.test(trimmed)) {
                             return `<div data-element="scene-heading">${trimmed.toUpperCase()}</div>`;
                         }
-                        return `<div>${trimmed}</div>`;
+                        return `<div data-element="scene-description">${trimmed}</div>`;
                     }).join('');
                 } else {
                     parsedContent = content;
@@ -3073,29 +3132,29 @@
             if (currentBlock === editor || !currentBlock || !currentBlock.hasAttribute) {
                 document.execCommand('formatBlock', false, 'div');
                 currentBlock = editor.firstElementChild;
-                if (currentBlock) currentBlock.setAttribute('data-element', 'action');
+                if (currentBlock) currentBlock.setAttribute('data-element', 'scene-heading');
             }
 
-            const currentType = currentBlock ? (currentBlock.getAttribute('data-element') || 'action') : 'action';
+            const currentType = currentBlock ? (currentBlock.getAttribute('data-element') || 'scene-heading') : 'scene-heading';
 
             if (e.key === 'Tab') {
                 e.preventDefault();
-                let nextType = 'character';
+                let nextType = 'scene-description';
 
                 if (e.shiftKey) {
-                    if (currentType === 'action') nextType = 'scene-heading';
-                    else if (currentType === 'scene-heading') nextType = 'transition';
+                    if (currentType === 'scene-heading') nextType = 'transition';
                     else if (currentType === 'transition') nextType = 'dialogue';
                     else if (currentType === 'dialogue') nextType = 'parenthetical';
                     else if (currentType === 'parenthetical') nextType = 'character';
-                    else if (currentType === 'character') nextType = 'action';
+                    else if (currentType === 'character') nextType = 'scene-description';
+                    else if (currentType === 'scene-description') nextType = 'scene-heading';
                 } else {
-                    if (currentType === 'action') nextType = 'character';
+                    if (currentType === 'scene-heading') nextType = 'scene-description';
+                    else if (currentType === 'scene-description') nextType = 'character';
                     else if (currentType === 'character') nextType = 'parenthetical';
                     else if (currentType === 'parenthetical') nextType = 'dialogue';
                     else if (currentType === 'dialogue') nextType = 'transition';
                     else if (currentType === 'transition') nextType = 'scene-heading';
-                    else if (currentType === 'scene-heading') nextType = 'action';
                 }
 
                 if (currentBlock) {
@@ -3108,10 +3167,10 @@
 
             if (e.key === 'Enter') {
                 e.preventDefault();
-                let targetType = 'action';
+                let targetType = 'scene-description';
 
-                if (currentType === 'scene-heading') targetType = 'action';
-                else if (currentType === 'action') targetType = 'action';
+                if (currentType === 'scene-heading') targetType = 'scene-description';
+                else if (currentType === 'scene-description') targetType = 'scene-description';
                 else if (currentType === 'character') targetType = 'dialogue';
                 else if (currentType === 'dialogue') targetType = 'character';
                 else if (currentType === 'parenthetical') targetType = 'dialogue';
@@ -3170,9 +3229,46 @@
             }
             if (currentBlock && currentBlock.hasAttribute && currentBlock.hasAttribute('data-element')) {
                 const tag = currentBlock.getAttribute('data-element');
-                elementStatusTag.textContent = `Element: ${tag.replace('-', ' ')}`;
+                let numberedLabel = "1. Slug Line";
+                if (tag === 'scene-heading') numberedLabel = "1. Slug Line";
+                else if (tag === 'scene-description') numberedLabel = "2. Scene Description";
+                else if (tag === 'character') numberedLabel = "3. Character";
+                else if (tag === 'parenthetical') numberedLabel = "4. Parenthetical";
+                else if (tag === 'dialogue') numberedLabel = "5. Dialogue";
+                else if (tag === 'transition') numberedLabel = "6. Transition";
+
+                elementStatusTag.textContent = `Element: ${numberedLabel}`;
+                if (leftMarginElementIndicator && nextLineNavigationPrompt) {
+                    leftMarginElementIndicator.textContent = numberedLabel;
+
+                    // Determine next element outcomes for Return vs Tab hints
+                    let returnTarget = "Scene Description";
+                    let tabTarget = "Scene Description";
+
+                    if (tag === 'scene-heading') { returnTarget = "Scene Description"; tabTarget = "Scene Description"; }
+                    else if (tag === 'scene-description') { returnTarget = "Scene Description"; tabTarget = "Character"; }
+                    else if (tag === 'character') { returnTarget = "Dialogue"; tabTarget = "Parenthetical"; }
+                    else if (tag === 'parenthetical') { returnTarget = "Dialogue"; tabTarget = "Dialogue"; }
+                    else if (tag === 'dialogue') { returnTarget = "Character"; tabTarget = "Transition"; }
+                    else if (tag === 'transition') { returnTarget = "Slug Line"; tabTarget = "Slug Line"; }
+
+                    nextLineNavigationPrompt.textContent = `↵ Return: ${returnTarget} | ⇥ Tab: ${tabTarget}`;
+
+                    const editorRect = editor.getBoundingClientRect();
+                    const blockRect = currentBlock.getBoundingClientRect();
+                    const topOffset = blockRect.top - editorRect.top + editor.scrollTop;
+                    
+                    leftMarginElementIndicator.style.top = `${Math.max(0, topOffset)}px`;
+                    nextLineNavigationPrompt.style.top = `${Math.max(0, topOffset + 32)}px`;
+                }
             } else {
-                elementStatusTag.textContent = "Element: Action";
+                elementStatusTag.textContent = "Element: 1. Slug Line";
+                if (leftMarginElementIndicator && nextLineNavigationPrompt) {
+                    leftMarginElementIndicator.textContent = "1. Slug Line";
+                    leftMarginElementIndicator.style.top = `40px`;
+                    nextLineNavigationPrompt.textContent = `↵ Return: Scene Description | ⇥ Tab: Scene Description`;
+                    nextLineNavigationPrompt.style.top = `72px`;
+                }
             }
         }
 
@@ -3184,7 +3280,7 @@
             const nameRegex = new RegExp(`\\b${cleanName}\\b`, 'i');
 
             for (let block of blocks) {
-                if (block.getAttribute('data-element') === 'action') {
+                if (block.getAttribute('data-element') === 'scene-description') {
                     const text = block.innerText;
                     if (nameRegex.test(text)) {
                         const updatedText = text.replace(nameRegex, (match) => match.toUpperCase());
@@ -3296,7 +3392,7 @@
                     if (blocks && blocks.length > 0) {
                         processedText = blocks.map(block => {
                             if (!block) return "";
-                            const type = (typeof block.getAttribute === 'function') ? (block.getAttribute('data-element') || 'action') : 'action';
+                            const type = (typeof block.getAttribute === 'function') ? (block.getAttribute('data-element') || 'scene-description') : 'scene-description';
                             const text = block.innerText ? block.innerText.replace(/\u200B/g, "").trim() : "";
                             if (!text) return "";
                             
