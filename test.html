@@ -821,6 +821,9 @@
             text-shadow: var(--text-glow); 
             padding-top: 40px;
             padding-bottom: 200px;
+            /* Explicitly disable Chrome auto-spell/grammar substitutions */
+            -webkit-spellcheck: false;
+            spellcheck: false;
         }
 
         .editor * {
@@ -1761,7 +1764,8 @@
                     </button>
                 </div>
 
-                <div class="editor" contenteditable="true" spellcheck="true" placeholder="Start typing here...">Start typing here...</div>
+                <!-- Added spellcheck="false" and autocorrect="off" to prevent Chrome from auto-formatting dashes, underscores, and periods -->
+                <div class="editor" contenteditable="true" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" placeholder="Start typing here...">Start typing here...</div>
             </div>
         </main>
 
@@ -3241,7 +3245,6 @@
                 if (leftMarginElementIndicator && nextLineNavigationPrompt) {
                     leftMarginElementIndicator.textContent = numberedLabel;
 
-                    // Determine next element outcomes for Return vs Tab hints
                     let returnTarget = "Scene Description";
                     let tabTarget = "Scene Description";
 
