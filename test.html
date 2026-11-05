@@ -2546,10 +2546,6 @@
         if (!selection.rangeCount || selection.isCollapsed) return false;
         const range = selection.getRangeAt(0);
 
-        const container = document.createElement('div');
-        container.appendChild(range.cloneContents());
-        if (container.querySelector(tags.join(','))) return true;
-
         let node = range.startContainer;
         while (node && node !== editor) {
             if (node.nodeType === Node.ELEMENT_NODE && tags.includes(node.tagName.toLowerCase())) return true;
@@ -2561,19 +2557,83 @@
             node = node.parentNode;
         }
 
-        const allEls = editor.querySelectorAll(tags.join(','));
-        for (let el of allEls) {
-            try {
-                const elRange = document.createRange();
-                elRange.selectNodeContents(el);
-                if (range.compareBoundaryPoints(Range.END_TO_START, elRange) < 0 &&
-                    range.compareBoundaryPoints(Range.START_TO_END, elRange) > 0) {
-                    return true;
-                }
-            } catch (e) {}
-        }
+        const container = document.createElement('div');
+        container.appendChild(range.cloneContents());
+        if (container.querySelector(tags.join(','))) return true;
 
         return false;
+    }
+
+    function toggleInlineFormatting(tag) {
+        const selection = window.getSelection();
+        let range = null;
+
+        if (selection.rangeCount && !selection.isCollapsed) {
+            range = selection.getRangeAt(0);
+            savedSelectionRange = range.cloneRange();
+        } else if (savedSelectionRange) {
+            range = savedSelectionRange;
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+
+        if (!range || range.collapsed) return;
+
+        let targetTags = [tag];
+        if (tag === 'b') targetTags = ['b', 'strong'];
+        if (tag === 'i') targetTags = ['i', 'em'];
+        if (tag === 'u') targetTags = ['u'];
+
+        const hasAny = isStylePresentInSelection(selection, ...targetTags);
+
+        if (hasAny) {
+            // TOGGLE OFF: Safely unwrap target tags within the selection range without disturbing surrounding text
+            const ancestor = range.commonAncestorContainer;
+            const editableAncestor = ancestor.nodeType === Node.TEXT_NODE ? ancestor.parentNode : ancestor;
+            
+            // Find all matching format elements inside or overlapping the range
+            const formatElements = editableAncestor.querySelectorAll ? Array.from(editableAncestor.querySelectorAll(targetTags.join(','))) : [];
+            
+            formatElements.forEach(el => {
+                try {
+                    const elRange = document.createRange();
+                    elRange.selectNodeContents(el);
+                    // Check if element intersects with user's selection range
+                    if (range.compareBoundaryPoints(Range.END_TO_START, elRange) < 0 &&
+                        range.compareBoundaryPoints(Range.START_TO_END, elRange) > 0) {
+                        
+                        const parent = el.parentNode;
+                        while (el.firstChild) {
+                            parent.insertBefore(el.firstChild, el);
+                        }
+                        parent.removeChild(el);
+                    }
+                } catch (err) {}
+            });
+
+            // Normalize adjacent text nodes to keep DOM clean
+            editor.normalize();
+        } else {
+            // TOGGLE ON: Wrap selected contents safely
+            try {
+                const fragment = range.extractContents();
+                const el = document.createElement(tag);
+                el.appendChild(fragment);
+                range.insertNode(el);
+
+                range.selectNodeContents(el);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            } catch (err) {
+                // Fallback for complex cross-node selections using document command execution
+                document.execCommand(tag === 'b' ? 'bold' : (tag === 'i' ? 'italic' : 'underline'), false, null);
+            }
+        }
+
+        savedSelectionRange = null;
+        saveDocument();
+        recordHistorySnapshot();
+        updateMarginListWidget();
     }
 
     function updateMarginListWidget() {
@@ -2658,69 +2718,7 @@
         updateMarginListWidget();
     }
 
-    function toggleInlineFormatting(tag) {
-        const selection = window.getSelection();
-        let range = null;
-
-        // Ensure we capture or restore the active selection range reliably
-        if (selection.rangeCount && !selection.isCollapsed) {
-            range = selection.getRangeAt(0);
-            savedSelectionRange = range.cloneRange();
-        } else if (savedSelectionRange) {
-            range = savedSelectionRange;
-            selection.removeAllRanges();
-            selection.addRange(range);
-        }
-
-        if (!range || range.collapsed) return;
-
-        let targetTags = [tag];
-        if (tag === 'b') targetTags = ['b', 'strong'];
-        if (tag === 'i') targetTags = ['i', 'em'];
-        if (tag === 'u') targetTags = ['u'];
-
-        const hasAny = isStylePresentInSelection(selection, ...targetTags);
-
-        if (hasAny) {
-            // TOGGLE OFF: Safely unwrap target tags inline using a DocumentFragment without block breaks
-            const fragment = range.cloneContents();
-
-            const walker = document.createTreeWalker(fragment, NodeFilter.SHOW_ELEMENT, null, false);
-            let currentNode = walker.currentNode;
-            let toUnwrap = [];
-            while(currentNode) {
-                if (targetTags.includes(currentNode.tagName.toLowerCase())) {
-                    toUnwrap.push(currentNode);
-                }
-                currentNode = walker.nextNode();
-            }
-            toUnwrap.forEach(el => {
-                const parent = el.parentNode;
-                while (el.firstChild) {
-                    parent.insertBefore(el.firstChild, el);
-                }
-                parent.removeChild(el);
-            });
-
-            range.deleteContents();
-            range.insertNode(fragment);
-        } else {
-            // TOGGLE ON: wrap entire selection in requested tag safely
-            const fragment = range.extractContents();
-            const el = document.createElement(tag);
-            el.appendChild(fragment);
-            range.insertNode(el);
-
-            range.selectNodeContents(el);
-            selection.removeAllRanges();
-            selection.addRange(range);
-        }
-
-        savedSelectionRange = null;
-        saveDocument();
-        recordHistorySnapshot();
-        updateMarginListWidget();
-    }
+   
 
     // Capture selection cache on mouseup and keyup inside editor
     editor.addEventListener('mouseup', () => {
