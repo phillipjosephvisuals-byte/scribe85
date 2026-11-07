@@ -2490,7 +2490,6 @@
 
             if (caretOffset >= matchEndIndex) {
                 const beforeText = text.substring(0, matchIndex);
-                // If nothing follows immediately, add a zero-width space to trap cursor outside
                 const rawAfterText = text.substring(matchEndIndex);
                 const afterText = rawAfterText.length > 0 ? rawAfterText : '\u200B';
 
@@ -2505,12 +2504,17 @@
                 parent.insertBefore(afterNode, textNode);
                 parent.removeChild(textNode);
 
-                // Place cursor at the start of the afterNode (right outside the <b> tag)
+                // Place cursor outside
                 const newRange = document.createRange();
                 newRange.setStart(afterNode, 0);
                 newRange.collapse(true);
                 selection.removeAllRanges();
                 selection.addRange(newRange);
+
+                // FORCE the browser to reset its internal active styling state
+                if (document.queryCommandState('bold')) {
+                    document.execCommand('bold', false, null);
+                }
                 return;
             }
         }
@@ -2544,6 +2548,11 @@
                 newRange.collapse(true);
                 selection.removeAllRanges();
                 selection.addRange(newRange);
+
+                // FORCE the browser to reset its internal active styling state
+                if (document.queryCommandState('italic')) {
+                    document.execCommand('italic', false, null);
+                }
                 return;
             }
         }
