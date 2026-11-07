@@ -1154,12 +1154,17 @@
         /* ------------------------------------------------------------------
             4.1 LEFT MARGIN CHAPTER NAVIGATOR
         ------------------------------------------------------------------ */
+       /* ------------------------------------------------------------------
+            4.1 LEFT MARGIN CHAPTER NAVIGATOR (FIXED OVERFLOW & PROPORTIONS)
+        ------------------------------------------------------------------ */
         .left-margin-chapter-nav {
             position: fixed;
             top: 120px;
             left: max(16px, calc((100vw - var(--canvas-width)) / 4 - 130px));
             width: 220px;
-            transform: none;
+            max-height: calc(100vh - 150px);
+            display: flex;
+            flex-direction: column;
             background: transparent;
             border: none;
             border-radius: 0;
@@ -1187,29 +1192,35 @@
             text-align: left;
             font-weight: bold;
             opacity: 0.9;
+            flex-shrink: 0;
         }
 
         .left-margin-chapter-list {
             display: flex;
             flex-direction: column;
             gap: 6px;
-            max-height: calc(100vh - 220px);
+            max-height: calc(100vh - 200px);
             overflow-y: auto;
-            padding-right: 4px;
+            overflow-x: hidden;
+            padding-right: 6px;
+            flex-grow: 1;
         }
 
         .left-margin-chapter-list::-webkit-scrollbar {
             width: 3px;
         }
         .left-margin-chapter-list::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.25);
+            background: color-mix(in srgb, var(--accent-color) 40%, transparent);
             border-radius: 3px;
+        }
+        .left-margin-chapter-list::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-color);
         }
 
         .left-margin-chapter-item {
             font-size: 0.91rem;
             color: var(--muted-color);
-            padding: 5px 4px;
+            padding: 6px 4px;
             border-radius: 4px;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -1218,6 +1229,7 @@
             text-overflow: ellipsis;
             text-align: left;
             display: block;
+            flex-shrink: 0; /* Prevents individual items from compressing */
         }
 
         .left-margin-chapter-item:hover {
