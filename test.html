@@ -1168,7 +1168,7 @@
             backdrop-filter: none;
             z-index: 15;
             user-select: none;
-            border-right: 1px solid rgba(255, 255, 255, 0.5);
+            border-right: 1px solid color-mix(in srgb, var(--accent-color) 50%, transparent);
             transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -1178,7 +1178,7 @@
         }
 
         .left-margin-chapter-nav-title {
-            font-size: 0.88rem;
+            font-size: 1.1rem;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             color: var(--accent-color);
@@ -1202,7 +1202,7 @@
             width: 3px;
         }
         .left-margin-chapter-list::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.25);
             border-radius: 3px;
         }
 
@@ -2623,7 +2623,6 @@
     let idleTimer;
     let tokenClient;
     let accessToken = null;
-    let chapterSequenceCounter = 1;
     let activeChapterPopup = null;
     let chapterWordGoals = {}; // stores custom goal per chapter index
 
@@ -2820,7 +2819,6 @@
         }
 
         currentLocalFileId = "local_" + Date.now();
-        chapterSequenceCounter = 1;
         chapterWordGoals = {};
 
         localStorage.setItem('zensuite_active_suite_mode', currentSuiteMode);
@@ -3230,7 +3228,9 @@
                 if (selectedOption === 'yes') {
                     const currentText = blockElement.innerText;
                     const chapterRegex = new RegExp(`\\b(${keyword})\\s*$`, 'i');
-                    const updatedText = currentText.replace(chapterRegex, `CHAPTER ${chapterSequenceCounter++}`);
+                    const currentChapters = parseDocumentIntoChapters();
+                    const nextChapterNum = currentChapters.length + 1;
+                    const updatedText = currentText.replace(chapterRegex, `CHAPTER ${nextChapterNum}`);
                     blockElement.innerText = updatedText;
                     updateLeftMarginChapterNavigator();
                 }
@@ -3250,7 +3250,9 @@
                 if (selectedOption === 'yes') {
                     const currentText = blockElement.innerText;
                     const chapterRegex = new RegExp(`\\b(${keyword})\\s*$`, 'i');
-                    const updatedText = currentText.replace(chapterRegex, `CHAPTER ${chapterSequenceCounter++}`);
+                    const currentChapters = parseDocumentIntoChapters();
+                    const nextChapterNum = currentChapters.length + 1;
+                    const updatedText = currentText.replace(chapterRegex, `CHAPTER ${nextChapterNum}`);
                     blockElement.innerText = updatedText;
                     updateLeftMarginChapterNavigator();
                 }
