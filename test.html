@@ -839,9 +839,9 @@
             pointer-events: none;
         }
 
-        /* Custom Spaced Ellipsis styling (10% closer than previous 0.6px) */
+        /* Custom Spaced Ellipsis styling (10% closer than previous 0.5px) */
         .custom-ellipsis {
-            letter-spacing: 0.5px;
+            letter-spacing: 0.45px;
         }
 
         /* ------------------------------------------------------------------
@@ -2471,29 +2471,81 @@
 
         if (!currentBlock || currentBlock === editor) return;
 
-        const caretOffset = getCaretCharacterOffset(currentBlock);
-        let html = currentBlock.innerHTML;
-        let modified = false;
+        let changed = false;
 
-        if (html.includes('-div-')) {
-            currentBlock.innerHTML = html.replace(/-div-/g, '------');
-            modified = true;
-        }
+        // Check text nodes inside currentBlock for markdown pairs (*...* or _..._)
+        const walker = document.createTreeWalker(currentBlock, NodeFilter.SHOW_TEXT, null, false);
+        let node;
+        while ((node = walker.nextNode())) {
+            let text = node.nodeValue;
+            
+            // Check for -div- replacement
+            if (text.includes('-div-')) {
+                node.nodeValue = text.replace(/-div-/g, '------');
+                changed = true;
+                continue;
+            }
 
-        const boldRegex = /\*([^*]+)\*/g;
-        if (boldRegex.test(html)) {
-            currentBlock.innerHTML = currentBlock.innerHTML.replace(boldRegex, '<b>$1</b>');
-            modified = true;
-        }
+            // Bold markdown: *text* (making sure it doesn't cross block boundaries)
+            const boldMatch = text.match(/\*([^*]+)\*/);
+            if (boldMatch) {
+                const fullMatch = boldMatch[0];
+                const innerText = boldMatch[1];
+                const matchIndex = text.indexOf(fullMatch);
 
-        const italicRegex = /_([^_]+)_/g;
-        if (italicRegex.test(currentBlock.innerHTML)) {
-            currentBlock.innerHTML = currentBlock.innerHTML.replace(italicRegex, '<i>$1</i>');
-            modified = true;
-        }
+                // Split text node to safely insert <b> element without disrupting cursor position
+                const beforeText = text.substring(0, matchIndex);
+                const afterText = text.substring(matchIndex + fullMatch.length);
 
-        if (modified) {
-            restoreCaretCharacterOffset(currentBlock, caretOffset);
+                node.nodeValue = beforeText;
+                
+                const bElem = document.createElement('b');
+                bElem.textContent = innerText;
+                
+                if (node.nextSibling) {
+                    node.parentNode.insertBefore(bElem, node.nextSibling);
+                } else {
+                    node.parentNode.appendChild(bElem);
+                }
+
+                if (afterText.length > 0) {
+                    const afterNode = document.createTextNode(afterText);
+                    bElem.parentNode.insertBefore(afterNode, bElem.nextSibling);
+                }
+
+                changed = true;
+                break;
+            }
+
+            // Italic markdown: _text_
+            const italicMatch = text.match(/_([^_]+)_/);
+            if (italicMatch) {
+                const fullMatch = italicMatch[0];
+                const innerText = italicMatch[1];
+                const matchIndex = text.indexOf(fullMatch);
+
+                const beforeText = text.substring(0, matchIndex);
+                const afterText = text.substring(matchIndex + fullMatch.length);
+
+                node.nodeValue = beforeText;
+                
+                const iElem = document.createElement('i');
+                iElem.textContent = innerText;
+                
+                if (node.nextSibling) {
+                    node.parentNode.insertBefore(iElem, node.nextSibling);
+                } else {
+                    node.parentNode.appendChild(iElem);
+                }
+
+                if (afterText.length > 0) {
+                    const afterNode = document.createTextNode(afterText);
+                    iElem.parentNode.insertBefore(afterNode, iElem.nextSibling);
+                }
+
+                changed = true;
+                break;
+            }
         }
     }
 
