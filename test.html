@@ -616,7 +616,8 @@
             transform: translateY(8px);
         }
 
-        body.distraction-free .margin-ghost-guide-wrapper .margin-ghost-guide {
+        body.distraction-free .margin-ghost-guide-wrapper .margin-ghost-guide,
+        body.distraction-free .left-margin-chapter-nav {
             opacity: 0.22 !important;
             background: rgba(255, 255, 255, 0.015);
             border-color: rgba(255, 255, 255, 0.08);
@@ -1009,11 +1010,23 @@
             font-weight: bold;
             color: var(--accent-color);
             text-shadow: var(--text-glow);
+            outline: none;
+            border-bottom: 1px dashed transparent;
+            transition: border-color 0.2s ease;
+        }
+
+        .chapter-card-title:hover, .chapter-card-title:focus {
+            border-bottom-color: var(--accent-color);
         }
 
         .chapter-card-stats {
             font-size: 0.7rem;
             color: var(--muted-color);
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        .chapter-card-stats:hover {
+            color: var(--accent-color);
         }
 
         /* Card Content Body with Internal Scroll and Fade */
@@ -1055,6 +1068,26 @@
             background: linear-gradient(to bottom, transparent, var(--bg-color));
             pointer-events: none;
             display: block;
+        }
+
+        /* Ultra-thin Goal Progress Track at bottom of card */
+        .chapter-goal-track {
+            height: 2px;
+            background: rgba(255, 255, 255, 0.08);
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chapter-goal-fill {
+            height: 100%;
+            background: var(--accent-color);
+            width: 0%;
+            transition: width 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .chapter-goal-fill.goal-met {
+            box-shadow: 0 0 8px var(--accent-color);
         }
 
         /* Center Hover Region for Edit Button */
@@ -1112,6 +1145,87 @@
         /* Custom Spaced Ellipsis styling */
         .custom-ellipsis {
             letter-spacing: 0.45px;
+        }
+
+        /* ------------------------------------------------------------------
+            4.1 LEFT MARGIN CHAPTER NAVIGATOR
+        ------------------------------------------------------------------ */
+        .left-margin-chapter-nav {
+            position: fixed;
+            top: 50%;
+            left: max(16px, calc((100vw - var(--canvas-width)) / 4 - 110px));
+            width: 220px;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.65);
+            border: 1px solid var(--accent-color);
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8), 0 0 12px rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(3px);
+            z-index: 15;
+            user-select: none;
+            transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        body.plot-view-active .left-margin-chapter-nav {
+            opacity: 0 !important;
+            pointer-events: none !important;
+        }
+
+        .left-margin-chapter-nav-title {
+            font-size: 0.70rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--accent-color);
+            margin-bottom: 12px;
+            text-shadow: var(--text-glow);
+            text-align: center;
+            font-weight: bold;
+            opacity: 0.9;
+        }
+
+        .left-margin-chapter-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-height: 220px;
+            overflow-y: auto;
+            padding-right: 2px;
+        }
+
+        .left-margin-chapter-list::-webkit-scrollbar {
+            width: 3px;
+        }
+        .left-margin-chapter-list::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.15);
+            border-radius: 3px;
+        }
+
+        .left-margin-chapter-item {
+            font-size: 0.73rem;
+            color: var(--muted-color);
+            padding: 5px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .left-margin-chapter-item:hover {
+            color: var(--text-color);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .left-margin-chapter-item.active {
+            color: var(--accent-color);
+            background: rgba(255, 255, 255, 0.08);
+            font-weight: bold;
+            text-shadow: var(--text-glow);
         }
 
         /* ------------------------------------------------------------------
@@ -1249,7 +1363,8 @@
                         box-shadow 0.35s ease;
         }
 
-        #launchpad-view.active ~ #workspace-view .margin-ghost-guide-wrapper {
+        #launchpad-view.active ~ #workspace-view .margin-ghost-guide-wrapper,
+        #launchpad-view.active ~ #workspace-view .left-margin-chapter-nav {
             display: none !important;
         }
 
@@ -1609,7 +1724,7 @@
             6. RESPONSIVE MEDIA QUERIES
         ------------------------------------------------------------------ */
         @media (max-width: 1180px) {
-            .margin-ghost-guide-wrapper { display: none !important; }
+            .margin-ghost-guide-wrapper, .left-margin-chapter-nav { display: none !important; }
             .left-margin-alert-card { left: 16px; top: 80px; transform: none; }
             .left-margin-element-indicator { display: none !important; }
             .next-line-navigation-prompt { display: none !important; }
@@ -2038,6 +2153,14 @@
             <button class="left-margin-reconnect-btn" onclick="triggerGoogleAuth(true)">Reconnect Drive</button>
         </div>
 
+        <!-- LEFT MARGIN CHAPTER NAVIGATOR -->
+        <div class="left-margin-chapter-nav chrome-element" id="left-margin-chapter-nav">
+            <div class="left-margin-chapter-nav-title">Chapters</div>
+            <div class="left-margin-chapter-list" id="left-margin-chapter-list">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+
         <div class="margin-ghost-guide-wrapper chrome-element" id="margin-ghost-guide-wrapper">
             <div class="desktop-history-row">
                 <button class="desktop-history-btn" id="btn-undo-desktop" title="Undo (Ctrl+Z)" onclick="performUndo()" disabled>↶</button>
@@ -2241,6 +2364,7 @@
         }
 
         updateAnalytics(editor.innerText);
+        updateLeftMarginChapterNavigator();
         if (currentSuiteMode === 'narrative') applyDynamicListSpacing();
         if (currentSuiteMode === 'screenplay') updateLiveElementTag();
         saveDocument();
@@ -2497,6 +2621,7 @@
     let accessToken = null;
     let chapterSequenceCounter = 1;
     let activeChapterPopup = null;
+    let chapterWordGoals = {}; // stores custom goal per chapter index
 
     function showLeftMarginAlert() {
         leftMarginAlert.style.display = 'flex';
@@ -2667,6 +2792,7 @@
             elementStatusTag.style.display = "none";
         }
         renderGhostMarginGuide();
+        updateLeftMarginChapterNavigator();
     }
 
     function initializeDocumentTrack(originTab) {
@@ -2691,6 +2817,7 @@
 
         currentLocalFileId = "local_" + Date.now();
         chapterSequenceCounter = 1;
+        chapterWordGoals = {};
 
         localStorage.setItem('zensuite_active_suite_mode', currentSuiteMode);
         localStorage.setItem('zensuite_view_state', 'workspace');
@@ -2709,6 +2836,7 @@
 
         updateUrlParameters(currentLocalFileId, currentSuiteMode);
         updateAnalytics(editor.innerText);
+        updateLeftMarginChapterNavigator();
         if (currentSuiteMode === 'screenplay') updateLiveElementTag();
         pickerModifierSync();
         renderGhostMarginGuide();
@@ -3100,6 +3228,7 @@
                     const chapterRegex = new RegExp(`\\b(${keyword})\\s*$`, 'i');
                     const updatedText = currentText.replace(chapterRegex, `CHAPTER ${chapterSequenceCounter++}`);
                     blockElement.innerText = updatedText;
+                    updateLeftMarginChapterNavigator();
                 }
                 cleanup();
             });
@@ -3119,6 +3248,7 @@
                     const chapterRegex = new RegExp(`\\b(${keyword})\\s*$`, 'i');
                     const updatedText = currentText.replace(chapterRegex, `CHAPTER ${chapterSequenceCounter++}`);
                     blockElement.innerText = updatedText;
+                    updateLeftMarginChapterNavigator();
                 }
                 cleanup();
             } else {
@@ -3150,6 +3280,7 @@
         div.textContent = plainText;
         range.insertNode(div);
         updateAnalytics(editor.innerText);
+        updateLeftMarginChapterNavigator();
         saveDocument();
         recordHistorySnapshot();
     });
@@ -3340,6 +3471,7 @@
                 selection.addRange(newRange);
 
                 applyDynamicListSpacing();
+                updateLeftMarginChapterNavigator();
                 saveDocument();
                 recordHistorySnapshot();
                 return;
@@ -3349,12 +3481,73 @@
 
     editor.addEventListener('keyup', () => {
         checkChapterKeywordTrigger();
+        updateLeftMarginChapterNavigator();
         if (currentSuiteMode === 'screenplay') updateLiveElementTag();
     });
 
     editor.addEventListener('click', () => {
+        updateLeftMarginChapterNavigator();
         if (currentSuiteMode === 'screenplay') updateLiveElementTag();
     });
+
+    function updateLeftMarginChapterNavigator() {
+        const navList = document.getElementById('left-margin-chapter-list');
+        if (!navList) return;
+
+        const chapters = parseDocumentIntoChapters();
+        navList.innerHTML = '';
+
+        chapters.forEach((chap, idx) => {
+            const item = document.createElement('div');
+            item.className = 'left-margin-chapter-item';
+            item.textContent = chap.title || `Chapter ${idx + 1}`;
+            item.title = chap.title || `Chapter ${idx + 1}`;
+            
+            item.addEventListener('click', () => {
+                if (chap.blocks && chap.blocks.length > 0) {
+                    const targetBlock = chap.blocks[0];
+                    targetBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    
+                    const range = document.createRange();
+                    range.setStart(targetBlock, 0);
+                    range.collapse(true);
+                    const sel = window.getSelection();
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                    editor.focus();
+                }
+            });
+
+            navList.appendChild(item);
+        });
+
+        highlightActiveChapterInLeftNav(chapters);
+    }
+
+    function highlightActiveChapterInLeftNav(chapters) {
+        const navItems = document.querySelectorAll('.left-margin-chapter-item');
+        if (navItems.length === 0) return;
+
+        const selection = window.getSelection();
+        if (!selection.rangeCount) return;
+
+        let currentBlock = selection.getRangeAt(0).startContainer;
+        if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
+        while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
+            currentBlock = currentBlock.parentNode;
+        }
+
+        let activeIdx = 0;
+        chapters.forEach((chap, idx) => {
+            if (chap.blocks.includes(currentBlock)) {
+                activeIdx = idx;
+            }
+        });
+
+        navItems.forEach((item, idx) => {
+            item.classList.toggle('active', idx === activeIdx);
+        });
+    }
 
     function updateLiveElementTag() {
         const selection = window.getSelection();
@@ -3530,6 +3723,7 @@
 
         updateUrlParameters(fileId, currentSuiteMode);
         updateAnalytics(editor.innerText);
+        updateLeftMarginChapterNavigator();
         pickerModifierSync();
         renderGhostMarginGuide();
         
@@ -3572,6 +3766,8 @@
         const targetDocId = urlDocId || localStorage.getItem(`zensuite_current_active_${currentSuiteMode}_id`);
         if (targetDocId) {
             loadLocalFile(targetDocId);
+        } else {
+            updateLeftMarginChapterNavigator();
         }
 
         if (typeof google !== 'undefined') {
@@ -3598,7 +3794,7 @@
         
         const query = encodeURIComponent(`appProperties has { key='suiteMode' and value='${currentSuiteMode}' } and trashed = false`);
         
-        fetch(`https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id, name, modifiedTime)&orderBy=modifiedTime desc`, {
+        fetch(`https://www.googleapis.com/drive/v3/files?q=${query}&files(id, name, modifiedTime)&orderBy=modifiedTime desc`, {
             headers: { 'Authorization': `Bearer ${accessToken}` }
         })
         .then(res => res.json())
@@ -3632,6 +3828,7 @@
             editor.innerHTML = content;
             if (docTitle) docTitle.value = fileName;
             currentDriveFileId = fileId;
+            updateLeftMarginChapterNavigator();
             pickerModal.style.display = 'none';
             launchpadView.classList.remove('active');
             workspaceView.classList.add('active');
@@ -3674,6 +3871,7 @@
             scribeContainer.style.display = 'flex';
             document.body.classList.remove('distraction-free');
             document.body.classList.remove('plot-view-active');
+            updateLeftMarginChapterNavigator();
         } else {
             btnPlot.classList.add('active');
             btnScribe.classList.remove('active');
@@ -3729,6 +3927,9 @@
             const fullChapText = chap.blocks.map(b => b.innerText).join('\n');
             const wordCount = fullChapText.trim() ? fullChapText.trim().split(/\s+/).length : 0;
             const charCount = fullChapText.length;
+            
+            const goalWords = chapterWordGoals[index] || 2000;
+            const goalPct = Math.min(100, Math.round((wordCount / goalWords) * 100));
 
             const card = document.createElement('div');
             card.className = 'chapter-card';
@@ -3740,16 +3941,57 @@
                     <div class="chapter-card-handle-dots"></div>
                 </div>
                 <div class="chapter-card-header">
-                    <span class="chapter-card-title">Chapter ${index + 1}</span>
-                    <span class="chapter-card-stats">${wordCount} words | ${charCount} chars</span>
+                    <span class="chapter-card-title" contenteditable="true" spellcheck="false" title="Click to rename chapter">${chap.title || `Chapter ${index + 1}`}</span>
+                    <span class="chapter-card-stats" title="Click to adjust word goal">${wordCount}/${goalWords} words</span>
                 </div>
                 <div class="chapter-card-body-wrapper">
                     <div class="chapter-card-body">${fullChapText}</div>
+                </div>
+                <div class="chapter-goal-track">
+                    <div class="chapter-goal-fill ${goalPct >= 100 ? 'goal-met' : ''}" style="width: ${goalPct}%;"></div>
                 </div>
                 <div class="chapter-card-center-hover-zone">
                     <button class="chapter-enter-btn" onclick="enterChapterFromPlot(${index})">Edit</button>
                 </div>
             `;
+
+            // Chapter Title live edit handling
+            const titleEl = card.querySelector('.chapter-card-title');
+            titleEl.addEventListener('blur', () => {
+                const newTitle = titleEl.textContent.trim() || `Chapter ${index + 1}`;
+                updateChapterTitleInEditor(index, newTitle);
+            });
+            titleEl.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    titleEl.blur();
+                }
+            });
+
+            // Chapter Goal adjustment on clicking stats
+            const statsEl = card.querySelector('.chapter-card-stats');
+            statsEl.addEventListener('click', () => {
+                zenAlertTitle.textContent = `Chapter ${index + 1} Word Goal`;
+                zenAlertText.textContent = `Enter target word count for this chapter:`;
+                document.getElementById('alert-interactive-body').innerHTML = `<input type="number" id="goal-input-val" class="alert-input" value="${goalWords}">`;
+                document.getElementById('alert-actions-well').innerHTML = `
+                    <button class="alert-btn" id="confirm-goal-execute">Set Goal</button>
+                    <button class="alert-btn" onclick="closeZenAlert()">Cancel</button>
+                `;
+                zenAlertOverlay.classList.add('active');
+                const goalInput = document.getElementById('goal-input-val');
+                goalInput.focus();
+                goalInput.select();
+
+                document.getElementById('confirm-goal-execute').onclick = () => {
+                    const parsedGoal = parseInt(goalInput.value, 10);
+                    if (parsedGoal > 0) {
+                        chapterWordGoals[index] = parsedGoal;
+                        buildPlotCardsFromEditor(index);
+                    }
+                    closeZenAlert();
+                };
+            });
 
             card.addEventListener('mousemove', (e) => {
                 const rect = card.getBoundingClientRect();
@@ -3813,30 +4055,38 @@
         }, 50);
     }
 
+    function updateChapterTitleInEditor(chapterIndex, newTitle) {
+        let chapters = parseDocumentIntoChapters();
+        if (!chapters[chapterIndex]) return;
+
+        const chap = chapters[chapterIndex];
+        let markerFound = false;
+
+        chap.blocks.forEach(b => {
+            const text = b.innerText.trim();
+            if (!markerFound && (/^chapter\s+\d+/i.test(text) || /^ch\.?\s*\d+/i.test(text) || text === chap.title)) {
+                b.innerText = newTitle;
+                markerFound = true;
+            }
+        });
+
+        if (!markerFound && chap.blocks.length > 0) {
+            const titleBlock = document.createElement('div');
+            titleBlock.innerText = newTitle;
+            chap.blocks[0].parentNode.insertBefore(titleBlock, chap.blocks[0]);
+        }
+
+        saveDocument();
+        recordHistorySnapshot();
+        updateLeftMarginChapterNavigator();
+    }
+
     function reorderChaptersInEditor(draggedIdx, targetIdx) {
         let chapters = parseDocumentIntoChapters();
         if (draggedIdx < 0 || draggedIdx >= chapters.length || targetIdx < 0 || targetIdx >= chapters.length) return;
 
         const [movedChapter] = chapters.splice(draggedIdx, 1);
         chapters.splice(targetIdx, 0, movedChapter);
-
-        chapters.forEach((chap, idx) => {
-            const newChapterNum = idx + 1;
-            let markerFound = false;
-            chap.blocks.forEach(b => {
-                const text = b.innerText.trim();
-                if (!markerFound && (/^chapter\s+\d+/i.test(text) || /^ch\.?\s*\d+/i.test(text))) {
-                    b.innerText = `CHAPTER ${newChapterNum}`;
-                    markerFound = true;
-                }
-            });
-
-            if (!markerFound && chap.blocks.length > 0) {
-                const headerBlock = document.createElement('div');
-                headerBlock.innerText = `CHAPTER ${newChapterNum}`;
-                chap.blocks.unshift(headerBlock);
-            }
-        });
 
         let newHtml = '';
         chapters.forEach((chap) => {
@@ -3848,6 +4098,7 @@
         editor.innerHTML = newHtml;
         saveDocument();
         recordHistorySnapshot();
+        updateLeftMarginChapterNavigator();
         buildPlotCardsFromEditor(targetIdx);
     }
 
@@ -3880,6 +4131,7 @@
     editor.addEventListener('input', () => {
         processInlineMarkdownFormatting(); 
         updateAnalytics(editor.innerText);
+        updateLeftMarginChapterNavigator();
         
         clearTimeout(idleTimer);
         idleTimer = setTimeout(startTypingDistractionHide, 1000); 
