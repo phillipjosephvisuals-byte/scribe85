@@ -616,12 +616,16 @@
             transform: translateY(8px);
         }
 
-        body.distraction-free .margin-ghost-guide-wrapper .margin-ghost-guide,
-        body.distraction-free .left-margin-chapter-nav {
-            opacity: 0 !important;
+        body.distraction-free .margin-ghost-guide-wrapper .margin-ghost-guide {
+            opacity: 0.22 !important;
             background: rgba(255, 255, 255, 0.015);
             border-color: rgba(255, 255, 255, 0.08);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        body.distraction-free .left-margin-chapter-nav {
+            opacity: 0 !important;
+            pointer-events: none !important;
         }
 
         #workspace-view {
@@ -1152,18 +1156,19 @@
         ------------------------------------------------------------------ */
         .left-margin-chapter-nav {
             position: fixed;
-            top: 50%;
-            left: max(16px, calc((100vw - var(--canvas-width)) / 4 - 110px));
+            top: 120px;
+            left: max(16px, calc((100vw - var(--canvas-width)) / 4 - 130px));
             width: 220px;
-            transform: translateY(-50%);
-            background: rgba(0, 0, 0, 0.65);
-            border: 1px solid var(--accent-color);
-            border-radius: 8px;
-            padding: 16px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8), 0 0 12px rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(3px);
+            transform: none;
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            padding: 0 16px 0 0;
+            box-shadow: none;
+            backdrop-filter: none;
             z-index: 15;
             user-select: none;
+            border-right: 1px solid rgba(255, 255, 255, 0.5);
             transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -1173,13 +1178,13 @@
         }
 
         .left-margin-chapter-nav-title {
-            font-size: 0.70rem;
+            font-size: 0.88rem;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             color: var(--accent-color);
             margin-bottom: 12px;
             text-shadow: var(--text-glow);
-            text-align: center;
+            text-align: left;
             font-weight: bold;
             opacity: 0.9;
         }
@@ -1188,9 +1193,9 @@
             display: flex;
             flex-direction: column;
             gap: 6px;
-            max-height: 220px;
+            max-height: calc(100vh - 220px);
             overflow-y: auto;
-            padding-right: 2px;
+            padding-right: 4px;
         }
 
         .left-margin-chapter-list::-webkit-scrollbar {
@@ -1202,18 +1207,17 @@
         }
 
         .left-margin-chapter-item {
-            font-size: 0.73rem;
+            font-size: 0.91rem;
             color: var(--muted-color);
-            padding: 5px 8px;
+            padding: 5px 4px;
             border-radius: 4px;
             cursor: pointer;
             transition: all 0.2s ease;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            text-align: left;
+            display: block;
         }
 
         .left-margin-chapter-item:hover {
