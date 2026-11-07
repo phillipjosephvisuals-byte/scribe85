@@ -841,7 +841,7 @@
 
         /* Custom Spaced Ellipsis styling */
         .custom-ellipsis {
-            letter-spacing: 2px;
+            letter-spacing: 0.6px;
         }
 
         /* ------------------------------------------------------------------
@@ -1322,6 +1322,7 @@
             border-radius: 4px;
             color: var(--muted-color);
             background: transparent;
+            cursor: pointer;
         }
         .chapter-prompt-option.highlighted {
             background: var(--accent-color);
@@ -2539,7 +2540,6 @@
         return allBlocks.filter(block => range.intersectsNode(block));
     }
 
-    /* Fixed: Robust check for style presence across nodes and partial boundaries */
     function isStylePresentInSelection(selection, ...tags) {
         if (!selection.rangeCount || selection.isCollapsed) return false;
         const range = selection.getRangeAt(0);
@@ -2629,52 +2629,13 @@
         const selection = window.getSelection();
         if (!selection.rangeCount || selection.isCollapsed) return;
 
-        const offsets = getSelectionCharacterOffsets(editor);
-        if (!offsets) return;
+        let cmd = tag;
+        if (tag === 'b') cmd = 'bold';
+        if (tag === 'i') cmd = 'italic';
+        if (tag === 'u') cmd = 'underline';
 
-        const range = selection.getRangeAt(0);
+        document.execCommand(cmd, false, null);
 
-        let targetTags = [tag];
-        if (tag === 'b') targetTags = ['b', 'strong'];
-        if (tag === 'i') targetTags = ['i', 'em'];
-        if (tag === 'u') targetTags = ['u'];
-
-        const hasAny = isStylePresentInSelection(selection, ...targetTags);
-
-        if (hasAny) {
-            const ancestor = range.commonAncestorContainer;
-            const editableAncestor = ancestor.nodeType === Node.TEXT_NODE ? ancestor.parentNode : ancestor;
-            const formatElements = editableAncestor.querySelectorAll ? Array.from(editableAncestor.querySelectorAll(targetTags.join(','))) : [];
-            
-            formatElements.forEach(el => {
-                try {
-                    const elRange = document.createRange();
-                    elRange.selectNodeContents(el);
-                    if (range.compareBoundaryPoints(Range.END_TO_START, elRange) < 0 &&
-                        range.compareBoundaryPoints(Range.START_TO_END, elRange) > 0) {
-                        const parent = el.parentNode;
-                        while (el.firstChild) {
-                            parent.insertBefore(el.firstChild, el);
-                        }
-                        parent.removeChild(el);
-                    }
-                } catch (err) {}
-            });
-            editor.normalize();
-        } else {
-            try {
-                const fragment = range.extractContents();
-                const el = document.createElement(tag);
-                el.appendChild(fragment);
-                range.insertNode(el);
-            } catch (err) {
-                document.execCommand(tag === 'b' ? 'bold' : (tag === 'i' ? 'italic' : 'underline'), false, null);
-            }
-        }
-
-        restoreSelectionCharacterOffsets(editor, offsets);
-
-        savedSelectionRange = null;
         saveDocument();
         recordHistorySnapshot();
         updateMarginListWidget();
@@ -2692,23 +2653,24 @@
             return;
         }
 
-        const selectedBlocks = getSelectedBlocks();
-        if (selectedBlocks.length === 0) {
+        const range = selection.getRangeAt(0);
+        const rect = range.getBoundingClientRect();
+        const editorRect = editor.getBoundingClientRect();
+
+        if (rect.width === 0 && rect.height === 0) {
             marginListWidget.style.display = 'none';
             return;
         }
 
-        const firstBlock = selectedBlocks[0];
-        const editorRect = editor.getBoundingClientRect();
-        const firstBlockRect = firstBlock.getBoundingClientRect();
-
-        const bottomOffset = firstBlockRect.bottom - editorRect.top + editor.scrollTop;
         const widgetHeight = marginListWidget.offsetHeight || 120;
-        marginListWidget.style.top = `${Math.max(0, bottomOffset - widgetHeight)}px`;
+        // Bottom aligned to the line/selection actively worked in
+        const lineBottom = rect.bottom - editorRect.top + editor.scrollTop;
+        marginListWidget.style.top = `${lineBottom - widgetHeight}px`;
         marginListWidget.style.display = 'flex';
 
-        const isAllBullets = selectedBlocks.every(b => (b.dataset.listType === 'bullet' || /^•\s/.test(b.innerText.trim())));
-        const isAllNumbers = selectedBlocks.every(b => (b.dataset.listType === 'number' || /^\d+[\.\)]\s/.test(b.innerText.trim())));
+        const selectedBlocks = getSelectedBlocks();
+        const isAllBullets = selectedBlocks.length > 0 && selectedBlocks.every(b => (b.dataset.listType === 'bullet' || /^•\s/.test(b.innerText.trim())));
+        const isAllNumbers = selectedBlocks.length > 0 && selectedBlocks.every(b => (b.dataset.listType === 'number' || /^\d+[\.\)]\s/.test(b.innerText.trim())));
 
         btnBulletToggle.classList.toggle('active', isAllBullets);
         btnNumberToggle.classList.toggle('active', isAllNumbers);
@@ -2722,7 +2684,6 @@
         btnUnderlineToggle.classList.toggle('active', hasUnderline);
     }
 
-    /* Fixed: Preserves internal formatting and HTML elements instead of stripping them out via textContent resetting */
     function toggleListFormatting(type) {
         const selectedBlocks = getSelectedBlocks();
         if (selectedBlocks.length === 0) return;
@@ -2847,6 +2808,20 @@
         activeChapterPopup = popup;
 
         let selectedOption = 'no';
+
+        popup.querySelectorAll('.chapter-prompt-option').forEach(opt => {
+            opt.addEventListener('click', (e) => {
+                e.stopPropagation();
+                selectedOption = opt.dataset.val;
+                if (selectedOption === 'yes') {
+                    const currentText = blockElement.innerText;
+                    const chapterRegex = new RegExp(`\\b(${keyword})\\s*$`, 'i');
+                    const updatedText = currentText.replace(chapterRegex, `CHAPTER ${chapterSequenceCounter++}`);
+                    blockElement.innerText = updatedText;
+                }
+                cleanup();
+            });
+        });
 
         function handlePopupKeydown(e) {
             if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
@@ -2979,7 +2954,6 @@
     }
 
     editor.addEventListener('keydown', (e) => {
-        /* Fixed: Custom Ellipsis Replacement & Spacing logic */
         if (e.key === '.') {
             const selection = window.getSelection();
             if (selection.rangeCount) {
@@ -3000,8 +2974,7 @@
                         
                         const ellipsisSpan = document.createElement('span');
                         ellipsisSpan.className = 'custom-ellipsis';
-                        ellipsisSpan.innerHTML = '&middot;&nbsp;&middot;&nbsp;&middot;';
-                        ellipsisSpan.style.letterSpacing = '2px';
+                        ellipsisSpan.textContent = '...';
                         
                         replaceRange.insertNode(ellipsisSpan);
                         
