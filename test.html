@@ -687,7 +687,7 @@
             gap: 20px;
         }
 
-        /* SCRIBE / PLOT TOGGLE BUTTONS - Clean centered pill region above right-hand margin */
+        /* SCRIBE / PLOT TOGGLE BUTTONS - Clean centered pill region aligned over right-hand margin */
         .workspace-mode-toggles {
             display: flex;
             background: rgba(255, 255, 255, 0.03);
@@ -1057,7 +1057,7 @@
             display: block;
         }
 
-        /* Center Hover Region for Enter Button */
+        /* Center Hover Region for Edit Button */
         .chapter-card-center-hover-zone {
             position: absolute;
             top: 35%;
@@ -1075,7 +1075,7 @@
             display: none;
             background: var(--accent-color);
             color: var(--bg-color);
-            border: none;
+            border: 1px solid var(--accent-color);
             font-family: var(--font-mono);
             font-size: 0.78rem;
             font-weight: bold;
@@ -1083,8 +1083,8 @@
             padding: 10px 24px;
             border-radius: 20px;
             cursor: pointer;
-            box-shadow: 0 0 20px rgba(255,255,255,0.8);
-            transition: transform 0.15s ease, background 0.15s ease;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+            transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
             animation: fadeInButton 0.2s ease forwards;
             z-index: 10;
         }
@@ -1092,7 +1092,8 @@
         .chapter-enter-btn:hover {
             transform: scale(1.06);
             background: #ffffff;
-            box-shadow: 0 0 25px rgba(255,255,255,1);
+            color: #000000;
+            box-shadow: 0 0 25px rgba(255,255,255,0.9);
         }
 
         @keyframes fadeInButton {
@@ -3744,9 +3745,9 @@
                 </div>
                 <div class="chapter-card-body-wrapper">
                     <div class="chapter-card-body">${fullChapText}</div>
-                    <div class="chapter-card-center-hover-zone">
-                        <button class="chapter-enter-btn" onclick="enterChapterFromPlot(${index})">Enter</button>
-                    </div>
+                </div>
+                <div class="chapter-card-center-hover-zone">
+                    <button class="chapter-enter-btn" onclick="enterChapterFromPlot(${index})">Edit</button>
                 </div>
             `;
 
