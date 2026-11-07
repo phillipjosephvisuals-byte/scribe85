@@ -684,6 +684,37 @@
             align-items: center;
             justify-content: center;
             justify-self: center;
+            gap: 20px;
+        }
+
+        /* SCRIBE / PLOT TOGGLE BUTTONS */
+        .workspace-mode-toggles {
+            display: flex;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 3px;
+            gap: 2px;
+        }
+
+        .mode-toggle-btn {
+            background: transparent;
+            border: none;
+            color: var(--muted-color);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 4px 14px;
+            border-radius: 16px;
+            cursor: pointer;
+            text-transform: lowercase;
+            transition: all 0.2s ease;
+        }
+
+        .mode-toggle-btn.active {
+            background: var(--accent-color);
+            color: var(--bg-color);
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(255,255,255,0.2);
         }
 
         .header-logo-container {
@@ -837,6 +868,234 @@
             color: var(--muted-color);
             opacity: 0.6;
             pointer-events: none;
+        }
+
+        /* PLOT CARD VIEW CONTAINER & STYLES */
+        #plot-view-container {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            flex-grow: 1;
+            padding: 20px 40px 40px 40px;
+            overflow-hidden: hidden;
+        }
+
+        #plot-view-container.active {
+            display: flex;
+        }
+
+        .plot-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 0 10px;
+            flex-shrink: 0;
+        }
+
+        .zoom-slider-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: var(--muted-color);
+        }
+
+        .zoom-slider-wrapper input[type="range"] {
+            appearance: none;
+            -webkit-appearance: none;
+            background: rgba(255, 255, 255, 0.1);
+            height: 4px;
+            border-radius: 2px;
+            outline: none;
+            width: 140px;
+        }
+
+        .zoom-slider-wrapper input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            box-shadow: 0 0 6px rgba(255,255,255,0.5);
+        }
+
+        .plot-grid-scroll-well {
+            flex-grow: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 10px;
+        }
+
+        .plot-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            width: 100%;
+            padding-bottom: 60px;
+            transition: transform 0.1s ease;
+            transform-origin: top center;
+        }
+
+        /* Individual Chapter Card Styling */
+        .chapter-card {
+            background: rgba(18, 20, 28, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            height: 320px;
+            position: relative;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .chapter-card.dragging {
+            opacity: 0.4;
+            border: 1px dashed var(--accent-color);
+        }
+
+        .chapter-card.drag-over {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 15px rgba(255,255,255,0.3);
+        }
+
+        /* Top handle bar */
+        .chapter-card-handle {
+            height: 24px;
+            background: rgba(255, 255, 255, 0.04);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            cursor: grab;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+        .chapter-card-handle:active {
+            cursor: grabbing;
+        }
+        .chapter-card-handle-dots {
+            width: 24px;
+            height: 2px;
+            background: var(--muted-color);
+            border-radius: 1px;
+            box-shadow: 0 4px 0 var(--muted-color);
+        }
+
+        /* Card Header */
+        .chapter-card-header {
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.2);
+        }
+
+        .chapter-card-title {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            text-shadow: var(--text-glow);
+        }
+
+        .chapter-card-stats {
+            font-size: 0.7rem;
+            color: var(--muted-color);
+        }
+
+        /* Card Content Body with Internal Scroll and Fade */
+        .chapter-card-body-wrapper {
+            position: relative;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+
+        .chapter-card-body {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            overflow-y: auto;
+            padding: 14px;
+            font-size: 0.8rem;
+            line-height: 1.6;
+            color: var(--text-color);
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .chapter-card-body::-webkit-scrollbar {
+            width: 4px;
+        }
+        .chapter-card-body::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.15);
+            border-radius: 4px;
+        }
+
+        /* Bottom opacity fade on text */
+        .chapter-card-body::after {
+            content: '';
+            position: sticky;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: linear-gradient(to bottom, transparent, var(--bg-color));
+            pointer-events: none;
+            display: block;
+        }
+
+        /* Center Hover Region for Enter Button */
+        .chapter-card-center-hover-zone {
+            position: absolute;
+            top: 42.5%;
+            left: 42.5%;
+            width: 15%;
+            height: 15%;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: auto;
+        }
+
+        .chapter-enter-btn {
+            display: none;
+            background: var(--accent-color);
+            color: var(--bg-color);
+            border: none;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 6px 14px;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(255,255,255,0.6);
+            transition: transform 0.15s ease;
+            animation: fadeInButton 0.2s ease forwards;
+        }
+
+        @keyframes fadeInButton {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .chapter-card.center-hovered .chapter-card-body-wrapper {
+            opacity: 0.3;
+            transition: opacity 0.2s ease;
+        }
+
+        .chapter-card.center-hovered .chapter-enter-btn {
+            display: block;
         }
 
         /* Custom Spaced Ellipsis styling */
@@ -1338,6 +1597,7 @@
             .left-margin-alert-card { left: 16px; top: 80px; transform: none; }
             .left-margin-element-indicator { display: none !important; }
             .next-line-navigation-prompt { display: none !important; }
+            .plot-cards-grid { grid-template-columns: repeat(2, 1fr) !important; }
         }
 
         @media (max-width: 768px) {
@@ -1484,6 +1744,8 @@
             .header-center-hub {
                 width: 100%;
                 margin-top: 2px;
+                flex-direction: column;
+                gap: 6px;
             }
 
             .doc-title { 
@@ -1500,6 +1762,7 @@
 
             main { padding: 0 16px; }
             .editor { font-size: 1rem; padding-top: 15px; padding-bottom: 140px; }
+            .plot-cards-grid { grid-template-columns: 1fr !important; }
 
             footer {
                 padding: 8px 16px;
@@ -1739,6 +2002,11 @@
 
             <div class="header-center-hub">
                 <input type="text" class="doc-title" spellcheck="false" placeholder="untitled">
+                <!-- Scribe / Plot Toggles -->
+                <div class="workspace-mode-toggles">
+                    <button class="mode-toggle-btn active" id="btn-mode-scribe" onclick="switchWorkspaceView('scribe')">scribe</button>
+                    <button class="mode-toggle-btn" id="btn-mode-plot" onclick="switchWorkspaceView('plot')">plot</button>
+                </div>
             </div>
         </header>
 
@@ -1762,7 +2030,8 @@
         </div>
 
         <main id="workspace-main">
-            <div class="editor-container">
+            <!-- SCRIBE EDITOR VIEW -->
+            <div class="editor-container" id="scribe-editor-container">
                 <div class="left-margin-element-indicator" id="left-margin-element-indicator">1. Slug Line</div>
                 <div class="next-line-navigation-prompt" id="next-line-navigation-prompt"></div>
 
@@ -1793,6 +2062,22 @@
                 </div>
 
                 <div class="editor" contenteditable="true" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" placeholder="Start typing here...">Start typing here...</div>
+            </div>
+
+            <!-- PLOT VIEW CONTAINER -->
+            <div id="plot-view-container">
+                <div class="plot-toolbar">
+                    <span style="font-size: 0.8rem; color: var(--muted-color); text-transform: uppercase; letter-spacing: 1px;">Chapter Card Navigator</span>
+                    <div class="zoom-slider-wrapper">
+                        <span>Zoom</span>
+                        <input type="range" id="plot-zoom-slider" min="0.4" max="1" step="0.05" value="1" oninput="handlePlotZoom(this.value)">
+                    </div>
+                </div>
+                <div class="plot-grid-scroll-well" id="plot-grid-scroll-well">
+                    <div class="plot-cards-grid" id="plot-cards-grid">
+                        <!-- Cards injected dynamically -->
+                    </div>
+                </div>
             </div>
         </main>
 
@@ -1825,6 +2110,8 @@
     const SCOPES = 'https://www.googleapis.com/auth/drive.file';
 
     let currentSuiteMode = 'narrative';
+    let currentWorkspaceTab = 'scribe'; // 'scribe' or 'plot'
+    let activePlotChapterIndex = 0;
     let autoBackupIntervalTimer = null;
     let isAutoBackupEnabled = false;
     let autoBackupMinutes = 10;
@@ -2187,7 +2474,6 @@
     let idleTimer;
     let tokenClient;
     let accessToken = null;
-    let cloudSaveDebounceTimer;
     let chapterSequenceCounter = 1;
     let activeChapterPopup = null;
 
@@ -2409,6 +2695,7 @@
         pickerModal.style.display = 'none';
         launchpadView.classList.remove('active');
         workspaceView.classList.add('active');
+        switchWorkspaceView('scribe');
     }
 
     newDocBtn.addEventListener('click', () => {
@@ -2418,7 +2705,7 @@
     function startTypingDistractionHide() {
         if (document.activeElement === docTitle) return;
 
-        if (workspaceView.classList.contains('active')) {
+        if (workspaceView.classList.contains('active') && currentWorkspaceTab === 'scribe') {
             document.body.classList.add('distraction-free');
             marginListWidget.style.display = 'none';
         }
@@ -2473,14 +2760,11 @@
         let text = textNode.nodeValue;
         const caretOffset = range.startOffset;
 
-        // Check for -div- replacement
         if (text.includes('-div-')) {
             textNode.nodeValue = text.replace(/-div-/g, '------');
             return;
         }
 
-        // Bold markdown: *text* (Requires a space or boundary right after the closing *)
-        // Matches e.g. "*hello* "
         const boldRegex = /\*([^*]+)\*(\s)/g;
         let match;
         while ((match = boldRegex.exec(text)) !== null) {
@@ -2490,7 +2774,6 @@
             const matchIndex = match.index;
             const matchEndIndex = matchIndex + fullMatch.length;
 
-            // Only trigger if the user's cursor has moved past the closing space
             if (caretOffset >= matchEndIndex) {
                 const beforeText = text.substring(0, matchIndex);
                 const rawAfterText = text.substring(matchEndIndex);
@@ -2500,7 +2783,6 @@
                 const beforeNode = document.createTextNode(beforeText);
                 const bElem = document.createElement('b');
                 bElem.textContent = innerText;
-                // Include the trailing space outside the bold element
                 const spaceNode = document.createTextNode(trailingSpace);
                 const afterNode = document.createTextNode(afterText);
 
@@ -2510,7 +2792,6 @@
                 parent.insertBefore(afterNode, textNode);
                 parent.removeChild(textNode);
 
-                // Place cursor cleanly in the plain text node after the space
                 const newRange = document.createRange();
                 newRange.setStart(afterNode, 0);
                 newRange.collapse(true);
@@ -2520,7 +2801,6 @@
             }
         }
 
-        // Italic markdown: _text_ (Requires a space or boundary right after the closing _)
         const italicRegex = /_([^_]+)_(\s)/g;
         while ((match = italicRegex.exec(text)) !== null) {
             const fullMatch = match[0];
@@ -2624,7 +2904,7 @@
     }
 
     function updateMarginListWidget() {
-        if (currentSuiteMode !== 'narrative') {
+        if (currentSuiteMode !== 'narrative' || currentWorkspaceTab !== 'scribe') {
             marginListWidget.style.display = 'none';
             return;
         }
@@ -2724,7 +3004,7 @@
     btnUnderlineToggle.addEventListener('mousedown', (e) => { e.preventDefault(); toggleInlineFormatting('u'); });
 
     document.addEventListener('selectionchange', () => {
-        if (workspaceView.classList.contains('active')) {
+        if (workspaceView.classList.contains('active') && currentWorkspaceTab === 'scribe') {
             const selection = window.getSelection();
             if (selection.rangeCount && !selection.isCollapsed) {
                 savedSelectionRange = selection.getRangeAt(0).cloneRange();
@@ -2899,6 +3179,7 @@
             pickerModal.style.display = 'none';
             launchpadView.classList.remove('active');
             workspaceView.classList.add('active');
+            switchWorkspaceView('scribe');
         };
         reader.readAsText(file);
     }
@@ -3202,6 +3483,7 @@
             db.unshift(fileObj); 
         }
         localStorage.setItem('zensuite_local_db', JSON.stringify(db));
+        localStorage.setItem(`zensuite_current_active_${currentSuiteMode}_id`, currentLocalFileId);
     }
 
     function loadLocalFile(fileId) {
@@ -3233,6 +3515,7 @@
         pickerModal.style.display = 'none';
         launchpadView.classList.remove('active');
         workspaceView.classList.add('active');
+        switchWorkspaceView('scribe');
     }
 
     function pickerModifierSync() {
@@ -3331,6 +3614,7 @@
             pickerModal.style.display = 'none';
             launchpadView.classList.remove('active');
             workspaceView.classList.add('active');
+            switchWorkspaceView('scribe');
         });
     }
 
@@ -3338,8 +3622,6 @@
         if (!accessToken) return;
         currentDriveFileId = "drive_" + Date.now();
     }
-
-    function updateDriveFile() {}
 
     function saveDocument() {
         if (!workspaceView.classList.contains('active')) return; 
@@ -3351,8 +3633,216 @@
             driveId: currentDriveFileId
         };
         saveToLocalDatabase(fileRecord);
-        localStorage.setItem(`zensuite_current_active_${currentSuiteMode}_id`, currentLocalFileId);
         updateUrlParameters(currentLocalFileId, currentSuiteMode);
+    }
+
+    /* ------------------------------------------------------------------
+        PLOT VIEW & CHAPTER CARD ARCHITECTURE (NEWLY ADDED FEATURE)
+    ------------------------------------------------------------------ */
+    function switchWorkspaceView(tab) {
+        currentWorkspaceTab = tab;
+        const scribeContainer = document.getElementById('scribe-editor-container');
+        const plotContainer = document.getElementById('plot-view-container');
+        const btnScribe = document.getElementById('btn-mode-scribe');
+        const btnPlot = document.getElementById('btn-mode-plot');
+
+        if (tab === 'scribe') {
+            btnScribe.classList.add('active');
+            btnPlot.classList.remove('active');
+            plotContainer.classList.remove('active');
+            scribeContainer.style.display = 'flex';
+            document.body.classList.remove('distraction-free');
+        } else {
+            btnPlot.classList.add('active');
+            btnScribe.classList.remove('active');
+            scribeContainer.style.display = 'none';
+            plotContainer.classList.add('active');
+            document.body.classList.add('distraction-free');
+            buildPlotCardsFromEditor(activePlotChapterIndex);
+        }
+    }
+
+    function parseDocumentIntoChapters() {
+        const blocks = Array.from(editor.children);
+        if (blocks.length === 0) {
+            // Fallback if editor is flat text nodes
+            const rawText = editor.innerText || "";
+            return [{ title: "Chapter 1", rawContent: rawText, blockStartIndex: 0, blockEndIndex: 0 }];
+        }
+
+        let chapters = [];
+        let currentChapter = { title: "Chapter 1", blocks: [], textChunks: [] };
+
+        blocks.forEach((block, idx) => {
+            const text = block.innerText.trim();
+            const isChapterMarker = /^chapter\s+\d+/i.test(text) || /^ch\.?\s*\d+/i.test(text);
+
+            if (isChapterMarker && currentChapter.blocks.length > 0) {
+                chapters.push(currentChapter);
+                currentChapter = { title: text, blocks: [block], textChunks: [text] };
+            } else {
+                if (currentChapter.blocks.length === 0 && !isChapterMarker) {
+                    currentChapter.title = "Chapter 1";
+                } else if (isChapterMarker) {
+                    currentChapter.title = text;
+                }
+                currentChapter.blocks.push(block);
+                currentChapter.textChunks.push(block.innerHTML);
+            }
+        });
+
+        if (currentChapter.blocks.length > 0) {
+            chapters.push(currentChapter);
+        }
+
+        return chapters;
+    }
+
+    function buildPlotCardsFromEditor(targetChapterIndex = 0) {
+        const gridContainer = document.getElementById('plot-cards-grid');
+        gridContainer.innerHTML = '';
+
+        const chapters = parseDocumentIntoChapters();
+
+        chapters.forEach((chap, index) => {
+            const fullChapText = chap.blocks.map(b => b.innerText).join('\n');
+            const wordCount = fullChapText.trim() ? fullChapText.trim().split(/\s+/).length : 0;
+            const charCount = fullChapText.length;
+
+            const card = document.createElement('div');
+            card.className = 'chapter-card';
+            card.draggable = true;
+            card.dataset.chapterIndex = index;
+
+            card.innerHTML = `
+                <div class="chapter-card-handle" title="Click and drag to reorder chapter">
+                    <div class="chapter-card-handle-dots"></div>
+                </div>
+                <div class="chapter-card-header">
+                    <span class="chapter-card-title">Chapter ${index + 1}</span>
+                    <span class="chapter-card-stats">${wordCount} words | ${charCount} chars</span>
+                </div>
+                <div class="chapter-card-body-wrapper">
+                    <div class="chapter-card-body">${fullChapText}</div>
+                    <div class="chapter-card-center-hover-zone">
+                        <button class="chapter-enter-btn" onclick="enterChapterFromPlot(${index})">Enter</button>
+                    </div>
+                </div>
+            `;
+
+            // Center hover detection (15% center box region)
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const minX = rect.width * 0.425;
+                const maxX = rect.width * 0.575;
+                const minY = rect.height * 0.425;
+                const maxY = rect.height * 0.575;
+
+                if (x >= minX && x <= maxX && y >= minY && y <= maxY) {
+                    card.classList.add('center-hovered');
+                } else {
+                    card.classList.remove('center-hovered');
+                }
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.classList.remove('center-hovered');
+            });
+
+            // Drag and Drop handlers
+            card.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', index);
+                setTimeout(() => card.classList.add('dragging'), 0);
+            });
+
+            card.addEventListener('dragend', () => {
+                card.classList.remove('dragging');
+                document.querySelectorAll('.chapter-card').forEach(c => c.classList.remove('drag-over'));
+            });
+
+            card.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                card.classList.add('drag-over');
+            });
+
+            card.addEventListener('dragleave', () => {
+                card.classList.remove('drag-over');
+            });
+
+            card.addEventListener('drop', (e) => {
+                e.preventDefault();
+                card.classList.remove('drag-over');
+                const draggedIndex = parseInt(e.dataTransfer.getData('text/plain'), 10);
+                const targetIndex = index;
+
+                if (draggedIndex !== targetIndex) {
+                    reorderChaptersInEditor(draggedIndex, targetIndex);
+                }
+            });
+
+            gridContainer.appendChild(card);
+        });
+
+        // Scroll to target chapter card if specified
+        setTimeout(() => {
+            const cards = gridContainer.querySelectorAll('.chapter-card');
+            if (cards[targetChapterIndex]) {
+                cards[targetChapterIndex].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }, 50);
+    }
+
+    function reorderChaptersInEditor(draggedIdx, targetIdx) {
+        const chapters = parseDocumentIntoChapters();
+        if (draggedIdx < 0 || draggedIdx >= chapters.length || targetIdx < 0 || targetIdx >= chapters.length) return;
+
+        // Splice and reorder chapter blocks array
+        const [movedChapter] = chapters.splice(draggedIdx, 1);
+        chapters.splice(targetIdx, 0, movedChapter);
+
+        // Reconstruct editor HTML from reordered chapters
+        let newHtml = '';
+        chapters.forEach((chap, idx) => {
+            // Ensure first block or header explicitly names correct sequence if desired, or keep original blocks
+            chap.blocks.forEach(b => {
+                newHtml += `<div>${b.innerHTML}</div>`;
+            });
+        });
+
+        editor.innerHTML = newHtml;
+        saveDocument();
+        recordHistorySnapshot();
+        buildPlotCardsFromEditor(targetIdx);
+    }
+
+    function enterChapterFromPlot(chapterIndex) {
+        activePlotChapterIndex = chapterIndex;
+        switchWorkspaceView('scribe');
+
+        // Scroll editor to corresponding chapter block
+        setTimeout(() => {
+            const chapters = parseDocumentIntoChapters();
+            if (chapters[chapterIndex] && chapters[chapterIndex].blocks.length > 0) {
+                const targetBlock = chapters[chapterIndex].blocks[0];
+                targetBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                
+                // Place caret inside block
+                const range = document.createRange();
+                range.setStart(targetBlock, 0);
+                range.collapse(true);
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+        }, 100);
+    }
+
+    function handlePlotZoom(zoomValue) {
+        const grid = document.getElementById('plot-cards-grid');
+        grid.style.transform = `scale(${zoomValue})`;
     }
 
     let historyDebounceTimer;
