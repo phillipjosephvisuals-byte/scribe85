@@ -687,7 +687,7 @@
             gap: 20px;
         }
 
-        /* SCRIBE / PLOT TOGGLE BUTTONS - Shifted right over the right hand margin */
+        /* SCRIBE / PLOT TOGGLE BUTTONS - Clean centered pill region above right-hand margin */
         .workspace-mode-toggles {
             display: flex;
             background: rgba(255, 255, 255, 0.03);
@@ -695,7 +695,8 @@
             border-radius: 20px;
             padding: 3px;
             gap: 2px;
-            margin-left: max(16px, calc((100vw - var(--canvas-width)) / 4 - 80px));
+            justify-self: end;
+            margin-right: max(16px, calc((100vw - var(--canvas-width)) / 4 - 95px));
             flex-shrink: 0;
         }
 
@@ -1020,6 +1021,7 @@
             position: relative;
             flex-grow: 1;
             overflow: hidden;
+            transition: opacity 0.2s ease;
         }
 
         .chapter-card-body {
@@ -1058,10 +1060,10 @@
         /* Center Hover Region for Enter Button */
         .chapter-card-center-hover-zone {
             position: absolute;
-            top: 42.5%;
-            left: 42.5%;
-            width: 15%;
-            height: 15%;
+            top: 35%;
+            left: 25%;
+            width: 50%;
+            height: 30%;
             z-index: 5;
             display: flex;
             align-items: center;
@@ -1075,15 +1077,22 @@
             color: var(--bg-color);
             border: none;
             font-family: var(--font-mono);
-            font-size: 0.75rem;
+            font-size: 0.78rem;
             font-weight: bold;
             text-transform: uppercase;
-            padding: 6px 14px;
-            border-radius: 16px;
+            padding: 10px 24px;
+            border-radius: 20px;
             cursor: pointer;
-            box-shadow: 0 0 15px rgba(255,255,255,0.6);
-            transition: transform 0.15s ease;
+            box-shadow: 0 0 20px rgba(255,255,255,0.8);
+            transition: transform 0.15s ease, background 0.15s ease;
             animation: fadeInButton 0.2s ease forwards;
+            z-index: 10;
+        }
+
+        .chapter-enter-btn:hover {
+            transform: scale(1.06);
+            background: #ffffff;
+            box-shadow: 0 0 25px rgba(255,255,255,1);
         }
 
         @keyframes fadeInButton {
@@ -1092,8 +1101,7 @@
         }
 
         .chapter-card.center-hovered .chapter-card-body-wrapper {
-            opacity: 0.3;
-            transition: opacity 0.2s ease;
+            opacity: 0.22;
         }
 
         .chapter-card.center-hovered .chapter-enter-btn {
@@ -1178,6 +1186,11 @@
             z-index: 15;
             transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
                         transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        body.plot-view-active .margin-ghost-guide-wrapper {
+            opacity: 0 !important;
+            pointer-events: none !important;
         }
 
         .desktop-history-row {
@@ -1600,7 +1613,7 @@
             .left-margin-element-indicator { display: none !important; }
             .next-line-navigation-prompt { display: none !important; }
             .plot-cards-grid { grid-template-columns: repeat(2, 1fr) !important; }
-            .workspace-mode-toggles { margin-left: 0; }
+            .workspace-mode-toggles { margin-right: 0; }
         }
 
         @media (max-width: 768px) {
@@ -1751,7 +1764,7 @@
                 gap: 6px;
             }
 
-            .workspace-mode-toggles { margin-left: 0; }
+            .workspace-mode-toggles { margin-right: 0; }
 
             .doc-title { 
                 width: 100%; 
@@ -1989,7 +2002,8 @@
                                 </g>
                             </g>
                         </svg>
-                    </button>
+                    </svg>
+                </button>
 
                     <div class="inline-theme-picker">
                         <div class="theme-square sq-dark" title="Classic Dark" onclick="applyAppTheme('dark')"></div>
@@ -2009,7 +2023,7 @@
                 <input type="text" class="doc-title" spellcheck="false" placeholder="untitled">
             </div>
 
-            <!-- Scribe / Plot Toggles - Balanced over right hand margin -->
+            <!-- Scribe / Plot Toggles - Centered pill region aligned over right-hand margin -->
             <div class="workspace-mode-toggles">
                 <button class="mode-toggle-btn active" id="btn-mode-scribe" onclick="switchWorkspaceView('scribe')">scribe</button>
                 <button class="mode-toggle-btn" id="btn-mode-plot" onclick="switchWorkspaceView('plot')">plot</button>
@@ -3643,7 +3657,7 @@
     }
 
     /* ------------------------------------------------------------------
-        PLOT VIEW & CHAPTER CARD ARCHITECTURE (UPDATED & RIPPLE-SYNCED)
+        PLOT VIEW & CHAPTER CARD ARCHITECTURE
     ------------------------------------------------------------------ */
     function switchWorkspaceView(tab) {
         currentWorkspaceTab = tab;
@@ -3658,12 +3672,14 @@
             plotContainer.classList.remove('active');
             scribeContainer.style.display = 'flex';
             document.body.classList.remove('distraction-free');
+            document.body.classList.remove('plot-view-active');
         } else {
             btnPlot.classList.add('active');
             btnScribe.classList.remove('active');
             scribeContainer.style.display = 'none';
             plotContainer.classList.add('active');
             document.body.classList.add('distraction-free');
+            document.body.classList.add('plot-view-active');
             buildPlotCardsFromEditor(activePlotChapterIndex);
         }
     }
@@ -3739,10 +3755,10 @@
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
                 
-                const minX = rect.width * 0.425;
-                const maxX = rect.width * 0.575;
-                const minY = rect.height * 0.425;
-                const maxY = rect.height * 0.575;
+                const minX = rect.width * 0.25;
+                const maxX = rect.width * 0.75;
+                const minY = rect.height * 0.35;
+                const maxY = rect.height * 0.65;
 
                 if (x >= minX && x <= maxX && y >= minY && y <= maxY) {
                     card.classList.add('center-hovered');
@@ -3800,14 +3816,11 @@
         let chapters = parseDocumentIntoChapters();
         if (draggedIdx < 0 || draggedIdx >= chapters.length || targetIdx < 0 || targetIdx >= chapters.length) return;
 
-        // Splice and reorder chapter objects physically
         const [movedChapter] = chapters.splice(draggedIdx, 1);
         chapters.splice(targetIdx, 0, movedChapter);
 
-        // Ripple re-sequence and update chapter headings within the blocks
         chapters.forEach((chap, idx) => {
             const newChapterNum = idx + 1;
-            // Scan blocks for chapter header and update label
             let markerFound = false;
             chap.blocks.forEach(b => {
                 const text = b.innerText.trim();
@@ -3817,7 +3830,6 @@
                 }
             });
 
-            // If no explicit chapter heading block existed in this chapter's blocks, insert one at the top
             if (!markerFound && chap.blocks.length > 0) {
                 const headerBlock = document.createElement('div');
                 headerBlock.innerText = `CHAPTER ${newChapterNum}`;
@@ -3825,7 +3837,6 @@
             }
         });
 
-        // Reconstruct editor HTML from reordered chapters
         let newHtml = '';
         chapters.forEach((chap) => {
             chap.blocks.forEach(b => {
