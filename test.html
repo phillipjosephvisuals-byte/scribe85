@@ -2479,7 +2479,7 @@
             return;
         }
 
-        // Bold markdown: *text* (Triggered only when typing/moving past the closing asterisk)
+        // Bold markdown: *text*
         const boldRegex = /\*([^*]+)\*/g;
         let match;
         while ((match = boldRegex.exec(text)) !== null) {
@@ -2488,10 +2488,11 @@
             const matchIndex = match.index;
             const matchEndIndex = matchIndex + fullMatch.length;
 
-            // Only format if the cursor is right after or inside the completed closure
             if (caretOffset >= matchEndIndex) {
                 const beforeText = text.substring(0, matchIndex);
-                const afterText = text.substring(matchEndIndex);
+                // If nothing follows immediately, add a zero-width space to trap cursor outside
+                const rawAfterText = text.substring(matchEndIndex);
+                const afterText = rawAfterText.length > 0 ? rawAfterText : '\u200B';
 
                 const parent = textNode.parentNode;
                 const beforeNode = document.createTextNode(beforeText);
@@ -2504,7 +2505,7 @@
                 parent.insertBefore(afterNode, textNode);
                 parent.removeChild(textNode);
 
-                // Safely place cursor right after the formatted element without jumping
+                // Place cursor at the start of the afterNode (right outside the <b> tag)
                 const newRange = document.createRange();
                 newRange.setStart(afterNode, 0);
                 newRange.collapse(true);
@@ -2524,7 +2525,8 @@
 
             if (caretOffset >= matchEndIndex) {
                 const beforeText = text.substring(0, matchIndex);
-                const afterText = text.substring(matchEndIndex);
+                const rawAfterText = text.substring(matchEndIndex);
+                const afterText = rawAfterText.length > 0 ? rawAfterText : '\u200B';
 
                 const parent = textNode.parentNode;
                 const beforeNode = document.createTextNode(beforeText);
