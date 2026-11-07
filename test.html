@@ -2564,20 +2564,75 @@
         return false;
     }
 
-    function toggleInlineFormatting(tag) {
+    function getSelectionCharacterOffsets(rootElement) {
         const selection = window.getSelection();
-        let range = null;
+        if (!selection.rangeCount || selection.isCollapsed) return null;
+        const range = selection.getRangeAt(0);
 
-        if (selection.rangeCount && !selection.isCollapsed) {
-            range = selection.getRangeAt(0);
-            savedSelectionRange = range.cloneRange();
-        } else if (savedSelectionRange) {
-            range = savedSelectionRange;
+        const preRange = range.cloneRange();
+        preRange.selectNodeContents(rootElement);
+        preRange.setEnd(range.startContainer, range.startOffset);
+        const start = preRange.toString().length;
+        const length = range.toString().length;
+
+        return { start, end: start + length };
+    }
+
+    function restoreSelectionCharacterOffsets(rootElement, offsets) {
+        if (!offsets) return;
+        const selection = window.getSelection();
+        const range = document.createRange();
+        range.setStart(rootElement, 0);
+        range.collapse(true);
+
+        let charIndex = 0;
+        let startNode = null, startOffset = 0;
+        let endNode = null, endOffset = 0;
+        let foundStart = false, foundEnd = false;
+
+        const nodeStack = [rootElement];
+        let node;
+
+        while ((node = nodeStack.pop())) {
+            if (node.nodeType === Node.TEXT_NODE) {
+                const nextCharIndex = charIndex + node.length;
+                if (!foundStart && offsets.start >= charIndex && offsets.start <= nextCharIndex) {
+                    startNode = node;
+                    startOffset = offsets.start - charIndex;
+                    foundStart = true;
+                }
+                if (!foundEnd && offsets.end >= charIndex && offsets.end <= nextCharIndex) {
+                    endNode = node;
+                    endOffset = offsets.end - charIndex;
+                    foundEnd = true;
+                }
+                if (foundStart && foundEnd) break;
+                charIndex = nextCharIndex;
+            } else {
+                let i = node.childNodes.length;
+                while (i--) {
+                    nodeStack.push(node.childNodes[i]);
+                }
+            }
+        }
+
+        if (foundStart) {
+            range.setStart(startNode, startOffset);
+            range.setEnd(foundEnd ? endNode : startNode, foundEnd ? endOffset : startOffset);
             selection.removeAllRanges();
             selection.addRange(range);
         }
+    }
 
-        if (!range || range.collapsed) return;
+    function toggleInlineFormatting(tag) {
+        const selection = window.getSelection();
+        if (!selection.rangeCount || selection.isCollapsed) return;
+
+        // 1. Capture exact selection offsets before any DOM changes occur
+        const offsets = getSelectionCharacterOffsets(editor);
+        if (!offsets) return;
+
+        const range = selection.getRangeAt(0);
 
         let targetTags = [tag];
         if (tag === 'b') targetTags = ['b', 'strong'];
@@ -2587,21 +2642,17 @@
         const hasAny = isStylePresentInSelection(selection, ...targetTags);
 
         if (hasAny) {
-            // TOGGLE OFF: Safely unwrap target tags within the selection range without disturbing surrounding text
+            // TOGGLE OFF: Safely unwrap target tags within the selection range
             const ancestor = range.commonAncestorContainer;
             const editableAncestor = ancestor.nodeType === Node.TEXT_NODE ? ancestor.parentNode : ancestor;
-            
-            // Find all matching format elements inside or overlapping the range
             const formatElements = editableAncestor.querySelectorAll ? Array.from(editableAncestor.querySelectorAll(targetTags.join(','))) : [];
             
             formatElements.forEach(el => {
                 try {
                     const elRange = document.createRange();
                     elRange.selectNodeContents(el);
-                    // Check if element intersects with user's selection range
                     if (range.compareBoundaryPoints(Range.END_TO_START, elRange) < 0 &&
                         range.compareBoundaryPoints(Range.START_TO_END, elRange) > 0) {
-                        
                         const parent = el.parentNode;
                         while (el.firstChild) {
                             parent.insertBefore(el.firstChild, el);
@@ -2611,7 +2662,6 @@
                 } catch (err) {}
             });
 
-            // Normalize adjacent text nodes to keep DOM clean
             editor.normalize();
         } else {
             // TOGGLE ON: Wrap selected contents safely
@@ -2620,15 +2670,13 @@
                 const el = document.createElement(tag);
                 el.appendChild(fragment);
                 range.insertNode(el);
-
-                range.selectNodeContents(el);
-                selection.removeAllRanges();
-                selection.addRange(range);
             } catch (err) {
-                // Fallback for complex cross-node selections using document command execution
                 document.execCommand(tag === 'b' ? 'bold' : (tag === 'i' ? 'italic' : 'underline'), false, null);
             }
         }
+
+        // 2. Restore the exact text selection highlight after DOM updates complete
+        restoreSelectionCharacterOffsets(editor, offsets);
 
         savedSelectionRange = null;
         saveDocument();
