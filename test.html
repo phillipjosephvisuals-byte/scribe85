@@ -2986,7 +2986,6 @@
     }
 
     editor.addEventListener('keydown', (e) => {
-        editor.addEventListener('keydown', (e) => {
         // 1. Guard against Chrome auto-formatting shortcuts for ---, ___, and ...
         if (['-', '_', '.'].includes(e.key)) {
             const selection = window.getSelection();
