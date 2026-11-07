@@ -2479,15 +2479,18 @@
             return;
         }
 
-        // Bold markdown: *text*
-        const boldRegex = /\*([^*]+)\*/g;
+        // Bold markdown: *text* (Requires a space or boundary right after the closing *)
+        // Matches e.g. "*hello* "
+        const boldRegex = /\*([^*]+)\*(\s)/g;
         let match;
         while ((match = boldRegex.exec(text)) !== null) {
             const fullMatch = match[0];
             const innerText = match[1];
+            const trailingSpace = match[2];
             const matchIndex = match.index;
             const matchEndIndex = matchIndex + fullMatch.length;
 
+            // Only trigger if the user's cursor has moved past the closing space
             if (caretOffset >= matchEndIndex) {
                 const beforeText = text.substring(0, matchIndex);
                 const rawAfterText = text.substring(matchEndIndex);
@@ -2497,33 +2500,32 @@
                 const beforeNode = document.createTextNode(beforeText);
                 const bElem = document.createElement('b');
                 bElem.textContent = innerText;
+                // Include the trailing space outside the bold element
+                const spaceNode = document.createTextNode(trailingSpace);
                 const afterNode = document.createTextNode(afterText);
 
                 parent.insertBefore(beforeNode, textNode);
                 parent.insertBefore(bElem, textNode);
+                parent.insertBefore(spaceNode, textNode);
                 parent.insertBefore(afterNode, textNode);
                 parent.removeChild(textNode);
 
-                // Place cursor outside
+                // Place cursor cleanly in the plain text node after the space
                 const newRange = document.createRange();
                 newRange.setStart(afterNode, 0);
                 newRange.collapse(true);
                 selection.removeAllRanges();
                 selection.addRange(newRange);
-
-                // FORCE the browser to reset its internal active styling state
-                if (document.queryCommandState('bold')) {
-                    document.execCommand('bold', false, null);
-                }
                 return;
             }
         }
 
-        // Italic markdown: _text_
-        const italicRegex = /_([^_]+)_/g;
+        // Italic markdown: _text_ (Requires a space or boundary right after the closing _)
+        const italicRegex = /_([^_]+)_(\s)/g;
         while ((match = italicRegex.exec(text)) !== null) {
             const fullMatch = match[0];
             const innerText = match[1];
+            const trailingSpace = match[2];
             const matchIndex = match.index;
             const matchEndIndex = matchIndex + fullMatch.length;
 
@@ -2536,10 +2538,12 @@
                 const beforeNode = document.createTextNode(beforeText);
                 const iElem = document.createElement('i');
                 iElem.textContent = innerText;
+                const spaceNode = document.createTextNode(trailingSpace);
                 const afterNode = document.createTextNode(afterText);
 
                 parent.insertBefore(beforeNode, textNode);
                 parent.insertBefore(iElem, textNode);
+                parent.insertBefore(spaceNode, textNode);
                 parent.insertBefore(afterNode, textNode);
                 parent.removeChild(textNode);
 
@@ -2548,11 +2552,6 @@
                 newRange.collapse(true);
                 selection.removeAllRanges();
                 selection.addRange(newRange);
-
-                // FORCE the browser to reset its internal active styling state
-                if (document.queryCommandState('italic')) {
-                    document.execCommand('italic', false, null);
-                }
                 return;
             }
         }
