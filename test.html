@@ -2479,16 +2479,19 @@
             return;
         }
 
-        // Bold markdown: *text*
-        const boldMatch = text.match(/\*([^*]+)\*/);
-        if (boldMatch) {
-            const fullMatch = boldMatch[0];
-            const innerText = boldMatch[1];
-            const matchIndex = text.indexOf(fullMatch);
+        // Bold markdown: *text* (Triggered only when typing/moving past the closing asterisk)
+        const boldRegex = /\*([^*]+)\*/g;
+        let match;
+        while ((match = boldRegex.exec(text)) !== null) {
+            const fullMatch = match[0];
+            const innerText = match[1];
+            const matchIndex = match.index;
+            const matchEndIndex = matchIndex + fullMatch.length;
 
-            if (caretOffset >= matchIndex + fullMatch.length) {
+            // Only format if the cursor is right after or inside the completed closure
+            if (caretOffset >= matchEndIndex) {
                 const beforeText = text.substring(0, matchIndex);
-                const afterText = text.substring(matchIndex + fullMatch.length);
+                const afterText = text.substring(matchEndIndex);
 
                 const parent = textNode.parentNode;
                 const beforeNode = document.createTextNode(beforeText);
@@ -2501,6 +2504,7 @@
                 parent.insertBefore(afterNode, textNode);
                 parent.removeChild(textNode);
 
+                // Safely place cursor right after the formatted element without jumping
                 const newRange = document.createRange();
                 newRange.setStart(afterNode, 0);
                 newRange.collapse(true);
@@ -2511,15 +2515,16 @@
         }
 
         // Italic markdown: _text_
-        const italicMatch = text.match(/_([^_]+)_/);
-        if (italicMatch) {
-            const fullMatch = italicMatch[0];
-            const innerText = italicMatch[1];
-            const matchIndex = text.indexOf(fullMatch);
+        const italicRegex = /_([^_]+)_/g;
+        while ((match = italicRegex.exec(text)) !== null) {
+            const fullMatch = match[0];
+            const innerText = match[1];
+            const matchIndex = match.index;
+            const matchEndIndex = matchIndex + fullMatch.length;
 
-            if (caretOffset >= matchIndex + fullMatch.length) {
+            if (caretOffset >= matchEndIndex) {
                 const beforeText = text.substring(0, matchIndex);
-                const afterText = text.substring(matchIndex + fullMatch.length);
+                const afterText = text.substring(matchEndIndex);
 
                 const parent = textNode.parentNode;
                 const beforeNode = document.createTextNode(beforeText);
