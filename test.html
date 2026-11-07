@@ -687,7 +687,7 @@
             gap: 20px;
         }
 
-        /* SCRIBE / PLOT TOGGLE BUTTONS */
+        /* SCRIBE / PLOT TOGGLE BUTTONS - Shifted right over the right hand margin */
         .workspace-mode-toggles {
             display: flex;
             background: rgba(255, 255, 255, 0.03);
@@ -695,6 +695,8 @@
             border-radius: 20px;
             padding: 3px;
             gap: 2px;
+            margin-left: max(16px, calc((100vw - var(--canvas-width)) / 4 - 80px));
+            flex-shrink: 0;
         }
 
         .mode-toggle-btn {
@@ -870,7 +872,7 @@
             pointer-events: none;
         }
 
-        /* PLOT CARD VIEW CONTAINER & STYLES */
+        /* PLOT VIEW CONTAINER & STYLES */
         #plot-view-container {
             display: none;
             flex-direction: column;
@@ -1598,6 +1600,7 @@
             .left-margin-element-indicator { display: none !important; }
             .next-line-navigation-prompt { display: none !important; }
             .plot-cards-grid { grid-template-columns: repeat(2, 1fr) !important; }
+            .workspace-mode-toggles { margin-left: 0; }
         }
 
         @media (max-width: 768px) {
@@ -1747,6 +1750,8 @@
                 flex-direction: column;
                 gap: 6px;
             }
+
+            .workspace-mode-toggles { margin-left: 0; }
 
             .doc-title { 
                 width: 100%; 
@@ -2002,11 +2007,12 @@
 
             <div class="header-center-hub">
                 <input type="text" class="doc-title" spellcheck="false" placeholder="untitled">
-                <!-- Scribe / Plot Toggles -->
-                <div class="workspace-mode-toggles">
-                    <button class="mode-toggle-btn active" id="btn-mode-scribe" onclick="switchWorkspaceView('scribe')">scribe</button>
-                    <button class="mode-toggle-btn" id="btn-mode-plot" onclick="switchWorkspaceView('plot')">plot</button>
-                </div>
+            </div>
+
+            <!-- Scribe / Plot Toggles - Balanced over right hand margin -->
+            <div class="workspace-mode-toggles">
+                <button class="mode-toggle-btn active" id="btn-mode-scribe" onclick="switchWorkspaceView('scribe')">scribe</button>
+                <button class="mode-toggle-btn" id="btn-mode-plot" onclick="switchWorkspaceView('plot')">plot</button>
             </div>
         </header>
 
@@ -3637,7 +3643,7 @@
     }
 
     /* ------------------------------------------------------------------
-        PLOT VIEW & CHAPTER CARD ARCHITECTURE (NEWLY ADDED FEATURE)
+        PLOT VIEW & CHAPTER CARD ARCHITECTURE (UPDATED & RIPPLE-SYNCED)
     ------------------------------------------------------------------ */
     function switchWorkspaceView(tab) {
         currentWorkspaceTab = tab;
@@ -3665,21 +3671,20 @@
     function parseDocumentIntoChapters() {
         const blocks = Array.from(editor.children);
         if (blocks.length === 0) {
-            // Fallback if editor is flat text nodes
             const rawText = editor.innerText || "";
-            return [{ title: "Chapter 1", rawContent: rawText, blockStartIndex: 0, blockEndIndex: 0 }];
+            return [{ title: "Chapter 1", blocks: [], rawContent: rawText }];
         }
 
         let chapters = [];
-        let currentChapter = { title: "Chapter 1", blocks: [], textChunks: [] };
+        let currentChapter = { title: "Chapter 1", blocks: [] };
 
-        blocks.forEach((block, idx) => {
+        blocks.forEach((block) => {
             const text = block.innerText.trim();
             const isChapterMarker = /^chapter\s+\d+/i.test(text) || /^ch\.?\s*\d+/i.test(text);
 
             if (isChapterMarker && currentChapter.blocks.length > 0) {
                 chapters.push(currentChapter);
-                currentChapter = { title: text, blocks: [block], textChunks: [text] };
+                currentChapter = { title: text, blocks: [block] };
             } else {
                 if (currentChapter.blocks.length === 0 && !isChapterMarker) {
                     currentChapter.title = "Chapter 1";
@@ -3687,7 +3692,6 @@
                     currentChapter.title = text;
                 }
                 currentChapter.blocks.push(block);
-                currentChapter.textChunks.push(block.innerHTML);
             }
         });
 
@@ -3730,7 +3734,6 @@
                 </div>
             `;
 
-            // Center hover detection (15% center box region)
             card.addEventListener('mousemove', (e) => {
                 const rect = card.getBoundingClientRect();
                 const x = e.clientX - rect.left;
@@ -3752,7 +3755,6 @@
                 card.classList.remove('center-hovered');
             });
 
-            // Drag and Drop handlers
             card.addEventListener('dragstart', (e) => {
                 e.dataTransfer.setData('text/plain', index);
                 setTimeout(() => card.classList.add('dragging'), 0);
@@ -3786,7 +3788,6 @@
             gridContainer.appendChild(card);
         });
 
-        // Scroll to target chapter card if specified
         setTimeout(() => {
             const cards = gridContainer.querySelectorAll('.chapter-card');
             if (cards[targetChapterIndex]) {
@@ -3796,19 +3797,39 @@
     }
 
     function reorderChaptersInEditor(draggedIdx, targetIdx) {
-        const chapters = parseDocumentIntoChapters();
+        let chapters = parseDocumentIntoChapters();
         if (draggedIdx < 0 || draggedIdx >= chapters.length || targetIdx < 0 || targetIdx >= chapters.length) return;
 
-        // Splice and reorder chapter blocks array
+        // Splice and reorder chapter objects physically
         const [movedChapter] = chapters.splice(draggedIdx, 1);
         chapters.splice(targetIdx, 0, movedChapter);
 
+        // Ripple re-sequence and update chapter headings within the blocks
+        chapters.forEach((chap, idx) => {
+            const newChapterNum = idx + 1;
+            // Scan blocks for chapter header and update label
+            let markerFound = false;
+            chap.blocks.forEach(b => {
+                const text = b.innerText.trim();
+                if (!markerFound && (/^chapter\s+\d+/i.test(text) || /^ch\.?\s*\d+/i.test(text))) {
+                    b.innerText = `CHAPTER ${newChapterNum}`;
+                    markerFound = true;
+                }
+            });
+
+            // If no explicit chapter heading block existed in this chapter's blocks, insert one at the top
+            if (!markerFound && chap.blocks.length > 0) {
+                const headerBlock = document.createElement('div');
+                headerBlock.innerText = `CHAPTER ${newChapterNum}`;
+                chap.blocks.unshift(headerBlock);
+            }
+        });
+
         // Reconstruct editor HTML from reordered chapters
         let newHtml = '';
-        chapters.forEach((chap, idx) => {
-            // Ensure first block or header explicitly names correct sequence if desired, or keep original blocks
+        chapters.forEach((chap) => {
             chap.blocks.forEach(b => {
-                newHtml += `<div>${b.innerHTML}</div>`;
+                newHtml += `<div>${b.innerHTML || b.innerText}</div>`;
             });
         });
 
@@ -3822,14 +3843,12 @@
         activePlotChapterIndex = chapterIndex;
         switchWorkspaceView('scribe');
 
-        // Scroll editor to corresponding chapter block
         setTimeout(() => {
             const chapters = parseDocumentIntoChapters();
             if (chapters[chapterIndex] && chapters[chapterIndex].blocks.length > 0) {
                 const targetBlock = chapters[chapterIndex].blocks[0];
                 targetBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 
-                // Place caret inside block
                 const range = document.createRange();
                 range.setStart(targetBlock, 0);
                 range.collapse(true);
