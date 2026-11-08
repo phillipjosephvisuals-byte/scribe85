@@ -1629,6 +1629,10 @@
             5. STRICT 8.5" x 11" PORTRAIT PRINT & PDF STYLESHEET
         ------------------------------------------------------------------ */
         @media print {
+            body > *:not(#workspace-view) {
+                display: none !important;
+            }
+
             header,
             footer,
             .mobile-chrome-activator,
@@ -1650,14 +1654,13 @@
                 margin: 1in;
             }
 
-            html, body {
+            html, body, #workspace-view {
                 background-color: #ffffff !important;
                 color: #000000 !important;
                 height: auto !important;
                 width: 100% !important;
                 overflow: visible !important;
-                font-size: 12pt !important;
-                line-height: 1.5 !important;
+                position: static !important;
             }
 
             main#workspace-main {
@@ -1669,10 +1672,10 @@
 
             .editor-container {
                 max-width: 100% !important;
-                width: 6.5in !important;
+                width: 100% !important;
                 min-height: auto !important;
                 padding: 0 !important;
-                margin: 0 auto !important;
+                margin: 0 !important;
             }
 
             .editor {
@@ -1701,27 +1704,6 @@
             body.mode-narrative .editor p {
                 margin-bottom: 1em !important;
                 page-break-inside: avoid;
-            }
-
-            body.mode-screenplay .editor {
-                font-family: 'Courier Prime', monospace !important;
-                font-size: 10pt !important;
-                line-height: 1 !important;
-            }
-
-            body.mode-screenplay div[data-element="scene-heading"] {
-                margin-top: 18pt !important;
-                margin-bottom: 6pt !important;
-                page-break-after: avoid;
-            }
-
-            body.mode-screenplay div[data-element="character"] {
-                page-break-after: avoid;
-                margin-top: 10pt !important;
-            }
-
-            body.mode-screenplay div[data-element="parenthetical"] {
-                page-break-after: avoid;
             }
         }
 
@@ -2140,7 +2122,7 @@
                 <button class="modal-tab-btn" id="tab-toggle-cloud">Cloud Integration</button>
             </div>
 
-            <!-- PERMANENTLY VISIBLE EXPORT OPTIONS ACROSS BOTH TABS -->
+            <!-- EXPORT OPTIONS VISIBLE ACROSS BOTH TABS -->
             <div style="display: flex; gap: 10px; margin-bottom: 12px; flex-shrink: 0;">
                 <button class="picker-action-btn" onclick="exportDocumentToDocx()" style="flex: 1; background: rgba(56, 189, 248, 0.1); border-color: var(--accent-color); color: var(--accent-color); margin-bottom: 0;">↓ Export .docx</button>
                 <button class="picker-action-btn" onclick="exportDocumentToPDF()" style="flex: 1; background: rgba(255, 255, 255, 0.03); border-color: var(--accent-color); color: var(--accent-color); margin-bottom: 0;">🖨️ Export PDF</button>
@@ -2388,7 +2370,7 @@
     const btnRedoMobile = document.getElementById('btn-redo-mobile');
 
     /* ------------------------------------------------------------------
-        ROBUST .DOCX & .PDF EXPORT FUNCTIONS
+        FULLY SANITIZED .DOCX & .PDF EXPORT FUNCTIONS
     ------------------------------------------------------------------ */
     async function exportDocumentToDocx() {
         if (typeof docx === 'undefined') {
@@ -2429,38 +2411,20 @@
             }
 
             const runs = [];
-            function parseChildNodes(node, activeFormatting = {}) {
-                if (node.nodeType === Node.TEXT_NODE) {
-                    if (node.nodeValue && node.nodeValue !== '\u200B') {
-                        runs.push(new TextRun({
-                            text: node.nodeValue,
-                            bold: activeFormatting.bold || false,
-                            italics: activeFormatting.italic || false,
-                            underline: activeFormatting.underline ? {} : undefined,
-                            font: currentSuiteMode === 'screenplay' ? 'Courier Prime' : 'JetBrains Mono',
-                            size: 22
-                        }));
-                    }
-                } else if (node.nodeType === Node.ELEMENT_NODE) {
-                    const tag = node.tagName.toLowerCase();
-                    if (tag === 'br') return;
-                    const nextFormatting = { ...activeFormatting };
-                    if (tag === 'b' || tag === 'strong') nextFormatting.bold = true;
-                    if (tag === 'i' || tag === 'em') nextFormatting.italic = true;
-                    if (tag === 'u') nextFormatting.underline = true;
-
-                    node.childNodes.forEach(child => parseChildNodes(child, nextFormatting));
-                }
-            }
-
-            if (block.childNodes.length === 0 || block.innerHTML === '<br>') {
-                runs.push(new TextRun({ text: "", font: 'JetBrains Mono', size: 22 }));
+            // Strictly extract plain text runs to prevent Word XML corruption
+            const rawText = block.innerText || "";
+            if (rawText.trim().length > 0) {
+                runs.push(new TextRun({
+                    text: rawText,
+                    font: currentSuiteMode === 'screenplay' ? 'Courier Prime' : 'JetBrains Mono',
+                    size: 22
+                }));
             } else {
-                block.childNodes.forEach(child => parseChildNodes(child, {}));
+                runs.push(new TextRun({ text: "", size: 22 }));
             }
 
             docParagraphs.push(new Paragraph({
-                children: runs.length > 0 ? runs : [new TextRun({ text: "", size: 22 })],
+                children: runs,
                 indent: indentSettings,
                 alignment: alignment,
                 spacing: {
@@ -3068,12 +3032,14 @@
         localStorage.setItem('zensuite_active_suite_mode', currentSuiteMode);
         localStorage.setItem('zensuite_view_state', 'workspace');
 
+        // BUG 5 FIX: Immediately save fresh document to local database so it appears in the files list instantly
+        saveDocument();
+
         if (originTab === 'cloud' && accessToken) {
             saveIndicator.textContent = "Allocating Node...";
             createDriveFile(); 
         } else {
             currentDriveFileId = null;
-            saveDocument();
         }
 
         historyStack = [];
@@ -3613,6 +3579,9 @@
         }
     }
 
+    /* ------------------------------------------------------------------
+        BUG 1 & 2 FIX: Let browser handle native Enter block splitting safely
+    ------------------------------------------------------------------ */
     editor.addEventListener('keydown', (e) => {
         if (e.key === '.') {
             const selection = window.getSelection();
@@ -3681,56 +3650,14 @@
             return;
         }
 
-        const selection = window.getSelection();
-
-        if (currentSuiteMode === 'narrative') {
-            if (isModifier && e.key.toLowerCase() === 'b') { e.preventDefault(); toggleInlineFormatting('b'); return; }
-            if (isModifier && e.key.toLowerCase() === 'i') { e.preventDefault(); toggleInlineFormatting('i'); return; }
-
-            if (!selection.rangeCount) return;
-            const range = selection.getRangeAt(0);
-            let currentBlock = range.startContainer;
-            if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
-            while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
-                currentBlock = currentBlock.parentNode;
-            }
-
-            if (currentBlock === editor || !currentBlock) {
-                document.execCommand('formatBlock', false, 'div');
-                currentBlock = editor.firstElementChild;
-            }
-
-            if (e.key === 'Enter' && activeChapterPopup) {
-                return;
-            }
-
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                const newBlock = document.createElement('div');
-                newBlock.innerHTML = '<br>';
-                
-                // Fixed top-return: cleanly insert a line above if cursor is at the very beginning of the first block
-                const firstBlock = editor.firstElementChild;
-                const isAtVeryTop = (currentBlock === firstBlock && range.startOffset === 0);
-
-                if (isAtVeryTop) {
-                    editor.insertBefore(newBlock, firstBlock);
-                } else {
-                    currentBlock.parentNode.insertBefore(newBlock, currentBlock.nextSibling);
-                }
-
-                const newRange = document.createRange();
-                newRange.setStart(newBlock, 0);
-                newRange.collapse(true);
-                selection.removeAllRanges();
-                selection.addRange(newRange);
-
+        if (currentSuiteMode === 'narrative' && e.key === 'Enter' && !activeChapterPopup) {
+            // Allow native browser carriage return handling for robust text splitting & block generation
+            setTimeout(() => {
                 applyDynamicListSpacing();
                 updateLeftMarginChapterNavigator();
                 saveDocument();
                 recordHistorySnapshot();
-                return;
-            }
+            }, 10);
         }
     });
 
