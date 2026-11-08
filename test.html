@@ -9,6 +9,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,300;1,700&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- docx.js library for client-side Word document generation -->
+    <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.js"></script>
 
     <style>
         /* ------------------------------------------------------------------
@@ -692,7 +694,6 @@
             gap: 20px;
         }
 
-        /* SCRIBE / PLOT TOGGLE BUTTONS - Clean centered pill region aligned over right-hand margin */
         .workspace-mode-toggles {
             display: flex;
             background: rgba(255, 255, 255, 0.03);
@@ -952,7 +953,6 @@
             transform-origin: top center;
         }
 
-        /* Individual Chapter Card Styling */
         .chapter-card {
             background: rgba(18, 20, 28, 0.85);
             border: 1px solid rgba(255, 255, 255, 0.12);
@@ -977,7 +977,6 @@
             box-shadow: 0 0 15px rgba(255,255,255,0.3);
         }
 
-        /* Top handle bar */
         .chapter-card-handle {
             height: 24px;
             background: rgba(255, 255, 255, 0.04);
@@ -999,7 +998,6 @@
             box-shadow: 0 4px 0 var(--muted-color);
         }
 
-        /* Card Header */
         .chapter-card-header {
             padding: 10px 14px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.06);
@@ -1033,7 +1031,6 @@
             color: var(--accent-color);
         }
 
-        /* Card Content Body with Internal Scroll and Fade */
         .chapter-card-body-wrapper {
             position: relative;
             flex-grow: 1;
@@ -1061,7 +1058,6 @@
             border-radius: 4px;
         }
 
-        /* Bottom opacity fade on text */
         .chapter-card-body::after {
             content: '';
             position: sticky;
@@ -1074,7 +1070,6 @@
             display: block;
         }
 
-        /* Ultra-thin Goal Progress Track at bottom of card */
         .chapter-goal-track {
             height: 2px;
             background: rgba(255, 255, 255, 0.08);
@@ -1094,7 +1089,6 @@
             box-shadow: 0 0 8px var(--accent-color);
         }
 
-        /* Center Hover Region for Edit Button */
         .chapter-card-center-hover-zone {
             position: absolute;
             top: 35%;
@@ -1146,16 +1140,12 @@
             display: block;
         }
 
-        /* Custom Spaced Ellipsis styling */
         .custom-ellipsis {
             letter-spacing: 0.45px;
         }
 
         /* ------------------------------------------------------------------
             4.1 LEFT MARGIN CHAPTER NAVIGATOR
-        ------------------------------------------------------------------ */
-       /* ------------------------------------------------------------------
-            4.1 LEFT MARGIN CHAPTER NAVIGATOR (FIXED OVERFLOW & PROPORTIONS)
         ------------------------------------------------------------------ */
         .left-margin-chapter-nav {
             position: fixed;
@@ -1229,7 +1219,7 @@
             text-overflow: ellipsis;
             text-align: left;
             display: block;
-            flex-shrink: 0; /* Prevents individual items from compressing */
+            flex-shrink: 0;
         }
 
         .left-margin-chapter-item:hover {
@@ -1628,6 +1618,97 @@
             text-align: right;
             padding-right: 5%;
             margin-bottom: 14pt;
+        }
+
+        /* ------------------------------------------------------------------
+            5. PRINT & PDF STYLESHEET (CLEAN PAPER EXPORT)
+        ------------------------------------------------------------------ */
+        @media print {
+            header,
+            footer,
+            .mobile-chrome-activator,
+            .margin-ghost-guide-wrapper,
+            .left-margin-chapter-nav,
+            .left-margin-alert-card,
+            .margin-list-widget,
+            .chapter-prompt-popup,
+            .modal-overlay,
+            .alert-overlay,
+            #plot-view-container,
+            .left-margin-element-indicator,
+            .next-line-navigation-prompt {
+                display: none !important;
+            }
+
+            html, body {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+                height: auto !important;
+                width: 100% !important;
+                overflow: visible !important;
+                font-size: 12pt !important;
+                line-height: 1.5 !important;
+            }
+
+            main#workspace-main {
+                overflow: visible !important;
+                padding: 0 !important;
+                display: block !important;
+            }
+
+            .editor-container {
+                max-width: 100% !important;
+                width: 100% !important;
+                min-height: auto !important;
+                padding: 0 !important;
+            }
+
+            .editor {
+                padding: 0 !important;
+                text-shadow: none !important;
+                color: #000000 !important;
+                caret-color: transparent !important;
+                overflow: visible !important;
+                min-height: auto !important;
+            }
+
+            .editor * {
+                color: #000000 !important;
+                text-shadow: none !important;
+                background: transparent !important;
+            }
+
+            @page {
+                size: letter portrait;
+                margin: 1in;
+            }
+
+            body.mode-narrative .editor div,
+            body.mode-narrative .editor p {
+                margin-bottom: 1em !important;
+                page-break-inside: avoid;
+            }
+
+            body.mode-screenplay .editor {
+                font-family: 'Courier Prime', monospace !important;
+                font-size: 10pt !important;
+                line-height: 1 !important;
+            }
+
+            body.mode-screenplay div[data-element="scene-heading"] {
+                margin-top: 18pt !important;
+                margin-bottom: 6pt !important;
+                page-break-after: avoid;
+            }
+
+            body.mode-screenplay div[data-element="character"] {
+                page-break-after: avoid;
+                margin-top: 10pt !important;
+            }
+
+            body.mode-screenplay div[data-element="parenthetical"] {
+                page-break-after: avoid;
+            }
         }
 
         footer {
@@ -2049,6 +2130,12 @@
                 <div id="panel-local-content" class="tab-panel-view active">
                     <button class="picker-action-btn" id="new-doc-btn">+ Create Fresh Document</button>
                     
+                    <!-- NEW EXPORT ACTION BUTTONS (.docx & PDF) -->
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <button class="picker-action-btn" onclick="exportDocumentToDocx()" style="flex: 1; background: rgba(56, 189, 248, 0.1); border-color: var(--accent-color); color: var(--accent-color); margin-bottom: 0;">↓ Export .docx</button>
+                        <button class="picker-action-btn" onclick="exportDocumentToPDF()" style="flex: 1; background: rgba(255, 255, 255, 0.03); border-color: var(--accent-color); color: var(--accent-color); margin-bottom: 0;">🖨️ Export PDF</button>
+                    </div>
+
                     <div class="document-list-title">Recent Local Drafts <span class="limit-subtext" id="local-limit-tag">(limit: 10)</span></div>
                     <div class="document-scroll-list" id="local-docs-target"></div>
 
@@ -2134,8 +2221,7 @@
                                 </g>
                             </g>
                         </svg>
-                    </svg>
-                </button>
+                    </button>
 
                     <div class="inline-theme-picker">
                         <div class="theme-square sq-dark" title="Classic Dark" onclick="applyAppTheme('dark')"></div>
@@ -2155,7 +2241,6 @@
                 <input type="text" class="doc-title" spellcheck="false" placeholder="untitled">
             </div>
 
-            <!-- Scribe / Plot Toggles - Centered pill region aligned over right-hand margin -->
             <div class="workspace-mode-toggles">
                 <button class="mode-toggle-btn active" id="btn-mode-scribe" onclick="switchWorkspaceView('scribe')">scribe</button>
                 <button class="mode-toggle-btn" id="btn-mode-plot" onclick="switchWorkspaceView('plot')">plot</button>
@@ -2287,6 +2372,122 @@
     const btnRedoDesktop = document.getElementById('btn-redo-desktop');
     const btnUndoMobile = document.getElementById('btn-undo-mobile');
     const btnRedoMobile = document.getElementById('btn-redo-mobile');
+
+    /* ------------------------------------------------------------------
+        NEW: .DOCX & .PDF EXPORT FUNCTIONS
+    ------------------------------------------------------------------ */
+    async function exportDocumentToDocx() {
+        if (typeof docx === 'undefined') {
+            showZenAlert("Export Engine Error", "docx.js library failed to load from CDN.");
+            return;
+        }
+
+        const { Document, Packer, Paragraph, TextRun, AlignmentType } = docx;
+        const blocks = Array.from(editor.children);
+        const docParagraphs = [];
+
+        blocks.forEach(block => {
+            const isScreenplay = currentSuiteMode === 'screenplay';
+            const elementType = block.getAttribute('data-element');
+
+            let indentSettings = {};
+            let alignment = AlignmentType.LEFT;
+
+            if (isScreenplay) {
+                if (elementType === 'character') {
+                    indentSettings = { left: 2880 };
+                } else if (elementType === 'dialogue') {
+                    indentSettings = { left: 1728, right: 1440 };
+                } else if (elementType === 'parenthetical') {
+                    indentSettings = { left: 2160, right: 2160 };
+                } else if (elementType === 'transition') {
+                    alignment = AlignmentType.RIGHT;
+                }
+            }
+
+            const runs = [];
+            function parseChildNodes(node, activeFormatting = {}) {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    if (node.nodeValue) {
+                        runs.push(new TextRun({
+                            text: node.nodeValue,
+                            bold: activeFormatting.bold || false,
+                            italics: activeFormatting.italic || false,
+                            underline: activeFormatting.underline ? {} : undefined,
+                            font: currentSuiteMode === 'screenplay' ? 'Courier Prime' : 'JetBrains Mono',
+                            size: 22
+                        }));
+                    }
+                } else if (node.nodeType === Node.ELEMENT_NODE) {
+                    const tag = node.tagName.toLowerCase();
+                    const nextFormatting = { ...activeFormatting };
+                    if (tag === 'b' || tag === 'strong') nextFormatting.bold = true;
+                    if (tag === 'i' || tag === 'em') nextFormatting.italic = true;
+                    if (tag === 'u') nextFormatting.underline = true;
+
+                    node.childNodes.forEach(child => parseChildNodes(child, nextFormatting));
+                }
+            }
+
+            if (block.childNodes.length === 0) {
+                runs.push(new TextRun({ text: "", font: 'JetBrains Mono', size: 22 }));
+            } else {
+                block.childNodes.forEach(child => parseChildNodes(child, {}));
+            }
+
+            docParagraphs.push(new Paragraph({
+                children: runs,
+                indent: indentSettings,
+                alignment: alignment,
+                spacing: {
+                    after: currentSuiteMode === 'screenplay' ? 140 : 200,
+                    line: 276
+                }
+            }));
+        });
+
+        const doc = new Document({
+            sections: [{ properties: {}, children: docParagraphs }]
+        });
+
+        try {
+            const blob = await Packer.toBlob(doc);
+            const title = (docTitle ? docTitle.value.trim() : "scribe85-document").replace(/\.[^/.]+$/, "");
+            const fileName = `${title}.docx`;
+
+            const tempLink = document.createElement('a');
+            tempLink.href = URL.createObjectURL(blob);
+            tempLink.download = fileName;
+            document.body.appendChild(tempLink);
+            tempLink.click();
+            document.body.removeChild(tempLink);
+            
+            saveIndicator.textContent = "Docx Exported";
+        } catch (error) {
+            showZenAlert("Docx Export Error", error.message);
+        }
+    }
+
+    function exportDocumentToPDF() {
+        const previousTab = currentWorkspaceTab;
+        if (previousTab !== 'scribe') {
+            switchWorkspaceView('scribe');
+        }
+
+        const previousTitle = document.title;
+        const cleanFileName = (docTitle && docTitle.value.trim() ? docTitle.value.trim() : "scribe85-document")
+            .replace(/\.[^/.]+$/, "");
+        document.title = cleanFileName;
+
+        window.print();
+
+        document.title = previousTitle;
+        if (previousTab !== 'scribe') {
+            switchWorkspaceView(previousTab);
+        }
+
+        saveIndicator.textContent = "PDF Generated";
+    }
 
     function getCaretCharacterOffset(element) {
         let caretOffset = 0;
@@ -2636,7 +2837,7 @@
     let tokenClient;
     let accessToken = null;
     let activeChapterPopup = null;
-    let chapterWordGoals = {}; // stores custom goal per chapter index
+    let chapterWordGoals = {};
 
     function showLeftMarginAlert() {
         leftMarginAlert.style.display = 'flex';
@@ -3973,7 +4174,6 @@
                 </div>
             `;
 
-            // Chapter Title live edit handling
             const titleEl = card.querySelector('.chapter-card-title');
             titleEl.addEventListener('blur', () => {
                 const newTitle = titleEl.textContent.trim() || `Chapter ${index + 1}`;
@@ -3986,7 +4186,6 @@
                 }
             });
 
-            // Chapter Goal adjustment on clicking stats
             const statsEl = card.querySelector('.chapter-card-stats');
             statsEl.addEventListener('click', () => {
                 zenAlertTitle.textContent = `Chapter ${index + 1} Word Goal`;
