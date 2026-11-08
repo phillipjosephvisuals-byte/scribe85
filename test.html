@@ -2368,8 +2368,47 @@
     const btnRedoMobile = document.getElementById('btn-redo-mobile');
 
     /* ------------------------------------------------------------------
-        ROBUST .DOCX & .PDF EXPORT FUNCTIONS
+        ROBUST .DOCX & .PDF EXPORT FUNCTIONS WITH FULL FORMATTING SUPPORT
     ------------------------------------------------------------------ */
+    function parseNodeToTextRuns(node, baseFormatting = {}, TextRunClass) {
+        let runs = [];
+        if (node.nodeType === Node.TEXT_NODE) {
+            const text = node.nodeValue;
+            if (text.length > 0) {
+                runs.push(new TextRunClass({
+                    text: text,
+                    bold: !!baseFormatting.bold,
+                    italics: !!baseFormatting.italics,
+                    underline: baseFormatting.underline ? { type: "single" } : undefined,
+                    font: currentSuiteMode === 'screenplay' ? 'Courier Prime' : 'JetBrains Mono',
+                    size: 22
+                }));
+            }
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+            let formatting = { ...baseFormatting };
+            const tag = node.tagName.toLowerCase();
+            if (tag === 'b' || tag === 'strong') formatting.bold = true;
+            if (tag === 'i' || tag === 'em') formatting.italics = true;
+            if (tag === 'u') formatting.underline = true;
+
+            if (node.childNodes.length > 0) {
+                node.childNodes.forEach(child => {
+                    runs.push(...parseNodeToTextRuns(child, formatting, TextRunClass));
+                });
+            } else {
+                runs.push(new TextRunClass({
+                    text: node.innerText || "",
+                    bold: !!formatting.bold,
+                    italics: !!formatting.italics,
+                    underline: formatting.underline ? { type: "single" } : undefined,
+                    font: currentSuiteMode === 'screenplay' ? 'Courier Prime' : 'JetBrains Mono',
+                    size: 22
+                }));
+            }
+        }
+        return runs;
+    }
+
     async function exportDocumentToDocx() {
         if (typeof docx === 'undefined') {
             showZenAlert("Docx Export Error", "The docx library failed to load from CDN.");
@@ -2403,20 +2442,29 @@
                 }
             }
 
-            const runs = [];
-            const rawText = block.innerText || "";
-            runs.push(new TextRun({
-                text: rawText,
-                font: currentSuiteMode === 'screenplay' ? 'Courier Prime' : 'JetBrains Mono',
-                size: 22
-            }));
+            let runs = [];
+            if (block.childNodes.length > 0) {
+                block.childNodes.forEach(child => {
+                    runs.push(...parseNodeToTextRuns(child, {}, TextRun));
+                });
+            } else {
+                runs.push(new TextRun({
+                    text: block.innerText || "",
+                    font: isScreenplay ? 'Courier Prime' : 'JetBrains Mono',
+                    size: 22
+                }));
+            }
+
+            if (runs.length === 0) {
+                runs.push(new TextRun({ text: "", size: 22 }));
+            }
 
             docParagraphs.push(new Paragraph({
                 children: runs,
                 indent: indentSettings,
                 alignment: alignment,
                 spacing: {
-                    after: currentSuiteMode === 'screenplay' ? 140 : 200,
+                    after: isScreenplay ? 140 : 200,
                     line: 276
                 }
             }));
@@ -3387,7 +3435,6 @@
         if (!currentBlock || currentBlock === editor) return;
 
         const text = currentBlock.innerText || "";
-        // Match ch, ch., or chapter at the start of the block (matching left nav parser)
         const chapterRegex = /^\s*(ch\.?|chapter)\b/i;
         const match = text.match(chapterRegex);
 
