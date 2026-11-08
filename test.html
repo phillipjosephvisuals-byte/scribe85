@@ -2390,7 +2390,6 @@
     ------------------------------------------------------------------ */
     async function exportDocumentToDocx() {
         if (typeof docx === 'undefined') {
-            // Offline fallback: exports clean text/RTF blob if docx library couldn't load due to network/adblocker
             const content = editor.innerText || "";
             const title = (docTitle ? docTitle.value.trim() : "scribe85-document").replace(/\.[^/.]+$/, "");
             const blob = new Blob([content], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
@@ -2430,7 +2429,7 @@
             const runs = [];
             function parseChildNodes(node, activeFormatting = {}) {
                 if (node.nodeType === Node.TEXT_NODE) {
-                    if (node.nodeValue) {
+                    if (node.nodeValue && node.nodeValue !== '\u200B') {
                         runs.push(new TextRun({
                             text: node.nodeValue,
                             bold: activeFormatting.bold || false,
@@ -2442,6 +2441,7 @@
                     }
                 } else if (node.nodeType === Node.ELEMENT_NODE) {
                     const tag = node.tagName.toLowerCase();
+                    if (tag === 'br') return;
                     const nextFormatting = { ...activeFormatting };
                     if (tag === 'b' || tag === 'strong') nextFormatting.bold = true;
                     if (tag === 'i' || tag === 'em') nextFormatting.italic = true;
@@ -2451,14 +2451,14 @@
                 }
             }
 
-            if (block.childNodes.length === 0) {
+            if (block.childNodes.length === 0 || block.innerHTML === '<br>') {
                 runs.push(new TextRun({ text: "", font: 'JetBrains Mono', size: 22 }));
             } else {
                 block.childNodes.forEach(child => parseChildNodes(child, {}));
             }
 
             docParagraphs.push(new Paragraph({
-                children: runs,
+                children: runs.length > 0 ? runs : [new TextRun({ text: "", size: 22 })],
                 indent: indentSettings,
                 alignment: alignment,
                 spacing: {
@@ -2469,7 +2469,14 @@
         });
 
         const doc = new Document({
-            sections: [{ properties: {}, children: docParagraphs }]
+            sections: [{
+                properties: {
+                    page: {
+                        margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 }
+                    }
+                },
+                children: docParagraphs
+            }]
         });
 
         try {
