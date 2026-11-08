@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:ital,wght@0,300;0,400;0,700;1,300;1,700&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docx@7.3.0/build/index.js"></script>
 
     <style>
         /* ------------------------------------------------------------------
@@ -2371,21 +2372,11 @@
     ------------------------------------------------------------------ */
     async function exportDocumentToDocx() {
         if (typeof docx === 'undefined') {
-            const content = editor.innerText || "";
-            const title = (docTitle ? docTitle.value.trim() : "scribe85-document").replace(/\.[^/.]+$/, "");
-            const blob = new Blob([content], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
-            const tempLink = document.createElement('a');
-            tempLink.href = URL.createObjectURL(blob);
-            tempLink.download = `${title}.docx`;
-            document.body.appendChild(tempLink);
-            tempLink.click();
-            document.body.removeChild(tempLink);
-            saveIndicator.textContent = "Docx (Fallback) Exported";
+            showZenAlert("Docx Export Error", "The docx library failed to load from CDN.");
             return;
         }
 
         const { Document, Packer, Paragraph, TextRun, AlignmentType } = docx;
-        // Strict isolation: Target ONLY writing well block elements
         const blocks = Array.from(editor.children).filter(child => child.tagName === 'DIV' || child.tagName === 'P');
         const docParagraphs = [];
 
@@ -3029,7 +3020,6 @@
         localStorage.setItem('zensuite_active_suite_mode', currentSuiteMode);
         localStorage.setItem('zensuite_view_state', 'workspace');
 
-        // Immediately persist fresh document to local database
         saveDocument();
 
         if (originTab === 'cloud' && accessToken) {
@@ -3397,11 +3387,12 @@
         if (!currentBlock || currentBlock === editor) return;
 
         const text = currentBlock.innerText || "";
-        const chapterRegex = /\b(ch\.?|chapter)\s*$/i;
+        // Match ch, ch., or chapter at the start of the block (matching left nav parser)
+        const chapterRegex = /^\s*(ch\.?|chapter)\b/i;
         const match = text.match(chapterRegex);
 
         if (match) {
-            showChapterPrompt(currentBlock, match[0]);
+            showChapterPrompt(currentBlock, match[1]);
         }
     }
 
@@ -3434,7 +3425,7 @@
                 selectedOption = opt.dataset.val;
                 if (selectedOption === 'yes') {
                     const currentText = blockElement.innerText;
-                    const chapterRegex = new RegExp(`\\b(${keyword})\\s*$`, 'i');
+                    const chapterRegex = new RegExp(`^\\s*(${keyword})\\b`, 'i');
                     const updatedText = currentText.replace(chapterRegex, `CHAPTER`);
                     blockElement.innerText = updatedText;
                     updateLeftMarginChapterNavigator();
@@ -3454,7 +3445,7 @@
                 e.preventDefault();
                 if (selectedOption === 'yes') {
                     const currentText = blockElement.innerText;
-                    const chapterRegex = new RegExp(`\\b(${keyword})\\s*$`, 'i');
+                    const chapterRegex = new RegExp(`^\\s*(${keyword})\\b`, 'i');
                     const updatedText = currentText.replace(chapterRegex, `CHAPTER`);
                     blockElement.innerText = updatedText;
                     updateLeftMarginChapterNavigator();
@@ -3494,7 +3485,6 @@
         saveDocument();
         recordHistorySnapshot();
 
-        // Trigger check so paste actions invoke chapter prompt anywhere in document
         checkChapterKeywordTrigger();
     });
 
@@ -3685,7 +3675,7 @@
 
         blocks.forEach((block, idx) => {
             const text = block.innerText.trim();
-            const isExplicitMarker = /^chapter\s*(\d+)?/i.test(text) || /^ch\.?\s*(\d+)?/i.test(text);
+            const isExplicitMarker = /^chapter(\s|$)/i.test(text) || /^ch\.?(\s|$)/i.test(text);
 
             if (isExplicitMarker) {
                 if (currentChapter.blocks.length > 0) {
