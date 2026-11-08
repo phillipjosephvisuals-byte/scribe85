@@ -1669,9 +1669,10 @@
 
             .editor-container {
                 max-width: 100% !important;
-                width: 100% !important;
+                width: 6.5in !important;
                 min-height: auto !important;
                 padding: 0 !important;
+                margin: 0 auto !important;
             }
 
             .editor {
@@ -3706,7 +3707,13 @@
                 e.preventDefault();
                 const newBlock = document.createElement('div');
                 newBlock.innerHTML = '<br>';
-                currentBlock.parentNode.insertBefore(newBlock, currentBlock.nextSibling);
+                
+                // If cursor is at the very beginning of the first block, insert above instead of below
+                if (currentBlock === editor.firstElementChild && range.startOffset === 0) {
+                    editor.insertBefore(newBlock, currentBlock);
+                } else {
+                    currentBlock.parentNode.insertBefore(newBlock, currentBlock.nextSibling);
+                }
 
                 const newRange = document.createRange();
                 newRange.setStart(newBlock, 0);
@@ -3735,7 +3742,7 @@
     });
 
     /* ------------------------------------------------------------------
-        DYNAMIC CHAPTER PARSER & RE-INDEXING ENGINE
+        ROBUST DYNAMIC CHAPTER PARSER (AUTO CHAPTER 1 AT TOP)
     ------------------------------------------------------------------ */
     function parseDocumentIntoChapters() {
         const blocks = Array.from(editor.children);
@@ -3748,18 +3755,18 @@
         let currentChapter = { title: "Chapter 1", blocks: [] };
         let dynamicChapterCounter = 1;
 
-        blocks.forEach((block) => {
+        blocks.forEach((block, idx) => {
             const text = block.innerText.trim();
-            const isChapterMarker = /^chapter\s*(\d+)?/i.test(text) || /^ch\.?\s*(\d+)?/i.test(text);
+            const isExplicitMarker = /^chapter\s*(\d+)?/i.test(text) || /^ch\.?\s*(\d+)?/i.test(text);
 
-            if (isChapterMarker) {
+            if (isExplicitMarker) {
                 if (currentChapter.blocks.length > 0) {
                     chapters.push(currentChapter);
                 }
                 const formattedTitle = `Chapter ${dynamicChapterCounter++}`;
                 currentChapter = { title: formattedTitle, blocks: [block] };
             } else {
-                if (currentChapter.blocks.length === 0 && chapters.length === 0) {
+                if (idx === 0 && chapters.length === 0) {
                     currentChapter.title = `Chapter ${dynamicChapterCounter}`;
                 }
                 currentChapter.blocks.push(block);
