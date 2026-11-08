@@ -886,7 +886,6 @@
             height: 100%;
             flex-grow: 1;
             padding: 20px 40px 40px 40px;
-            overflow-hidden: hidden;
         }
 
         #plot-view-container.active {
@@ -2386,8 +2385,13 @@
         }
 
         const { Document, Packer, Paragraph, TextRun, AlignmentType } = docx;
-        const blocks = Array.from(editor.children);
+        // Strict isolation: Target ONLY writing well block elements
+        const blocks = Array.from(editor.children).filter(child => child.tagName === 'DIV' || child.tagName === 'P');
         const docParagraphs = [];
+
+        if (blocks.length === 0) {
+            blocks.push(editor);
+        }
 
         blocks.forEach(block => {
             const isScreenplay = currentSuiteMode === 'screenplay';
@@ -2410,15 +2414,11 @@
 
             const runs = [];
             const rawText = block.innerText || "";
-            if (rawText.trim().length > 0) {
-                runs.push(new TextRun({
-                    text: rawText,
-                    font: currentSuiteMode === 'screenplay' ? 'Courier Prime' : 'JetBrains Mono',
-                    size: 22
-                }));
-            } else {
-                runs.push(new TextRun({ text: "", size: 22 }));
-            }
+            runs.push(new TextRun({
+                text: rawText,
+                font: currentSuiteMode === 'screenplay' ? 'Courier Prime' : 'JetBrains Mono',
+                size: 22
+            }));
 
             docParagraphs.push(new Paragraph({
                 children: runs,
@@ -3029,7 +3029,7 @@
         localStorage.setItem('zensuite_active_suite_mode', currentSuiteMode);
         localStorage.setItem('zensuite_view_state', 'workspace');
 
-        // BUG 5 FIX: Immediately persist document to database so it's visible in Files list instantly
+        // Immediately persist fresh document to local database
         saveDocument();
 
         if (originTab === 'cloud' && accessToken) {
@@ -3488,10 +3488,14 @@
         const div = document.createElement('div');
         div.textContent = plainText;
         range.insertNode(div);
+        
         updateAnalytics(editor.innerText);
         updateLeftMarginChapterNavigator();
         saveDocument();
         recordHistorySnapshot();
+
+        // Trigger check so paste actions invoke chapter prompt anywhere in document
+        checkChapterKeywordTrigger();
     });
 
     editor.addEventListener('copy', (e) => {
@@ -3576,9 +3580,6 @@
         }
     }
 
-    /* ------------------------------------------------------------------
-        BUG 1 & 2 FIX: Native Browser Block Handling for Returns/Splits
-    ------------------------------------------------------------------ */
     editor.addEventListener('keydown', (e) => {
         if (e.key === '.') {
             const selection = window.getSelection();
@@ -3960,9 +3961,6 @@
         }
     }
 
-    /* ------------------------------------------------------------------
-        BUG 6 FIX: Robust window.onload state restoration on page refresh
-    ------------------------------------------------------------------ */
     window.onload = function() {
         requestPersistentStorage();
         const cachedTheme = localStorage.getItem('zensuite_saved_theme');
@@ -4008,7 +4006,6 @@
                     accessToken = tokenResponse.access_token;
                     hideLeftMarginAlert();
                     pickerModifierSync();
-                    // BUG 4 FIX: Automatically render cloud tab upon successful token grant
                     renderCloudTabInterface();
                 },
             });
