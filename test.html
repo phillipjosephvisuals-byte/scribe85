@@ -366,7 +366,7 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
             padding: 3px;
             border-radius: 6px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .modal-tab-btn {
@@ -1646,7 +1646,7 @@
             }
 
             @page {
-                size: letter portrait;
+                size: 8.5in 11in;
                 margin: 1in;
             }
 
@@ -2140,14 +2140,15 @@
                 <button class="modal-tab-btn" id="tab-toggle-cloud">Cloud Integration</button>
             </div>
 
+            <!-- GLOBAL EXPORT OPTIONS (VISIBLE ACROSS BOTH TABS) -->
+            <div style="display: flex; gap: 10px; margin-bottom: 12px; flex-shrink: 0;">
+                <button class="picker-action-btn" onclick="exportDocumentToDocx()" style="flex: 1; background: rgba(56, 189, 248, 0.1); border-color: var(--accent-color); color: var(--accent-color); margin-bottom: 0;">↓ Export .docx</button>
+                <button class="picker-action-btn" onclick="exportDocumentToPDF()" style="flex: 1; background: rgba(255, 255, 255, 0.03); border-color: var(--accent-color); color: var(--accent-color); margin-bottom: 0;">🖨️ Export PDF</button>
+            </div>
+
             <div class="modal-scroll-well">
                 <div id="panel-local-content" class="tab-panel-view active">
                     <button class="picker-action-btn" id="new-doc-btn">+ Create Fresh Document</button>
-                    
-                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                        <button class="picker-action-btn" onclick="exportDocumentToDocx()" style="flex: 1; background: rgba(56, 189, 248, 0.1); border-color: var(--accent-color); color: var(--accent-color); margin-bottom: 0;">↓ Export .docx</button>
-                        <button class="picker-action-btn" onclick="exportDocumentToPDF()" style="flex: 1; background: rgba(255, 255, 255, 0.03); border-color: var(--accent-color); color: var(--accent-color); margin-bottom: 0;">🖨️ Export PDF</button>
-                    </div>
 
                     <div class="document-list-title">Recent Local Drafts <span class="limit-subtext" id="local-limit-tag">(limit: 10)</span></div>
                     <div class="document-scroll-list" id="local-docs-target"></div>
@@ -2387,7 +2388,7 @@
     const btnRedoMobile = document.getElementById('btn-redo-mobile');
 
     /* ------------------------------------------------------------------
-        .DOCX & .PDF EXPORT FUNCTIONS (WITH OFFLINE FALLBACK)
+        ROBUST .DOCX & .PDF EXPORT FUNCTIONS
     ------------------------------------------------------------------ */
     async function exportDocumentToDocx() {
         if (typeof docx === 'undefined') {
@@ -3708,9 +3709,9 @@
                 const newBlock = document.createElement('div');
                 newBlock.innerHTML = '<br>';
                 
-                // Fixed top-return: cleanly insert a line above if cursor is at the very beginning of the first block
+                // Robust top-return check: if cursor is at the very beginning of the first block
                 const isFirstBlock = (currentBlock === editor.firstElementChild);
-                const isAtStart = (range.startOffset === 0 && (range.startContainer === currentBlock || range.startContainer === currentBlock.firstChild));
+                const isAtStart = (range.startOffset === 0 && (range.startContainer === currentBlock || range.startContainer.parentNode === currentBlock));
 
                 if (isFirstBlock && isAtStart) {
                     editor.insertBefore(newBlock, currentBlock);
