@@ -1302,7 +1302,7 @@
         ------------------------------------------------------------------ */
         .margin-ghost-guide-wrapper {
             position: fixed;
-            top: 120px; /* Aligned with top of chapter navigation table */
+            top: 120px; 
             right: max(16px, calc((100vw - var(--canvas-width)) / 4 - 110px));
             width: 220px;
             transform: scale(1);
@@ -1359,7 +1359,7 @@
 
         .margin-ghost-guide {
             width: 100%;
-            background: transparent; /* No bounding box */
+            background: transparent; 
             border: none;
             border-radius: 0;
             padding: 0;
@@ -1368,7 +1368,7 @@
             opacity: 1;
             cursor: default;
             user-select: none;
-            font-size: 0.82rem; /* 25% smaller */
+            font-size: 0.82rem; 
             transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
                         transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
@@ -1561,10 +1561,10 @@
 
         /* Chapter Title Specific Spacing & Typography */
         body.mode-narrative .editor div[data-chapter-title="true"] {
-            font-size: 1.65rem; /* ~50% bigger than base 1.1rem */
+            font-size: 1.65rem; 
             font-weight: bold;
-            margin-top: 3.6em;   /* Equivalent of roughly 2 lines height before */
-            margin-bottom: 1.8em; /* Equivalent of roughly 1 line height after */
+            margin-top: 3.6em;   
+            margin-bottom: 1.8em; 
             text-shadow: var(--text-glow);
         }
 
@@ -3231,7 +3231,6 @@
                     block.dataset.chapterTitle = "true";
                     block.innerText = innerTitle;
 
-                    // Automatically ensure a blank normal paragraph follows after closing chapter markdown
                     let nextBlock = block.nextElementSibling;
                     if (!nextBlock || nextBlock.dataset.chapterTitle === 'true' || nextBlock.innerText.trim() !== '') {
                         const newDiv = document.createElement('div');
@@ -3319,7 +3318,6 @@
         const range = selection.getRangeAt(0);
 
         if (!selection.isCollapsed) {
-            // Highlighted text case: toggle inline chapter span
             let parentSpan = range.commonAncestorContainer;
             if (parentSpan.nodeType === Node.TEXT_NODE) parentSpan = parentSpan.parentNode;
             
@@ -3338,7 +3336,6 @@
                 } catch (e) {}
             }
         } else {
-            // Block level case (collapsed cursor)
             let targetBlock = range.startContainer;
             if (targetBlock.nodeType === Node.TEXT_NODE) targetBlock = targetBlock.parentNode;
             while (targetBlock && targetBlock.parentNode !== editor && targetBlock !== editor) {
@@ -3514,7 +3511,14 @@
 
         lines.forEach((lineText) => {
             const div = document.createElement('div');
-            div.textContent = lineText || "\u200B";
+            const trimmed = lineText.trim();
+            const chapMatch = trimmed.match(/^\/\/(.*?)\/\/$/);
+            if (chapMatch) {
+                div.dataset.chapterTitle = "true";
+                div.textContent = chapMatch[1].trim();
+            } else {
+                div.textContent = lineText || "\u200B";
+            }
             fragment.appendChild(div);
         });
 
