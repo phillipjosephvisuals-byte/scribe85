@@ -3222,7 +3222,9 @@
                 const innerTitle = match[1].trim();
                 block.dataset.chapterTitle = "true";
                 if (block.innerText !== innerTitle) {
+                    const caretOffset = getCaretCharacterOffset(editor);
                     block.innerText = innerTitle;
+                    restoreCaretCharacterOffset(editor, Math.max(0, caretOffset - 4));
                 }
             }
         });
