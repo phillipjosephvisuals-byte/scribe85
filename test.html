@@ -1361,7 +1361,7 @@
             opacity: 1;
             cursor: default;
             user-select: none;
-            font-size: 0.82rem; /* 25% smaller than prior 1.1rem */
+            font-size: 0.82rem; /* 25% smaller */
             transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
                         transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
@@ -1377,7 +1377,7 @@
         }
 
         .ghost-guide-title {
-            font-size: 0.72rem; /* 25% smaller */
+            font-size: 0.72rem;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             color: var(--accent-color);
@@ -1392,7 +1392,7 @@
             display: flex;
             flex-direction: column;
             gap: 6px;
-            font-size: 0.78rem; /* 25% smaller */
+            font-size: 0.78rem;
             line-height: 1.4;
         }
 
@@ -1638,7 +1638,6 @@
             .left-margin-chapter-nav,
             .left-margin-alert-card,
             .margin-list-widget,
-            .chapter-prompt-popup,
             .modal-overlay,
             .alert-overlay,
             #plot-view-container,
@@ -3251,7 +3250,6 @@
         const range = selection.getRangeAt(0);
 
         const allBlocks = Array.from(editor.children);
-        // Restrict strictly to blocks containing the actual selection range endpoints
         return allBlocks.filter(block => range.intersectsNode(block) && (block.contains(range.startContainer) || block.contains(range.endContainer) || block === range.startContainer));
     }
 
@@ -3301,7 +3299,6 @@
         if (!selection.rangeCount) return;
         const range = selection.getRangeAt(0);
 
-        // Target the specific block container holding the cursor or selection start
         let targetBlock = range.startContainer;
         if (targetBlock.nodeType === Node.TEXT_NODE) targetBlock = targetBlock.parentNode;
         while (targetBlock && targetBlock.parentNode !== editor && targetBlock !== editor) {
@@ -3471,7 +3468,7 @@
         const lines = plainText.split(/\r?\n/);
         const fragment = document.createDocumentFragment();
 
-        lines.forEach((lineText, idx) => {
+        lines.forEach((lineText) => {
             const div = document.createElement('div');
             div.textContent = lineText || "\u200B";
             fragment.appendChild(div);
