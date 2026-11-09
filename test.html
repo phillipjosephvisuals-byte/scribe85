@@ -1295,10 +1295,10 @@
         ------------------------------------------------------------------ */
         .margin-ghost-guide-wrapper {
             position: fixed;
-            top: 50%;
+            top: 120px; /* Aligned with top of chapter navigation table */
             right: max(16px, calc((100vw - var(--canvas-width)) / 4 - 110px));
             width: 220px;
-            transform: translateY(-50%) scale(1);
+            transform: scale(1);
             transform-origin: center right;
             display: flex;
             flex-direction: column;
@@ -1352,20 +1352,18 @@
 
         .margin-ghost-guide {
             width: 100%;
-            background: rgba(0, 0, 0, 0.65);
-            border: 1px solid var(--accent-color);
-            border-radius: 8px;
-            padding: 16px 16px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8), 0 0 12px rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(3px);
+            background: transparent; /* Removed bounding box */
+            border: none;
+            border-radius: 0;
+            padding: 0;
+            box-shadow: none;
+            backdrop-filter: none;
             opacity: 1;
             cursor: default;
             user-select: none;
+            font-size: 1.1rem; /* 50% bigger */
             transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
-                        transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), 
-                        border-color 0.35s ease, 
-                        background 0.35s ease, 
-                        box-shadow 0.35s ease;
+                        transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         #launchpad-view.active ~ #workspace-view .margin-ghost-guide-wrapper,
@@ -1376,17 +1374,14 @@
         .margin-ghost-guide-wrapper:hover .margin-ghost-guide {
             opacity: 1 !important;
             transform: scale(1.02);
-            border-color: var(--accent-color);
-            background: rgba(0, 0, 0, 0.65);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8), 0 0 12px rgba(255, 255, 255, 0.05);
         }
 
         .ghost-guide-title {
-            font-size: 0.70rem;
+            font-size: 0.95rem; /* 50% bigger */
             text-transform: uppercase;
             letter-spacing: 1.5px;
             color: var(--accent-color);
-            margin-bottom: 12px;
+            margin-bottom: 14px;
             text-shadow: var(--text-glow);
             text-align: center;
             font-weight: bold;
@@ -1396,8 +1391,8 @@
         .ghost-guide-list {
             display: flex;
             flex-direction: column;
-            gap: 7px;
-            font-size: 0.73rem;
+            gap: 10px;
+            font-size: 1.05rem; /* 50% bigger */
             line-height: 1.4;
         }
 
@@ -1410,7 +1405,7 @@
 
         .ghost-guide-row span {
             color: var(--text-color);
-            font-size: 0.71rem;
+            font-size: 1.02rem;
             transition: color 0.3s ease;
         }
 
@@ -1418,9 +1413,9 @@
             font-family: var(--font-mono);
             color: var(--accent-color);
             background: rgba(255, 255, 255, 0.06);
-            padding: 1px 5px;
+            padding: 1px 6px;
             border-radius: 3px;
-            font-size: 0.68rem;
+            font-size: 0.98rem;
             border: 1px solid rgba(255, 255, 255, 0.1);
             white-space: nowrap;
         }
@@ -1557,6 +1552,15 @@
             transition: margin-bottom 0.2s ease, margin-top 0.2s ease;
         }
 
+        /* Chapter Title Specific Spacing & Typography */
+        body.mode-narrative .editor div[data-chapter-title="true"] {
+            font-size: 1.65rem; /* ~50% bigger than base 1.1rem */
+            font-weight: bold;
+            margin-top: 3.6em;   /* Equivalent of roughly 2 lines height before */
+            margin-bottom: 1.8em; /* Equivalent of roughly 1 line height after */
+            text-shadow: var(--text-glow);
+        }
+
         body.mode-narrative .editor div[data-first-line-indent="true"] {
             text-indent: 2em;
         }
@@ -1634,7 +1638,6 @@
             .left-margin-chapter-nav,
             .left-margin-alert-card,
             .margin-list-widget,
-            .chapter-prompt-popup,
             .modal-overlay,
             .alert-overlay,
             #plot-view-container,
@@ -1774,41 +1777,6 @@
         .mobile-history-btn:disabled {
             opacity: 0.25;
             cursor: not-allowed;
-        }
-
-        /* ------------------------------------------------------------------
-            CHAPTER PROMPT POPUP
-        ------------------------------------------------------------------ */
-        .chapter-prompt-popup {
-            position: absolute;
-            background: rgba(18, 20, 28, 0.95);
-            border: 1px solid var(--accent-color);
-            border-radius: 6px;
-            padding: 6px 12px;
-            font-family: var(--font-mono);
-            font-size: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.6);
-            backdrop-filter: blur(4px);
-            z-index: 60;
-            user-select: none;
-        }
-        .chapter-prompt-label {
-            color: var(--muted-color);
-        }
-        .chapter-prompt-option {
-            padding: 2px 8px;
-            border-radius: 4px;
-            color: var(--muted-color);
-            background: transparent;
-            cursor: pointer;
-        }
-        .chapter-prompt-option.highlighted {
-            background: var(--accent-color);
-            color: var(--bg-color);
-            font-weight: bold;
         }
 
         /* ------------------------------------------------------------------
@@ -2263,7 +2231,7 @@
             </div>
 
             <div class="margin-ghost-guide" id="margin-ghost-guide">
-                <div class="ghost-guide-title" id="ghost-guide-title">Narrative Shortcuts</div>
+                <div class="ghost-guide-title" id="ghost-guide-title">Narrative Guide</div>
                 <div class="ghost-guide-list" id="ghost-guide-list"></div>
             </div>
         </div>
@@ -2298,6 +2266,8 @@
                     <button class="margin-widget-btn" id="btn-bold-toggle" title="Toggle Bold"><b>B</b></button>
                     <button class="margin-widget-btn" id="btn-italic-toggle" title="Toggle Italic"><i>I</i></button>
                     <button class="margin-widget-btn" id="btn-underline-toggle" title="Toggle Underline"><u>U</u></button>
+                    <!-- ADDED: ch. Toggle Button -->
+                    <button class="margin-widget-btn" id="btn-chapter-toggle" title="Toggle Chapter Title" style="font-size: 0.68rem; font-weight: bold;">ch.</button>
                 </div>
 
                 <div class="editor" contenteditable="true" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" placeholder="Start typing here...">Start typing here...</div>
@@ -2381,7 +2351,7 @@
                     italics: !!baseFormatting.italics,
                     underline: baseFormatting.underline ? { type: "single" } : undefined,
                     font: currentSuiteMode === 'screenplay' ? 'Courier Prime' : 'JetBrains Mono',
-                    size: 22
+                    size: baseFormatting.isChapter ? 33 : 22 // 50% larger for chapter title
                 }));
             }
         } else if (node.nodeType === Node.ELEMENT_NODE) {
@@ -2402,7 +2372,7 @@
                     italics: !!formatting.italics,
                     underline: formatting.underline ? { type: "single" } : undefined,
                     font: currentSuiteMode === 'screenplay' ? 'Courier Prime' : 'JetBrains Mono',
-                    size: 22
+                    size: formatting.isChapter ? 33 : 22
                 }));
             }
         }
@@ -2426,6 +2396,7 @@
         blocks.forEach(block => {
             const isScreenplay = currentSuiteMode === 'screenplay';
             const elementType = block.getAttribute('data-element');
+            const isChap = block.getAttribute('data-chapter-title') === 'true';
 
             let indentSettings = {};
             let alignment = AlignmentType.LEFT;
@@ -2445,13 +2416,14 @@
             let runs = [];
             if (block.childNodes.length > 0) {
                 block.childNodes.forEach(child => {
-                    runs.push(...parseNodeToTextRuns(child, {}, TextRun));
+                    runs.push(...parseNodeToTextRuns(child, { isChapter: isChap, bold: isChap }, TextRun));
                 });
             } else {
                 runs.push(new TextRun({
                     text: block.innerText || "",
+                    bold: isChap,
                     font: isScreenplay ? 'Courier Prime' : 'JetBrains Mono',
-                    size: 22
+                    size: isChap ? 33 : 22
                 }));
             }
 
@@ -2464,7 +2436,8 @@
                 indent: indentSettings,
                 alignment: alignment,
                 spacing: {
-                    after: isScreenplay ? 140 : 200,
+                    before: isChap ? 720 : 0, // Equivalent to two lines spacing before
+                    after: isChap ? 360 : (isScreenplay ? 140 : 200), // Equivalent to one line spacing after
                     line: 276
                 }
             }));
@@ -2611,6 +2584,7 @@
             configureWorkspaceUIPresentation();
         }
 
+        processDoubleSlashChapters();
         updateAnalytics(editor.innerText);
         updateLeftMarginChapterNavigator();
         if (currentSuiteMode === 'narrative') applyDynamicListSpacing();
@@ -2701,7 +2675,7 @@
                 <div class="ghost-guide-row"><span>Bold selection</span><code>Ctrl + B</code></div>
                 <div class="ghost-guide-row"><span>Italicize</span><code>Ctrl + I</code></div>
                 <div class="ghost-guide-row"><span>Divider dots</span><code>-div-</code></div>
-                <div class="ghost-guide-row"><span>Insert Chapter</span><code>ch. / Chapter</code></div>
+                <div class="ghost-guide-row"><span>Chapter title</span><code>//title//</code></div>
                 <div class="ghost-guide-row"><span>Indent 1st line</span><code>Tab</code></div>
                 <div class="ghost-guide-row"><span>Indent list block</span><code>Tab x2</code></div>
                 <div class="ghost-guide-row"><span>Outdent</span><code>Shift+Tab</code></div>
@@ -2710,7 +2684,7 @@
         } else {
             titleEl.textContent = "Screenplay Guide";
             listEl.innerHTML = `
-                <div style="font-size: 0.71rem; color: var(--muted-color); margin-bottom: 6px; line-height: 1.4;">Elements work on a cycle. Press <strong>Return</strong> repeatedly to advance through the cycle:</div>
+                <div style="font-size: 0.95rem; color: var(--muted-color); margin-bottom: 6px; line-height: 1.4;">Elements work on a cycle. Press <strong>Return</strong> repeatedly to advance through the cycle:</div>
                 <div class="ghost-guide-row"><span>1. Slug Line</span><code>Cycle</code></div>
                 <div class="ghost-guide-row"><span>2. Description</span><code>Cycle</code></div>
                 <div class="ghost-guide-row"><span>3. Character</span><code>Cycle</code></div>
@@ -2843,6 +2817,7 @@
     const btnBoldToggle = document.getElementById('btn-bold-toggle');
     const btnItalicToggle = document.getElementById('btn-italic-toggle');
     const btnUnderlineToggle = document.getElementById('btn-underline-toggle');
+    const btnChapterToggle = document.getElementById('btn-chapter-toggle');
 
     const localDocsTarget = document.getElementById('local-docs-target');
     const restoreDropZone = document.getElementById('restore-drop-zone');
@@ -2867,7 +2842,6 @@
     let idleTimer;
     let tokenClient;
     let accessToken = null;
-    let activeChapterPopup = null;
     let chapterWordGoals = {};
 
     function showLeftMarginAlert() {
@@ -3082,6 +3056,7 @@
         recordHistorySnapshot();
 
         updateUrlParameters(currentLocalFileId, currentSuiteMode);
+        processDoubleSlashChapters();
         updateAnalytics(editor.innerText);
         updateLeftMarginChapterNavigator();
         if (currentSuiteMode === 'screenplay') updateLiveElementTag();
@@ -3125,6 +3100,8 @@
             
             const prevIndent = prevBlock ? parseInt(prevBlock.dataset.indent || "0", 10) : 0;
             const nextIndent = nextBlock ? parseInt(nextBlock.dataset.indent || "0", 10) : 0;
+
+            if (block.dataset.chapterTitle === 'true') return; // Handled by CSS
 
             if (indent > 0) {
                 if (prevIndent === 0) {
@@ -3233,6 +3210,30 @@
         }
     }
 
+    function processDoubleSlashChapters() {
+        if (currentSuiteMode !== 'narrative') return;
+        const blocks = Array.from(editor.children);
+
+        blocks.forEach(block => {
+            const rawText = block.innerText || "";
+            const trimmed = rawText.trim();
+            // Check for //...// syntax
+            const match = trimmed.match(/^\/\/(.*?)\/\/$/);
+
+            if (match) {
+                const innerTitle = match[1].trim();
+                block.dataset.chapterTitle = "true";
+                if (block.innerText !== innerTitle) {
+                    block.innerText = innerTitle;
+                }
+            } else {
+                if (block.dataset.chapterTitle === "true") {
+                    delete block.dataset.chapterTitle;
+                }
+            }
+        });
+    }
+
     function updateAnalytics(text) {
         const cleanText = text.replace(/\u200B/g, "");
         
@@ -3299,6 +3300,28 @@
         updateMarginListWidget();
     }
 
+    function toggleChapterWidgetStyle() {
+        const selectedBlocks = getSelectedBlocks();
+        if (selectedBlocks.length === 0) return;
+
+        const isAllChapters = selectedBlocks.every(b => b.dataset.chapterTitle === 'true');
+
+        selectedBlocks.forEach(block => {
+            if (isAllChapters) {
+                delete block.dataset.chapterTitle;
+            } else {
+                block.dataset.chapterTitle = "true";
+            }
+        });
+
+        applyDynamicListSpacing();
+        updateAnalytics(editor.innerText);
+        updateLeftMarginChapterNavigator();
+        saveDocument();
+        recordHistorySnapshot();
+        updateMarginListWidget();
+    }
+
     function updateMarginListWidget() {
         if (currentSuiteMode !== 'narrative' || currentWorkspaceTab !== 'scribe') {
             marginListWidget.style.display = 'none';
@@ -3320,17 +3343,23 @@
             return;
         }
 
-        const widgetHeight = marginListWidget.offsetHeight || 120;
-        const lineBottom = rect.bottom - editorRect.top + editor.scrollTop;
-        marginListWidget.style.top = `${lineBottom - widgetHeight}px`;
+        const widgetHeight = marginListWidget.offsetHeight || 140;
+        let lineBottom = rect.bottom - editorRect.top + editor.scrollTop;
+        
+        // Align top of widget to be no higher than the first line of text when at the top of document
+        const minTop = 0;
+        const calculatedTop = lineBottom - widgetHeight;
+        marginListWidget.style.top = `${Math.max(minTop, calculatedTop)}px`;
         marginListWidget.style.display = 'flex';
 
         const selectedBlocks = getSelectedBlocks();
         const isAllBullets = selectedBlocks.length > 0 && selectedBlocks.every(b => (b.dataset.listType === 'bullet' || /^•\s/.test(b.innerText.trim())));
         const isAllNumbers = selectedBlocks.length > 0 && selectedBlocks.every(b => (b.dataset.listType === 'number' || /^\d+[\.\)]\s/.test(b.innerText.trim())));
+        const isAllChapters = selectedBlocks.length > 0 && selectedBlocks.every(b => b.dataset.chapterTitle === 'true');
 
         btnBulletToggle.classList.toggle('active', isAllBullets);
         btnNumberToggle.classList.toggle('active', isAllNumbers);
+        btnChapterToggle.classList.toggle('active', isAllChapters);
 
         const hasBold = isStylePresentInSelection(selection, 'b', 'strong');
         const hasItalic = isStylePresentInSelection(selection, 'i', 'em');
@@ -3398,6 +3427,7 @@
     btnBoldToggle.addEventListener('mousedown', (e) => { e.preventDefault(); toggleInlineFormatting('b'); });
     btnItalicToggle.addEventListener('mousedown', (e) => { e.preventDefault(); toggleInlineFormatting('i'); });
     btnUnderlineToggle.addEventListener('mousedown', (e) => { e.preventDefault(); toggleInlineFormatting('u'); });
+    btnChapterToggle.addEventListener('mousedown', (e) => { e.preventDefault(); toggleChapterWidgetStyle(); });
 
     document.addEventListener('selectionchange', () => {
         if (workspaceView.classList.contains('active') && currentWorkspaceTab === 'scribe') {
@@ -3422,98 +3452,6 @@
         }
     });
 
-    function checkChapterKeywordTrigger() {
-        if (activeChapterPopup) return;
-        const selection = window.getSelection();
-        if (!selection.rangeCount) return;
-
-        let currentBlock = selection.getRangeAt(0).startContainer;
-        if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
-        while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
-            currentBlock = currentBlock.parentNode;
-        }
-        if (!currentBlock || currentBlock === editor) return;
-
-        const text = currentBlock.innerText || "";
-        const chapterRegex = /^\s*(ch\.?|chapter)\b/i;
-        const match = text.match(chapterRegex);
-
-        if (match) {
-            showChapterPrompt(currentBlock, match[1]);
-        }
-    }
-
-    function showChapterPrompt(blockElement, keyword) {
-        if (activeChapterPopup) activeChapterPopup.remove();
-
-        const popup = document.createElement('div');
-        popup.className = 'chapter-prompt-popup';
-        popup.innerHTML = `
-            <span class="chapter-prompt-label">Insert chapter?</span>
-            <span class="chapter-prompt-option highlighted" data-val="no">no</span>
-            <span class="chapter-prompt-option" data-val="yes">yes</span>
-        `;
-
-        const editorRect = editor.getBoundingClientRect();
-        const blockRect = blockElement.getBoundingClientRect();
-        
-        const topOffset = blockRect.top - editorRect.top + editor.scrollTop - 36;
-        popup.style.top = `${Math.max(0, topOffset)}px`;
-        popup.style.left = `${Math.max(0, blockRect.left - editorRect.left)}px`;
-
-        editor.parentElement.appendChild(popup);
-        activeChapterPopup = popup;
-
-        let selectedOption = 'no';
-
-        popup.querySelectorAll('.chapter-prompt-option').forEach(opt => {
-            opt.addEventListener('click', (e) => {
-                e.stopPropagation();
-                selectedOption = opt.dataset.val;
-                if (selectedOption === 'yes') {
-                    const currentText = blockElement.innerText;
-                    const chapterRegex = new RegExp(`^\\s*(${keyword})\\b`, 'i');
-                    const updatedText = currentText.replace(chapterRegex, `CHAPTER`);
-                    blockElement.innerText = updatedText;
-                    updateLeftMarginChapterNavigator();
-                }
-                cleanup();
-            });
-        });
-
-        function handlePopupKeydown(e) {
-            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
-                e.preventDefault();
-                selectedOption = selectedOption === 'no' ? 'yes' : 'no';
-                popup.querySelectorAll('.chapter-prompt-option').forEach(opt => {
-                    opt.classList.toggle('highlighted', opt.dataset.val === selectedOption);
-                });
-            } else if (e.key === 'Enter') {
-                e.preventDefault();
-                if (selectedOption === 'yes') {
-                    const currentText = blockElement.innerText;
-                    const chapterRegex = new RegExp(`^\\s*(${keyword})\\b`, 'i');
-                    const updatedText = currentText.replace(chapterRegex, `CHAPTER`);
-                    blockElement.innerText = updatedText;
-                    updateLeftMarginChapterNavigator();
-                }
-                cleanup();
-            } else {
-                cleanup();
-            }
-        }
-
-        function cleanup() {
-            if (activeChapterPopup) {
-                activeChapterPopup.remove();
-                activeChapterPopup = null;
-            }
-            document.removeEventListener('keydown', handlePopupKeydown, true);
-        }
-
-        document.addEventListener('keydown', handlePopupKeydown, true);
-    }
-
     editor.addEventListener('paste', (e) => {
         e.preventDefault();
         const clipboard = e.clipboardData || window.clipboardData;
@@ -3527,12 +3465,11 @@
         div.textContent = plainText;
         range.insertNode(div);
         
+        processDoubleSlashChapters();
         updateAnalytics(editor.innerText);
         updateLeftMarginChapterNavigator();
         saveDocument();
         recordHistorySnapshot();
-
-        checkChapterKeywordTrigger();
     });
 
     editor.addEventListener('copy', (e) => {
@@ -3572,6 +3509,7 @@
             editor.innerHTML = content ? `<div>${content}</div>` : "<div>Start typing here...</div>";
             if (docTitle) docTitle.value = fileName;
 
+            processDoubleSlashChapters();
             saveDocument();
             historyStack = [];
             historyIndex = -1;
@@ -3685,8 +3623,9 @@
             return;
         }
 
-        if (currentSuiteMode === 'narrative' && e.key === 'Enter' && !activeChapterPopup) {
+        if (currentSuiteMode === 'narrative' && e.key === 'Enter') {
             setTimeout(() => {
+                processDoubleSlashChapters();
                 applyDynamicListSpacing();
                 updateLeftMarginChapterNavigator();
                 saveDocument();
@@ -3696,7 +3635,7 @@
     });
 
     editor.addEventListener('keyup', () => {
-        checkChapterKeywordTrigger();
+        processDoubleSlashChapters();
         updateLeftMarginChapterNavigator();
         if (currentSuiteMode === 'screenplay') updateLiveElementTag();
     });
@@ -3707,7 +3646,7 @@
     });
 
     /* ------------------------------------------------------------------
-        ROBUST DYNAMIC CHAPTER PARSER
+        ROBUST DYNAMIC CHAPTER PARSER USING // MARKDOWN & DELETION FALLBACK
     ------------------------------------------------------------------ */
     function parseDocumentIntoChapters() {
         const blocks = Array.from(editor.children);
@@ -3721,14 +3660,14 @@
         let dynamicChapterCounter = 1;
 
         blocks.forEach((block, idx) => {
-            const text = block.innerText.trim();
-            const isExplicitMarker = /^chapter(\s|$)/i.test(text) || /^ch\.?(\s|$)/i.test(text);
+            const isChap = block.dataset.chapterTitle === 'true';
 
-            if (isExplicitMarker) {
+            if (isChap) {
                 if (currentChapter.blocks.length > 0) {
                     chapters.push(currentChapter);
                 }
-                const formattedTitle = `Chapter ${dynamicChapterCounter++}`;
+                const chapTitleText = block.innerText.trim() || `Chapter ${dynamicChapterCounter}`;
+                const formattedTitle = `Chapter ${dynamicChapterCounter++}: ${chapTitleText}`;
                 currentChapter = { title: formattedTitle, blocks: [block] };
             } else {
                 if (idx === 0 && chapters.length === 0) {
@@ -3755,8 +3694,8 @@
         chapters.forEach((chap, idx) => {
             const item = document.createElement('div');
             item.className = 'left-margin-chapter-item';
-            item.textContent = `Chapter ${idx + 1}`;
-            item.title = `Chapter ${idx + 1}`;
+            item.textContent = chap.title.includes(':') ? chap.title.split(':')[0] : `Chapter ${idx + 1}`;
+            item.title = chap.title;
             
             item.addEventListener('click', () => {
                 if (chap.blocks && chap.blocks.length > 0) {
@@ -3977,6 +3916,7 @@
         recordHistorySnapshot();
 
         updateUrlParameters(fileId, currentSuiteMode);
+        processDoubleSlashChapters();
         updateAnalytics(editor.innerText);
         updateLeftMarginChapterNavigator();
         pickerModifierSync();
@@ -4026,6 +3966,7 @@
             launchpadView.classList.remove('active');
             workspaceView.classList.add('active');
         } else {
+            processDoubleSlashChapters();
             updateLeftMarginChapterNavigator();
             launchpadView.classList.add('active');
             workspaceView.classList.remove('active');
@@ -4092,6 +4033,7 @@
             editor.innerHTML = content;
             if (docTitle) docTitle.value = fileName;
             currentDriveFileId = fileId;
+            processDoubleSlashChapters();
             updateLeftMarginChapterNavigator();
             pickerModal.style.display = 'none';
             launchpadView.classList.remove('active');
@@ -4171,7 +4113,7 @@
                     <div class="chapter-card-handle-dots"></div>
                 </div>
                 <div class="chapter-card-header">
-                    <span class="chapter-card-title" contenteditable="true" spellcheck="false" title="Click to rename chapter">${chap.title || `Chapter ${index + 1}`}</span>
+                    <span class="chapter-card-title" contenteditable="true" spellcheck="false" title="Click to rename chapter">${chap.title}</span>
                     <span class="chapter-card-stats" title="Click to adjust word goal">${wordCount}/${goalWords} words</span>
                 </div>
                 <div class="chapter-card-body-wrapper">
@@ -4288,20 +4230,8 @@
         if (!chapters[chapterIndex]) return;
 
         const chap = chapters[chapterIndex];
-        let markerFound = false;
-
-        chap.blocks.forEach(b => {
-            const text = b.innerText.trim();
-            if (!markerFound && (/^chapter\s+\d+/i.test(text) || /^ch\.?\s*\d+/i.test(text) || text === chap.title)) {
-                b.innerText = newTitle;
-                markerFound = true;
-            }
-        });
-
-        if (!markerFound && chap.blocks.length > 0) {
-            const titleBlock = document.createElement('div');
-            titleBlock.innerText = newTitle;
-            chap.blocks[0].parentNode.insertBefore(titleBlock, chap.blocks[0]);
+        if (chap.blocks.length > 0 && chap.blocks[0].dataset.chapterTitle === 'true') {
+            chap.blocks[0].innerText = newTitle;
         }
 
         saveDocument();
@@ -4324,6 +4254,7 @@
         });
 
         editor.innerHTML = newHtml;
+        processDoubleSlashChapters();
         saveDocument();
         recordHistorySnapshot();
         updateLeftMarginChapterNavigator();
@@ -4358,6 +4289,7 @@
     let historyDebounceTimer;
     editor.addEventListener('input', () => {
         processInlineMarkdownFormatting(); 
+        processDoubleSlashChapters();
         updateAnalytics(editor.innerText);
         updateLeftMarginChapterNavigator();
         
