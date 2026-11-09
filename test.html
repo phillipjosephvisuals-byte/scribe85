@@ -3218,6 +3218,18 @@
 
     function processDoubleSlashChapters() {
         if (currentSuiteMode !== 'narrative') return;
+        
+        // Normalize any loose text nodes directly under editor into <div> blocks
+        Array.from(editor.childNodes).forEach(node => {
+            if (node.nodeType === Node.TEXT_NODE && node.nodeValue.trim() !== '') {
+                const div = document.createElement('div');
+                div.textContent = node.nodeValue;
+                editor.replaceChild(div, node);
+            } else if (node.nodeType === Node.TEXT_NODE) {
+                editor.removeChild(node);
+            }
+        });
+
         const blocks = Array.from(editor.children);
 
         blocks.forEach(block => {
@@ -3244,6 +3256,8 @@
                 }
             }
         });
+
+        updateLeftMarginChapterNavigator();
     }
 
     function updateAnalytics(text) {
@@ -3513,6 +3527,7 @@
             const div = document.createElement('div');
             const trimmed = lineText.trim();
             const chapMatch = trimmed.match(/^\/\/(.*?)\/\/$/);
+            
             if (chapMatch) {
                 div.dataset.chapterTitle = "true";
                 div.textContent = chapMatch[1].trim();
@@ -4412,7 +4427,7 @@
 
         let newHtml = '';
         chapters.forEach((chap) => {
-            chap.blocks.forEach(b => {
+            chap.blocks.blocks.forEach(b => {
                 newHtml += `<div>${b.innerHTML || b.innerText}</div>`;
             });
         });
