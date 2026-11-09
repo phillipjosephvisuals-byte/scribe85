@@ -3536,39 +3536,55 @@
     });
 
     editor.addEventListener('paste', (e) => {
-        e.preventDefault();
-        const clipboard = e.clipboardData || window.clipboardData;
-        const plainText = clipboard.getData('text/plain');
-        const selection = window.getSelection();
-        if (!selection.rangeCount) return;
-        selection.deleteFromDocument();
-        const range = selection.getRangeAt(0);
+    e.preventDefault();
+    const clipboard = e.clipboardData || window.clipboardData;
+    const plainText = clipboard.getData('text/plain');
+    const selection = window.getSelection();
+    if (!selection.rangeCount) return;
+    selection.deleteFromDocument();
+    const range = selection.getRangeAt(0);
 
-        const lines = plainText.split(/\r?\n/);
-        const fragment = document.createDocumentFragment();
+    // Normalize all line endings to \n and split
+    const lines = plainText.replace(/\r\n/g, '\n').split('\n');
+    const fragment = document.createDocumentFragment();
 
-        lines.forEach((lineText) => {
-            const div = document.createElement('div');
-            const cleanLine = lineText.replace(/[\u00A0\u200B]/g, "").trim();
-            const chapMatch = cleanLine.match(/^\/\/(.*?)\/\/$/);
-            
-            if (chapMatch) {
-                div.dataset.chapterTitle = "true";
-                div.textContent = chapMatch[1].trim();
-            } else {
-                div.textContent = lineText || "\u200B";
-            }
-            fragment.appendChild(div);
-        });
+    let lastWasEmpty = false;
 
-        range.insertNode(fragment);
+    lines.forEach((lineText) => {
+        const cleanLine = lineText.replace(/[\u00A0\u200B]/g, "").trim();
         
-        processDoubleSlashChapters();
-        updateAnalytics(editor.innerText);
-        updateLeftMarginChapterNavigator();
-        saveDocument();
-        recordHistorySnapshot();
+        // Collapse multiple consecutive empty lines to prevent giant gaps
+        if (cleanLine === "") {
+            if (lastWasEmpty) return; 
+            lastWasEmpty = true;
+            
+            const div = document.createElement('div');
+            div.innerHTML = "<br>";
+            fragment.appendChild(div);
+            return;
+        }
+
+        lastWasEmpty = false;
+        const div = document.createElement('div');
+        const chapMatch = cleanLine.match(/^\/\/(.*?)\/\/$/);
+        
+        if (chapMatch) {
+            div.dataset.chapterTitle = "true";
+            div.textContent = chapMatch[1].trim();
+        } else {
+            div.textContent = lineText; // Keeps line text intact while avoiding hidden non-breaking space bugs
+        }
+        fragment.appendChild(div);
     });
+
+    range.insertNode(fragment);
+    
+    processDoubleSlashChapters();
+    updateAnalytics(editor.innerText);
+    updateLeftMarginChapterNavigator();
+    saveDocument();
+    recordHistorySnapshot();
+});
 
     editor.addEventListener('copy', (e) => {
         const selection = window.getSelection();
