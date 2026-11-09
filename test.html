@@ -3636,6 +3636,20 @@
 
         if (currentSuiteMode === 'narrative' && e.key === 'Enter') {
             setTimeout(() => {
+                const selection = window.getSelection();
+                if (selection.rangeCount) {
+                    let currentBlock = selection.getRangeAt(0).startContainer;
+                    if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
+                    while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
+                        currentBlock = currentBlock.parentNode;
+                    }
+                    if (currentBlock && currentBlock !== editor) {
+                        const text = currentBlock.innerText.trim();
+                        if (!text.match(/^\/\/(.*?)\/\/$/)) {
+                            delete currentBlock.dataset.chapterTitle;
+                        }
+                    }
+                }
                 processDoubleSlashChapters();
                 applyDynamicListSpacing();
                 updateLeftMarginChapterNavigator();
