@@ -518,6 +518,13 @@
         .modal-close-btn { background: transparent; border: none; color: var(--muted-color); font-family: var(--font-mono); font-size: 0.8rem; cursor: pointer; display: block; text-align: center; width: 100%; padding-top: 5px; }
         .modal-close-btn:hover { color: var(--text-color); }
 
+        /* Inline Chapter Span Styling */
+        .inline-chapter {
+            font-size: 1.35rem;
+            font-weight: bold;
+            text-shadow: var(--text-glow);
+        }
+
         /* ------------------------------------------------------------------
             REACTIVENESS SYSTEM ALERT DESIGN
         ------------------------------------------------------------------ */
@@ -3214,17 +3221,27 @@
         const blocks = Array.from(editor.children);
 
         blocks.forEach(block => {
-            const rawText = block.innerText || "";
+            const rawText = (block.innerText || block.textContent || "").replace(/\u200B/g, "");
             const trimmed = rawText.trim();
             const match = trimmed.match(/^\/\/(.*?)\/\/$/);
 
             if (match) {
                 const innerTitle = match[1].trim();
-                block.dataset.chapterTitle = "true";
-                if (block.innerText !== innerTitle) {
-                    const caretOffset = getCaretCharacterOffset(editor);
+                if (block.dataset.chapterTitle !== "true") {
+                    block.dataset.chapterTitle = "true";
                     block.innerText = innerTitle;
-                    restoreCaretCharacterOffset(editor, Math.max(0, caretOffset - 4));
+
+                    // Automatically ensure a blank normal paragraph follows after closing chapter markdown
+                    let nextBlock = block.nextElementSibling;
+                    if (!nextBlock || nextBlock.dataset.chapterTitle === 'true' || nextBlock.innerText.trim() !== '') {
+                        const newDiv = document.createElement('div');
+                        newDiv.innerHTML = '<br>';
+                        if (nextBlock) {
+                            editor.insertBefore(newDiv, nextBlock);
+                        } else {
+                            editor.appendChild(newDiv);
+                        }
+                    }
                 }
             }
         });
@@ -3301,18 +3318,43 @@
         if (!selection.rangeCount) return;
         const range = selection.getRangeAt(0);
 
-        let targetBlock = range.startContainer;
-        if (targetBlock.nodeType === Node.TEXT_NODE) targetBlock = targetBlock.parentNode;
-        while (targetBlock && targetBlock.parentNode !== editor && targetBlock !== editor) {
-            targetBlock = targetBlock.parentNode;
-        }
-
-        if (!targetBlock || targetBlock === editor) return;
-
-        if (targetBlock.dataset.chapterTitle === 'true') {
-            delete targetBlock.dataset.chapterTitle;
+        if (!selection.isCollapsed) {
+            // Highlighted text case: toggle inline chapter span
+            let parentSpan = range.commonAncestorContainer;
+            if (parentSpan.nodeType === Node.TEXT_NODE) parentSpan = parentSpan.parentNode;
+            
+            if (parentSpan && parentSpan.classList && parentSpan.classList.contains('inline-chapter')) {
+                const parent = parentSpan.parentNode;
+                while (parentSpan.firstChild) {
+                    parent.insertBefore(parentSpan.firstChild, parentSpan);
+                }
+                parent.removeChild(parentSpan);
+            } else {
+                try {
+                    const span = document.createElement('span');
+                    span.className = 'inline-chapter';
+                    span.appendChild(range.extractContents());
+                    range.insertNode(span);
+                } catch (e) {}
+            }
         } else {
-            targetBlock.dataset.chapterTitle = "true";
+            // Block level case (collapsed cursor)
+            let targetBlock = range.startContainer;
+            if (targetBlock.nodeType === Node.TEXT_NODE) targetBlock = targetBlock.parentNode;
+            while (targetBlock && targetBlock.parentNode !== editor && targetBlock !== editor) {
+                targetBlock = targetBlock.parentNode;
+            }
+
+            if (!targetBlock || targetBlock === editor) {
+                targetBlock = editor.firstElementChild;
+            }
+            if (!targetBlock || targetBlock === editor) return;
+
+            if (targetBlock.dataset.chapterTitle === 'true') {
+                delete targetBlock.dataset.chapterTitle;
+            } else {
+                targetBlock.dataset.chapterTitle = "true";
+            }
         }
 
         applyDynamicListSpacing();
