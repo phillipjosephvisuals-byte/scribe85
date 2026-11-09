@@ -3800,11 +3800,11 @@
             block.dataset.chapterTitle = "true";
             block.innerText = chapTitleText; // Keep display clean without slashes in editor view
             
-            const formattedTitle = `Chapter ${dynamicChapterCounter++}: ${chapTitleText}`;
-            currentChapter = { title: formattedTitle, blocks: [block] };
+            currentChapter = { title: chapTitleText, blocks: [block] };
+            dynamicChapterCounter++;
         } else {
             if (idx === 0 && chapters.length === 0) {
-                currentChapter.title = `Chapter ${dynamicChapterCounter}`;
+                currentChapter.title = rawText ? rawText.substring(0, 20) : "Chapter 1";
             }
             currentChapter.blocks.push(block);
         }
@@ -3817,39 +3817,40 @@
     return chapters;
 }
 
-    function updateLeftMarginChapterNavigator() {
-        const navList = document.getElementById('left-margin-chapter-list');
-        if (!navList) return;
+function updateLeftMarginChapterNavigator() {
+    const navList = document.getElementById('left-margin-chapter-list');
+    if (!navList) return;
 
-        const chapters = parseDocumentIntoChapters();
-        navList.innerHTML = '';
+    const chapters = parseDocumentIntoChapters();
+    navList.innerHTML = '';
 
-        chapters.forEach((chap, idx) => {
-            const item = document.createElement('div');
-            item.className = 'left-margin-chapter-item';
-            item.textContent = chap.title.includes(':') ? chap.title.split(':')[0] : `Chapter ${idx + 1}`;
-            item.title = chap.title;
-            
-            item.addEventListener('click', () => {
-                if (chap.blocks && chap.blocks.length > 0) {
-                    const targetBlock = chap.blocks[0];
-                    targetBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    
-                    const range = document.createRange();
-                    range.setStart(targetBlock, 0);
-                    range.collapse(true);
-                    const sel = window.getSelection();
-                    sel.removeAllRanges();
-                    sel.addRange(range);
-                    editor.focus();
-                }
-            });
-
-            navList.appendChild(item);
+    chapters.forEach((chap, idx) => {
+        const item = document.createElement('div');
+        item.className = 'left-margin-chapter-item';
+        // Display with sequential numbering and exact chapter title
+        item.textContent = `${idx + 1}. ${chap.title}`;
+        item.title = chap.title;
+        
+        item.addEventListener('click', () => {
+            if (chap.blocks && chap.blocks.length > 0) {
+                const targetBlock = chap.blocks[0];
+                targetBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                
+                const range = document.createRange();
+                range.setStart(targetBlock, 0);
+                range.collapse(true);
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(range);
+                editor.focus();
+            }
         });
 
-        highlightActiveChapterInLeftNav(chapters);
-    }
+        navList.appendChild(item);
+    });
+
+    highlightActiveChapterInLeftNav(chapters);
+}
 
     function highlightActiveChapterInLeftNav(chapters) {
         const navItems = document.querySelectorAll('.left-margin-chapter-item');
