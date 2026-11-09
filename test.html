@@ -4459,26 +4459,33 @@
     }
 
     function reorderChaptersInEditor(draggedIdx, targetIdx) {
-        let chapters = parseDocumentIntoChapters();
-        if (draggedIdx < 0 || draggedIdx >= chapters.length || targetIdx < 0 || targetIdx >= chapters.length) return;
+    let chapters = parseDocumentIntoChapters();
+    if (draggedIdx < 0 || draggedIdx >= chapters.length || targetIdx < 0 || targetIdx >= chapters.length) return;
 
-        const [movedChapter] = chapters.splice(draggedIdx, 1);
-        chapters.splice(targetIdx, 0, movedChapter);
+    const [movedChapter] = chapters.splice(draggedIdx, 1);
+    chapters.splice(targetIdx, 0, movedChapter);
 
-        let newHtml = '';
-        chapters.forEach((chap) => {
-            chap.blocks.forEach(b => {
-                newHtml += `<div>${b.innerHTML || b.innerText}</div>`;
-            });
+    let newHtml = '';
+    chapters.forEach((chap) => {
+        chap.blocks.forEach((b, bIdx) => {
+            let innerText = b.innerHTML || b.innerText || "";
+            // Ensure chapter titles maintain //...// markdown syntax when serialized
+            if (b.dataset.chapterTitle === 'true' || bIdx === 0) {
+                let cleanTitle = innerText.replace(/^\/\/(.*?)\/\/$/, '$1').trim();
+                newHtml += `<div data-chapter-title="true">//${cleanTitle}//</div>`;
+            } else {
+                newHtml += `<div>${innerText}</div>`;
+            }
         });
+    });
 
-        editor.innerHTML = newHtml;
-        processDoubleSlashChapters();
-        saveDocument();
-        recordHistorySnapshot();
-        updateLeftMarginChapterNavigator();
-        buildPlotCardsFromEditor(targetIdx);
-    }
+    editor.innerHTML = newHtml;
+    processDoubleSlashChapters();
+    saveDocument();
+    recordHistorySnapshot();
+    updateLeftMarginChapterNavigator();
+    buildPlotCardsFromEditor(targetIdx);
+}
 
     function enterChapterFromPlot(chapterIndex) {
         activePlotChapterIndex = chapterIndex;
