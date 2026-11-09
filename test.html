@@ -3219,7 +3219,7 @@
     function processDoubleSlashChapters() {
         if (currentSuiteMode !== 'narrative') return;
         
-        // Normalize any loose text nodes directly under editor into <div> blocks
+        // Normalize loose text nodes into <div> blocks
         Array.from(editor.childNodes).forEach(node => {
             if (node.nodeType === Node.TEXT_NODE && node.nodeValue.trim() !== '') {
                 const div = document.createElement('div');
@@ -3231,18 +3231,32 @@
         });
 
         const blocks = Array.from(editor.children);
+        const selection = window.getSelection();
+        let activeBlock = null;
+        let wasCursorInActiveBlock = false;
+
+        if (selection.rangeCount) {
+            let node = selection.getRangeAt(0).startContainer;
+            if (node.nodeType === Node.TEXT_NODE) node = node.parentNode;
+            while (node && node.parentNode !== editor && node !== editor) {
+                node = node.parentNode;
+            }
+            activeBlock = node;
+        }
 
         blocks.forEach(block => {
-            const rawText = (block.innerText || block.textContent || "").replace(/\u200B/g, "");
-            const trimmed = rawText.trim();
-            const match = trimmed.match(/^\/\/(.*?)\/\/$/);
+            const rawText = block.innerText || block.textContent || "";
+            const cleanText = rawText.replace(/[\u00A0\u200B]/g, "").trim();
+            const match = cleanText.match(/^\/\/(.*?)\/\/$/);
 
             if (match) {
                 const innerTitle = match[1].trim();
                 if (block.dataset.chapterTitle !== "true") {
                     block.dataset.chapterTitle = "true";
                     block.innerText = innerTitle;
+                    wasCursorInActiveBlock = (block === activeBlock);
 
+                    // Ensure a blank normal paragraph follows the chapter title
                     let nextBlock = block.nextElementSibling;
                     if (!nextBlock || nextBlock.dataset.chapterTitle === 'true' || nextBlock.innerText.trim() !== '') {
                         const newDiv = document.createElement('div');
@@ -3252,6 +3266,16 @@
                         } else {
                             editor.appendChild(newDiv);
                         }
+                        nextBlock = newDiv;
+                    }
+
+                    // If user was typing in this block, move cursor forward to the line below
+                    if (wasCursorInActiveBlock && nextBlock) {
+                        const range = document.createRange();
+                        range.setStart(nextBlock, 0);
+                        range.collapse(true);
+                        selection.removeAllRanges();
+                        selection.addRange(range);
                     }
                 }
             }
@@ -3525,8 +3549,8 @@
 
         lines.forEach((lineText) => {
             const div = document.createElement('div');
-            const trimmed = lineText.trim();
-            const chapMatch = trimmed.match(/^\/\/(.*?)\/\/$/);
+            const cleanLine = lineText.replace(/[\u00A0\u200B]/g, "").trim();
+            const chapMatch = cleanLine.match(/^\/\/(.*?)\/\/$/);
             
             if (chapMatch) {
                 div.dataset.chapterTitle = "true";
@@ -4427,7 +4451,7 @@
 
         let newHtml = '';
         chapters.forEach((chap) => {
-            chap.blocks.blocks.forEach(b => {
+            chap.blocks.forEach(b => {
                 newHtml += `<div>${b.innerHTML || b.innerText}</div>`;
             });
         });
