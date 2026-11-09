@@ -3777,40 +3777,45 @@
         ROBUST DYNAMIC CHAPTER PARSER USING // MARKDOWN & DELETION FALLBACK
     ------------------------------------------------------------------ */
     function parseDocumentIntoChapters() {
-        const blocks = Array.from(editor.children);
-        if (blocks.length === 0) {
-            const rawText = editor.innerText || "";
-            return [{ title: "Chapter 1", blocks: [], rawContent: rawText }];
-        }
-
-        let chapters = [];
-        let currentChapter = { title: "Chapter 1", blocks: [] };
-        let dynamicChapterCounter = 1;
-
-        blocks.forEach((block, idx) => {
-            const isChap = block.dataset.chapterTitle === 'true';
-
-            if (isChap) {
-                if (currentChapter.blocks.length > 0) {
-                    chapters.push(currentChapter);
-                }
-                const chapTitleText = block.innerText.trim() || `Chapter ${dynamicChapterCounter}`;
-                const formattedTitle = `Chapter ${dynamicChapterCounter++}: ${chapTitleText}`;
-                currentChapter = { title: formattedTitle, blocks: [block] };
-            } else {
-                if (idx === 0 && chapters.length === 0) {
-                    currentChapter.title = `Chapter ${dynamicChapterCounter}`;
-                }
-                currentChapter.blocks.push(block);
-            }
-        });
-
-        if (currentChapter.blocks.length > 0) {
-            chapters.push(currentChapter);
-        }
-
-        return chapters;
+    const blocks = Array.from(editor.children);
+    if (blocks.length === 0) {
+        const rawText = editor.innerText || "";
+        return [{ title: "Chapter 1", blocks: [], rawContent: rawText }];
     }
+
+    let chapters = [];
+    let currentChapter = { title: "Chapter 1", blocks: [] };
+    let dynamicChapterCounter = 1;
+
+    blocks.forEach((block, idx) => {
+        const rawText = (block.innerText || block.textContent || "").trim();
+        const match = rawText.match(/^\/\/(.*?)\/\/$/);
+        const isChap = block.dataset.chapterTitle === 'true' || match;
+
+        if (isChap) {
+            if (currentChapter.blocks.length > 0) {
+                chapters.push(currentChapter);
+            }
+            const chapTitleText = match ? match[1].trim() : (rawText || `Chapter ${dynamicChapterCounter}`);
+            block.dataset.chapterTitle = "true";
+            block.innerText = chapTitleText; // Keep display clean without slashes in editor view
+            
+            const formattedTitle = `Chapter ${dynamicChapterCounter++}: ${chapTitleText}`;
+            currentChapter = { title: formattedTitle, blocks: [block] };
+        } else {
+            if (idx === 0 && chapters.length === 0) {
+                currentChapter.title = `Chapter ${dynamicChapterCounter}`;
+            }
+            currentChapter.blocks.push(block);
+        }
+    });
+
+    if (currentChapter.blocks.length > 0) {
+        chapters.push(currentChapter);
+    }
+
+    return chapters;
+}
 
     function updateLeftMarginChapterNavigator() {
         const navList = document.getElementById('left-margin-chapter-list');
