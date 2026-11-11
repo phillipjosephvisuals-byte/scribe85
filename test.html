@@ -2937,7 +2937,6 @@
         isAutoBackupEnabled = enabled;
         localStorage.setItem('zensuite_autobackup_enabled', enabled ? 'true' : 'false');
         
-        // Sync cloud panel checkbox state
         const cloudToggle = document.getElementById('auto-backup-toggle-cloud');
         if (cloudToggle) cloudToggle.checked = enabled;
 
@@ -2948,7 +2947,6 @@
         isAutoBackupEnabled = enabled;
         localStorage.setItem('zensuite_autobackup_enabled', enabled ? 'true' : 'false');
         
-        // Sync local panel checkbox state
         const localToggle = document.getElementById('auto-backup-toggle');
         if (localToggle) localToggle.checked = enabled;
 
@@ -3336,6 +3334,29 @@
         updateLeftMarginChapterNavigator();
     }
 
+    function parseRawContentToEditorHTML(content) {
+        if (!content) return "<div>Start typing here...</div>";
+        if (content.includes('<div') || content.includes('<p')) {
+            return content;
+        }
+
+        const lines = content.replace(/\r\n/g, '\n').split('\n');
+        let html = '';
+        
+        lines.forEach(line => {
+            const cleanLine = line.trim();
+            const match = cleanLine.match(/^\/\/(.*?)\/\/$/);
+            if (match) {
+                html += `<div data-chapter-title="true">${match[1].trim()}</div>`;
+            } else if (cleanLine === '') {
+                html += `<div><br></div>`;
+            } else {
+                html += `<div>${line}</div>`;
+            }
+        });
+        return html || "<div>Start typing here...</div>";
+    }
+
     function updateAnalytics(text) {
         const cleanText = text.replace(/\u200B/g, "");
         
@@ -3686,7 +3707,7 @@
             currentLocalFileId = "local_" + Date.now();
             currentDriveFileId = null;
 
-            editor.innerHTML = content ? `<div>${content}</div>` : "<div>Start typing here...</div>";
+            editor.innerHTML = parseRawContentToEditorHTML(content);
             if (docTitle) docTitle.value = fileName;
 
             processDoubleSlashChapters();
@@ -4098,7 +4119,7 @@
         currentSuiteMode = file.suiteMode || 'narrative';
         configureWorkspaceUIPresentation();
 
-        editor.innerHTML = file.content;
+        editor.innerHTML = parseRawContentToEditorHTML(file.content);
         if (docTitle) docTitle.value = file.title;
         currentLocalFileId = file.id;
         currentDriveFileId = file.driveId || null;
@@ -4181,11 +4202,31 @@
                         return;
                     }
                     accessToken = tokenResponse.access_token;
+                    localStorage.setItem('zensuite_google_access_token', accessToken);
+                    localStorage.setItem('zensuite_google_token_exp', Date.now() + (tokenResponse.expires_in * 1000));
+                    
                     hideLeftMarginAlert();
                     pickerModifierSync();
                     renderCloudTabInterface();
                 },
             });
+
+            const isPersistChecked = localStorage.getItem('zensuite_persist_google_auth') !== 'false';
+            const storedToken = localStorage.getItem('zensuite_google_access_token');
+            const tokenExp = localStorage.getItem('zensuite_google_token_exp');
+
+            if (isPersistChecked && storedToken && tokenExp && Date.now() < parseInt(tokenExp, 10)) {
+                accessToken = storedToken;
+                hideLeftMarginAlert();
+                pickerModifierSync();
+                renderCloudTabInterface();
+            } else if (isPersistChecked && tokenClient) {
+                try {
+                    tokenClient.requestAccessToken({ prompt: '' });
+                } catch (e) {
+                    console.log("Silent token restore skipped.");
+                }
+            }
         }
     };
 
@@ -4225,65 +4266,64 @@
     }
 
     function fetchDocumentFromDrive(fileId, fileName) {
-    if (!accessToken) return;
-    saveIndicator.textContent = "Loading Cloud File...";
-    
-    fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
-        headers: { 'Authorization': `Bearer ${accessToken}` }
-    })
-    .then(res => {
-        if (res.status === 401 || res.status === 403) {
-            handleAuthError();
-            throw new Error("Auth expired");
-        }
-        return res.text();
-    })
-    .then(content => {
-        editor.innerHTML = content ? `<div>${content}</div>` : "<div>Start typing here...</div>";
-        if (docTitle) docTitle.value = fileName;
-        currentDriveFileId = fileId;
-
-        // Bind or create a local storage record linked to this Google Drive file ID
-        let db = getLocalDatabase();
-        let existingLocal = db.find(item => item.driveId === fileId);
+        if (!accessToken) return;
+        saveIndicator.textContent = "Loading Cloud File...";
         
-        if (existingLocal) {
-            currentLocalFileId = existingLocal.id;
-            existingLocal.content = editor.innerHTML;
-            existingLocal.title = fileName;
-        } else {
-            currentLocalFileId = "drive_local_" + fileId;
-            db.unshift({
-                id: currentLocalFileId,
-                title: fileName,
-                content: editor.innerHTML,
-                suiteMode: currentSuiteMode,
-                driveId: fileId
-            });
-        }
-        
-        localStorage.setItem('zensuite_local_db', JSON.stringify(db));
-        localStorage.setItem(`zensuite_current_active_${currentSuiteMode}_id`, currentLocalFileId);
-        updateUrlParameters(currentLocalFileId, currentSuiteMode);
+        fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+            headers: { 'Authorization': `Bearer ${accessToken}` }
+        })
+        .then(res => {
+            if (res.status === 401 || res.status === 403) {
+                handleAuthError();
+                throw new Error("Auth expired");
+            }
+            return res.text();
+        })
+        .then(content => {
+            editor.innerHTML = parseRawContentToEditorHTML(content);
+            if (docTitle) docTitle.value = fileName;
+            currentDriveFileId = fileId;
 
-        processDoubleSlashChapters();
-        updateLeftMarginChapterNavigator();
-        
-        historyStack = [];
-        historyIndex = -1;
-        recordHistorySnapshot();
+            let db = getLocalDatabase();
+            let existingLocal = db.find(item => item.driveId === fileId);
+            
+            if (existingLocal) {
+                currentLocalFileId = existingLocal.id;
+                existingLocal.content = editor.innerHTML;
+                existingLocal.title = fileName;
+            } else {
+                currentLocalFileId = "drive_local_" + fileId;
+                db.unshift({
+                    id: currentLocalFileId,
+                    title: fileName,
+                    content: editor.innerHTML,
+                    suiteMode: currentSuiteMode,
+                    driveId: fileId
+                });
+            }
+            
+            localStorage.setItem('zensuite_local_db', JSON.stringify(db));
+            localStorage.setItem(`zensuite_current_active_${currentSuiteMode}_id`, currentLocalFileId);
+            updateUrlParameters(currentLocalFileId, currentSuiteMode);
 
-        pickerModal.style.display = 'none';
-        launchpadView.classList.remove('active');
-        workspaceView.classList.add('active');
-        switchWorkspaceView('scribe');
-        pickerModifierSync();
-    })
-    .catch(error => {
-        showZenAlert("Cloud Load Error", "Failed to retrieve document from Google Drive: " + error.message);
-        saveIndicator.textContent = "Load Failed";
-    });
-}
+            processDoubleSlashChapters();
+            updateLeftMarginChapterNavigator();
+            
+            historyStack = [];
+            historyIndex = -1;
+            recordHistorySnapshot();
+
+            pickerModal.style.display = 'none';
+            launchpadView.classList.remove('active');
+            workspaceView.classList.add('active');
+            switchWorkspaceView('scribe');
+            pickerModifierSync();
+        })
+        .catch(error => {
+            showZenAlert("Cloud Load Error", "Failed to retrieve document from Google Drive: " + error.message);
+            saveIndicator.textContent = "Load Failed";
+        });
+    }
 
     let cloudSaveDebounceTimer = null;
 
@@ -4291,12 +4331,21 @@
         if (!workspaceView.classList.contains('active')) return; 
         
         const title = (docTitle ? docTitle.value : '') || 'untitledProse.rtf';
-        const content = editor.innerHTML;
+        
+        const tempContainer = document.createElement('div');
+        tempContainer.innerHTML = editor.innerHTML;
+        Array.from(tempContainer.children).forEach(block => {
+            if (block.dataset.chapterTitle === 'true') {
+                const cleanText = block.innerText.replace(/^\/\/(.*?)\/\/$/, '$1').trim();
+                block.textContent = `//${cleanText}//`;
+            }
+        });
+        const serializedContent = tempContainer.innerHTML;
 
         const fileRecord = {
             id: currentLocalFileId,
             title: title,
-            content: content,
+            content: serializedContent,
             suiteMode: currentSuiteMode,
             driveId: currentDriveFileId
         };
@@ -4310,7 +4359,7 @@
             
             clearTimeout(cloudSaveDebounceTimer);
             cloudSaveDebounceTimer = setTimeout(() => {
-                const plainTextContent = content.replace(/<\/div>/gi, '\n').replace(/<[^>]+>/g, '');
+                const plainTextContent = serializedContent.replace(/<\/div>/gi, '\n').replace(/<[^>]+>/g, '');
                 
                 fetch(`https://www.googleapis.com/upload/drive/v3/files/${currentDriveFileId}?uploadType=media`, {
                     method: 'PATCH',
