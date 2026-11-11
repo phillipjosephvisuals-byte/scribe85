@@ -2495,6 +2495,7 @@
             document.body.removeChild(tempLink);
             
             saveIndicator.textContent = "Docx Exported";
+            setTimeout(() => { pickerModifierSync(); }, 3000);
         } catch (error) {
             showZenAlert("Docx Export Error", error.message);
         }
@@ -2519,6 +2520,7 @@
         }
 
         saveIndicator.textContent = "PDF Generated";
+        setTimeout(() => { pickerModifierSync(); }, 3000);
     }
 
     function getCaretCharacterOffset(element) {
@@ -4622,7 +4624,16 @@
 
     function handlePlotZoom(zoomValue) {
         const grid = document.getElementById('plot-cards-grid');
-        grid.style.transform = `scale(${zoomValue})`;
+        const numericZoom = parseFloat(zoomValue) || 1;
+        
+        // Dynamically adjust columns based on zoom level so cards reflow to fill the space
+        let columnsCount = 3;
+        if (numericZoom <= 0.55) columnsCount = 6;
+        else if (numericZoom <= 0.7) columnsCount = 5;
+        else if (numericZoom <= 0.85) columnsCount = 4;
+
+        grid.style.gridTemplateColumns = `repeat(${columnsCount}, 1fr)`;
+        grid.style.transform = `scale(${numericZoom})`;
     }
 
     let historyDebounceTimer;
