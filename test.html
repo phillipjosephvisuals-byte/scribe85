@@ -420,8 +420,8 @@
             background: rgba(255, 255, 255, 0.05);
         }
         
-        #new-doc-btn { background: rgba(56, 189, 248, 0.1); border-color: var(--accent-color); color: var(--accent-color); }
-        #new-doc-btn:hover { background: var(--accent-color); color: var(--bg-color); text-shadow: none; }
+        #new-doc-btn, #new-cloud-doc-btn { background: rgba(56, 189, 248, 0.1); border-color: var(--accent-color); color: var(--accent-color); }
+        #new-doc-btn:hover, #new-cloud-doc-btn:hover { background: var(--accent-color); color: var(--bg-color); text-shadow: none; }
         
         #auth-btn { background: var(--text-color); color: var(--bg-color); border-color: var(--text-color); font-weight: bold; margin: 10px 0; width: 100%; }
         #auth-btn:hover { opacity: 0.9; }
@@ -2134,6 +2134,28 @@
 
                 <div id="panel-cloud-content" class="tab-panel-view">
                     <div id="cloud-ui-injection-zone"></div>
+
+                    <!-- CLOUD INTEGRATION MIRRORED DROP ZONE & AUTO-BACKUP CONTROLS -->
+                    <div class="restore-drop-zone" id="restore-drop-zone-cloud" style="margin-top: 15px;">
+                        Drop saved scribe85 files (.rtf, .fountain, .txt) to restore
+                        <input type="file" id="manual-file-input-cloud" style="display: none;" accept=".rtf,.fountain,.txt,.html">
+                    </div>
+
+                    <div class="auto-backup-control-box" style="margin-top: 10px;">
+                        <div class="auto-backup-header">
+                            <span class="auto-backup-title">Auto-Backup Downloads</span>
+                            <input type="checkbox" id="auto-backup-toggle-cloud" onchange="syncAutoBackupToggles(this.checked)">
+                        </div>
+                        <p style="color:var(--muted-color); line-height:1.4;">Automated client-side file downloads to disk protect against browser cache purges and OS updates.</p>
+                        <div class="auto-backup-options-row">
+                            <span>Frequency:</span>
+                            <select id="auto-backup-interval-select-cloud" class="auto-backup-select" onchange="syncAutoBackupSelects(this.value)">
+                                <option value="5">Every 5 Minutes</option>
+                                <option value="10" selected>Every 10 Minutes</option>
+                                <option value="15">Every 15 Minutes</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -2829,6 +2851,9 @@
     const restoreDropZone = document.getElementById('restore-drop-zone');
     const manualFileInput = document.getElementById('manual-file-input');
 
+    const restoreDropZoneCloud = document.getElementById('restore-drop-zone-cloud');
+    const manualFileInputCloud = document.getElementById('manual-file-input-cloud');
+
     const closePickerBtn = document.getElementById('close-picker-btn');
     const newDocBtn = document.getElementById('new-doc-btn');
     const returnHomeBtn = document.getElementById('return-home-btn');
@@ -2911,12 +2936,42 @@
     function toggleAutoBackupState(enabled) {
         isAutoBackupEnabled = enabled;
         localStorage.setItem('zensuite_autobackup_enabled', enabled ? 'true' : 'false');
+        
+        // Sync cloud panel checkbox state
+        const cloudToggle = document.getElementById('auto-backup-toggle-cloud');
+        if (cloudToggle) cloudToggle.checked = enabled;
+
+        configureAutoBackupTimer();
+    }
+
+    function syncAutoBackupToggles(enabled) {
+        isAutoBackupEnabled = enabled;
+        localStorage.setItem('zensuite_autobackup_enabled', enabled ? 'true' : 'false');
+        
+        // Sync local panel checkbox state
+        const localToggle = document.getElementById('auto-backup-toggle');
+        if (localToggle) localToggle.checked = enabled;
+
         configureAutoBackupTimer();
     }
 
     function updateAutoBackupInterval(minutes) {
         autoBackupMinutes = parseInt(minutes, 10) || 10;
         localStorage.setItem('zensuite_autobackup_interval', autoBackupMinutes);
+        
+        const cloudSelect = document.getElementById('auto-backup-interval-select-cloud');
+        if (cloudSelect) cloudSelect.value = autoBackupMinutes;
+
+        configureAutoBackupTimer();
+    }
+
+    function syncAutoBackupSelects(minutes) {
+        autoBackupMinutes = parseInt(minutes, 10) || 10;
+        localStorage.setItem('zensuite_autobackup_interval', autoBackupMinutes);
+        
+        const localSelect = document.getElementById('auto-backup-interval-select');
+        if (localSelect) localSelect.value = autoBackupMinutes;
+
         configureAutoBackupTimer();
     }
 
@@ -3219,7 +3274,6 @@
     function processDoubleSlashChapters() {
         if (currentSuiteMode !== 'narrative') return;
         
-        // Normalize loose text nodes into <div> blocks
         Array.from(editor.childNodes).forEach(node => {
             if (node.nodeType === Node.TEXT_NODE && node.nodeValue.trim() !== '') {
                 const div = document.createElement('div');
@@ -3256,7 +3310,6 @@
                     block.innerText = innerTitle;
                     wasCursorInActiveBlock = (block === activeBlock);
 
-                    // Ensure a blank normal paragraph follows the chapter title
                     let nextBlock = block.nextElementSibling;
                     if (!nextBlock || nextBlock.dataset.chapterTitle === 'true' || nextBlock.innerText.trim() !== '') {
                         const newDiv = document.createElement('div');
@@ -3269,7 +3322,6 @@
                         nextBlock = newDiv;
                     }
 
-                    // If user was typing in this block, move cursor forward to the line below
                     if (wasCursorInActiveBlock && nextBlock) {
                         const range = document.createRange();
                         range.setStart(nextBlock, 0);
@@ -3536,55 +3588,53 @@
     });
 
     editor.addEventListener('paste', (e) => {
-    e.preventDefault();
-    const clipboard = e.clipboardData || window.clipboardData;
-    const plainText = clipboard.getData('text/plain');
-    const selection = window.getSelection();
-    if (!selection.rangeCount) return;
-    selection.deleteFromDocument();
-    const range = selection.getRangeAt(0);
+        e.preventDefault();
+        const clipboard = e.clipboardData || window.clipboardData;
+        const plainText = clipboard.getData('text/plain');
+        const selection = window.getSelection();
+        if (!selection.rangeCount) return;
+        selection.deleteFromDocument();
+        const range = selection.getRangeAt(0);
 
-    // Normalize all line endings to \n and split
-    const lines = plainText.replace(/\r\n/g, '\n').split('\n');
-    const fragment = document.createDocumentFragment();
+        const lines = plainText.replace(/\r\n/g, '\n').split('\n');
+        const fragment = document.createDocumentFragment();
 
-    let lastWasEmpty = false;
+        let lastWasEmpty = false;
 
-    lines.forEach((lineText) => {
-        const cleanLine = lineText.replace(/[\u00A0\u200B]/g, "").trim();
-        
-        // Collapse multiple consecutive empty lines to prevent giant gaps
-        if (cleanLine === "") {
-            if (lastWasEmpty) return; 
-            lastWasEmpty = true;
+        lines.forEach((lineText) => {
+            const cleanLine = lineText.replace(/[\u00A0\u200B]/g, "").trim();
             
+            if (cleanLine === "") {
+                if (lastWasEmpty) return; 
+                lastWasEmpty = true;
+                
+                const div = document.createElement('div');
+                div.innerHTML = "<br>";
+                fragment.appendChild(div);
+                return;
+            }
+
+            lastWasEmpty = false;
             const div = document.createElement('div');
-            div.innerHTML = "<br>";
+            const chapMatch = cleanLine.match(/^\/\/(.*?)\/\/$/);
+            
+            if (chapMatch) {
+                div.dataset.chapterTitle = "true";
+                div.textContent = chapMatch[1].trim();
+            } else {
+                div.textContent = lineText;
+            }
             fragment.appendChild(div);
-            return;
-        }
+        });
 
-        lastWasEmpty = false;
-        const div = document.createElement('div');
-        const chapMatch = cleanLine.match(/^\/\/(.*?)\/\/$/);
+        range.insertNode(fragment);
         
-        if (chapMatch) {
-            div.dataset.chapterTitle = "true";
-            div.textContent = chapMatch[1].trim();
-        } else {
-            div.textContent = lineText; // Keeps line text intact while avoiding hidden non-breaking space bugs
-        }
-        fragment.appendChild(div);
+        processDoubleSlashChapters();
+        updateAnalytics(editor.innerText);
+        updateLeftMarginChapterNavigator();
+        saveDocument();
+        recordHistorySnapshot();
     });
-
-    range.insertNode(fragment);
-    
-    processDoubleSlashChapters();
-    updateAnalytics(editor.innerText);
-    updateLeftMarginChapterNavigator();
-    saveDocument();
-    recordHistorySnapshot();
-});
 
     editor.addEventListener('copy', (e) => {
         const selection = window.getSelection();
@@ -3593,6 +3643,7 @@
         e.preventDefault();
     });
 
+    // Event listeners for both Local and Cloud drop zones & file inputs
     restoreDropZone.addEventListener('click', () => { manualFileInput.click(); });
     restoreDropZone.addEventListener('dragover', (e) => { e.preventDefault(); restoreDropZone.classList.add('dragover'); });
     restoreDropZone.addEventListener('dragleave', () => { restoreDropZone.classList.remove('dragover'); });
@@ -3603,8 +3654,23 @@
             processRestoredFile(e.dataTransfer.files[0]);
         }
     });
-
     manualFileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+            processRestoredFile(e.target.files[0]);
+        }
+    });
+
+    restoreDropZoneCloud.addEventListener('click', () => { manualFileInputCloud.click(); });
+    restoreDropZoneCloud.addEventListener('dragover', (e) => { e.preventDefault(); restoreDropZoneCloud.classList.add('dragover'); });
+    restoreDropZoneCloud.addEventListener('dragleave', () => { restoreDropZoneCloud.classList.remove('dragover'); });
+    restoreDropZoneCloud.addEventListener('drop', (e) => {
+        e.preventDefault();
+        restoreDropZoneCloud.classList.remove('dragover');
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            processRestoredFile(e.dataTransfer.files[0]);
+        }
+    });
+    manualFileInputCloud.addEventListener('change', (e) => {
         if (e.target.files && e.target.files.length > 0) {
             processRestoredFile(e.target.files[0]);
         }
@@ -3773,84 +3839,80 @@
         if (currentSuiteMode === 'screenplay') updateLiveElementTag();
     });
 
-    /* ------------------------------------------------------------------
-        ROBUST DYNAMIC CHAPTER PARSER USING // MARKDOWN & DELETION FALLBACK
-    ------------------------------------------------------------------ */
     function parseDocumentIntoChapters() {
-    const blocks = Array.from(editor.children);
-    if (blocks.length === 0) {
-        const rawText = editor.innerText || "";
-        return [{ title: "Chapter 1", blocks: [], rawContent: rawText }];
-    }
-
-    let chapters = [];
-    let currentChapter = { title: "Chapter 1", blocks: [] };
-    let dynamicChapterCounter = 1;
-
-    blocks.forEach((block, idx) => {
-        const rawText = (block.innerText || block.textContent || "").trim();
-        const match = rawText.match(/^\/\/(.*?)\/\/$/);
-        const isChap = block.dataset.chapterTitle === 'true' || match;
-
-        if (isChap) {
-            if (currentChapter.blocks.length > 0) {
-                chapters.push(currentChapter);
-            }
-            const chapTitleText = match ? match[1].trim() : (rawText || `Chapter ${dynamicChapterCounter}`);
-            block.dataset.chapterTitle = "true";
-            block.innerText = chapTitleText; // Keep display clean without slashes in editor view
-            
-            currentChapter = { title: chapTitleText, blocks: [block] };
-            dynamicChapterCounter++;
-        } else {
-            if (idx === 0 && chapters.length === 0) {
-                currentChapter.title = rawText ? rawText.substring(0, 20) : "Chapter 1";
-            }
-            currentChapter.blocks.push(block);
+        const blocks = Array.from(editor.children);
+        if (blocks.length === 0) {
+            const rawText = editor.innerText || "";
+            return [{ title: "Chapter 1", blocks: [], rawContent: rawText }];
         }
-    });
 
-    if (currentChapter.blocks.length > 0) {
-        chapters.push(currentChapter);
-    }
+        let chapters = [];
+        let currentChapter = { title: "Chapter 1", blocks: [] };
+        let dynamicChapterCounter = 1;
 
-    return chapters;
-}
+        blocks.forEach((block, idx) => {
+            const rawText = (block.innerText || block.textContent || "").trim();
+            const match = rawText.match(/^\/\/(.*?)\/\/$/);
+            const isChap = block.dataset.chapterTitle === 'true' || match;
 
-function updateLeftMarginChapterNavigator() {
-    const navList = document.getElementById('left-margin-chapter-list');
-    if (!navList) return;
-
-    const chapters = parseDocumentIntoChapters();
-    navList.innerHTML = '';
-
-    chapters.forEach((chap, idx) => {
-        const item = document.createElement('div');
-        item.className = 'left-margin-chapter-item';
-        // Display with sequential numbering and exact chapter title
-        item.textContent = `${idx + 1}. ${chap.title}`;
-        item.title = chap.title;
-        
-        item.addEventListener('click', () => {
-            if (chap.blocks && chap.blocks.length > 0) {
-                const targetBlock = chap.blocks[0];
-                targetBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            if (isChap) {
+                if (currentChapter.blocks.length > 0) {
+                    chapters.push(currentChapter);
+                }
+                const chapTitleText = match ? match[1].trim() : (rawText || `Chapter ${dynamicChapterCounter}`);
+                block.dataset.chapterTitle = "true";
+                block.innerText = chapTitleText;
                 
-                const range = document.createRange();
-                range.setStart(targetBlock, 0);
-                range.collapse(true);
-                const sel = window.getSelection();
-                sel.removeAllRanges();
-                sel.addRange(range);
-                editor.focus();
+                currentChapter = { title: chapTitleText, blocks: [block] };
+                dynamicChapterCounter++;
+            } else {
+                if (idx === 0 && chapters.length === 0) {
+                    currentChapter.title = rawText ? rawText.substring(0, 20) : "Chapter 1";
+                }
+                currentChapter.blocks.push(block);
             }
         });
 
-        navList.appendChild(item);
-    });
+        if (currentChapter.blocks.length > 0) {
+            chapters.push(currentChapter);
+        }
 
-    highlightActiveChapterInLeftNav(chapters);
-}
+        return chapters;
+    }
+
+    function updateLeftMarginChapterNavigator() {
+        const navList = document.getElementById('left-margin-chapter-list');
+        if (!navList) return;
+
+        const chapters = parseDocumentIntoChapters();
+        navList.innerHTML = '';
+
+        chapters.forEach((chap, idx) => {
+            const item = document.createElement('div');
+            item.className = 'left-margin-chapter-item';
+            item.textContent = `${idx + 1}. ${chap.title}`;
+            item.title = chap.title;
+            
+            item.addEventListener('click', () => {
+                if (chap.blocks && chap.blocks.length > 0) {
+                    const targetBlock = chap.blocks[0];
+                    targetBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    
+                    const range = document.createRange();
+                    range.setStart(targetBlock, 0);
+                    range.collapse(true);
+                    const sel = window.getSelection();
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                    editor.focus();
+                }
+            });
+
+            navList.appendChild(item);
+        });
+
+        highlightActiveChapterInLeftNav(chapters);
+    }
 
     function highlightActiveChapterInLeftNav(chapters) {
         const navItems = document.querySelectorAll('.left-margin-chapter-item');
@@ -4080,7 +4142,10 @@ function updateLeftMarginChapterNavigator() {
         const savedBackupState = localStorage.getItem('zensuite_autobackup_enabled');
         if (savedBackupState === 'true') {
             isAutoBackupEnabled = true;
-            document.getElementById('auto-backup-toggle').checked = true;
+            const localToggle = document.getElementById('auto-backup-toggle');
+            const cloudToggle = document.getElementById('auto-backup-toggle-cloud');
+            if (localToggle) localToggle.checked = true;
+            if (cloudToggle) cloudToggle.checked = true;
         }
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -4323,7 +4388,6 @@ function updateLeftMarginChapterNavigator() {
         chapters.forEach((chap, index) => {
             const fullChapText = chap.blocks.map(b => b.innerText).join('\n');
             const wordCount = fullChapText.trim() ? fullChapText.trim().split(/\s+/).length : 0;
-            const charCount = fullChapText.length;
             
             const goalWords = chapterWordGoals[index] || 2000;
             const goalPct = Math.min(100, Math.round((wordCount / goalWords) * 100));
@@ -4465,33 +4529,32 @@ function updateLeftMarginChapterNavigator() {
     }
 
     function reorderChaptersInEditor(draggedIdx, targetIdx) {
-    let chapters = parseDocumentIntoChapters();
-    if (draggedIdx < 0 || draggedIdx >= chapters.length || targetIdx < 0 || targetIdx >= chapters.length) return;
+        let chapters = parseDocumentIntoChapters();
+        if (draggedIdx < 0 || draggedIdx >= chapters.length || targetIdx < 0 || targetIdx >= chapters.length) return;
 
-    const [movedChapter] = chapters.splice(draggedIdx, 1);
-    chapters.splice(targetIdx, 0, movedChapter);
+        const [movedChapter] = chapters.splice(draggedIdx, 1);
+        chapters.splice(targetIdx, 0, movedChapter);
 
-    let newHtml = '';
-    chapters.forEach((chap) => {
-        chap.blocks.forEach((b, bIdx) => {
-            let innerText = b.innerHTML || b.innerText || "";
-            // Ensure chapter titles maintain //...// markdown syntax when serialized
-            if (b.dataset.chapterTitle === 'true' || bIdx === 0) {
-                let cleanTitle = innerText.replace(/^\/\/(.*?)\/\/$/, '$1').trim();
-                newHtml += `<div data-chapter-title="true">//${cleanTitle}//</div>`;
-            } else {
-                newHtml += `<div>${innerText}</div>`;
-            }
+        let newHtml = '';
+        chapters.forEach((chap) => {
+            chap.blocks.forEach((b, bIdx) => {
+                let innerText = b.innerHTML || b.innerText || "";
+                if (b.dataset.chapterTitle === 'true' || bIdx === 0) {
+                    let cleanTitle = innerText.replace(/^\/\/(.*?)\/\/$/, '$1').trim();
+                    newHtml += `<div data-chapter-title="true">//${cleanTitle}//</div>`;
+                } else {
+                    newHtml += `<div>${innerText}</div>`;
+                }
+            });
         });
-    });
 
-    editor.innerHTML = newHtml;
-    processDoubleSlashChapters();
-    saveDocument();
-    recordHistorySnapshot();
-    updateLeftMarginChapterNavigator();
-    buildPlotCardsFromEditor(targetIdx);
-}
+        editor.innerHTML = newHtml;
+        processDoubleSlashChapters();
+        saveDocument();
+        recordHistorySnapshot();
+        updateLeftMarginChapterNavigator();
+        buildPlotCardsFromEditor(targetIdx);
+    }
 
     function enterChapterFromPlot(chapterIndex) {
         activePlotChapterIndex = chapterIndex;
