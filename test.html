@@ -4225,70 +4225,65 @@
     }
 
     function fetchDocumentFromDrive(fileId, fileName) {
-        if (!accessToken) return;
-        fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
-            headers: { 'Authorization': `Bearer ${accessToken}` }
-        })
-        .then(res => res.text())
-        .then(content => {
-            editor.innerHTML = content ? `<div>${content}</div>` : "<div>Start typing here...</div>";
-            if (docTitle) docTitle.value = fileName;
-            currentDriveFileId = fileId;
-            processDoubleSlashChapters();
-            updateLeftMarginChapterNavigator();
-            pickerModal.style.display = 'none';
-            launchpadView.classList.remove('active');
-            workspaceView.classList.add('active');
-            switchWorkspaceView('scribe');
-        });
-    }
-
-    async function createDriveFile() {
-        if (!accessToken) return;
-        saveIndicator.textContent = "Creating Cloud File...";
-        
-        const title = (docTitle ? docTitle.value : '') || (currentSuiteMode === 'screenplay' ? 'untitledScript.fountain' : 'untitledProse.rtf');
-        
-        const metadata = {
-            name: title,
-            mimeType: 'text/plain',
-            appProperties: {
-                suiteMode: currentSuiteMode
-            }
-        };
-
-        const content = editor.innerHTML.replace(/<\/div>/gi, '\n').replace(/<[^>]+>/g, '');
-
-        try {
-            const form = new FormData();
-            form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-            form.append('file', new Blob([content], { type: 'text/plain;charset=utf-8' }));
-
-            const response = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`
-                },
-                body: form
-            });
-
-            if (response.status === 401 || response.status === 403) {
-                handleAuthError();
-                throw new Error("Auth expired");
-            }
-
-            const fileData = await response.json();
-            currentDriveFileId = fileData.id;
-            
-            saveIndicator.textContent = "Cloud Created & Synced";
-            syncDot.className = 'sync-dot connected';
-            saveDocument();
-            listDriveFiles();
-        } catch (error) {
-            showZenAlert("Cloud Creation Error", "Failed to initialize document on Google Drive: " + error.message);
-            saveIndicator.textContent = "Sync Failed";
+    if (!accessToken) return;
+    saveIndicator.textContent = "Loading Cloud File...";
+    
+    fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+        headers: { 'Authorization': `Bearer ${accessToken}` }
+    })
+    .then(res => {
+        if (res.status === 401 || res.status === 403) {
+            handleAuthError();
+            throw new Error("Auth expired");
         }
-    }
+        return res.text();
+    })
+    .then(content => {
+        editor.innerHTML = content ? `<div>${content}</div>` : "<div>Start typing here...</div>";
+        if (docTitle) docTitle.value = fileName;
+        currentDriveFileId = fileId;
+
+        // Bind or create a local storage record linked to this Google Drive file ID
+        let db = getLocalDatabase();
+        let existingLocal = db.find(item => item.driveId === fileId);
+        
+        if (existingLocal) {
+            currentLocalFileId = existingLocal.id;
+            existingLocal.content = editor.innerHTML;
+            existingLocal.title = fileName;
+        } else {
+            currentLocalFileId = "drive_local_" + fileId;
+            db.unshift({
+                id: currentLocalFileId,
+                title: fileName,
+                content: editor.innerHTML,
+                suiteMode: currentSuiteMode,
+                driveId: fileId
+            });
+        }
+        
+        localStorage.setItem('zensuite_local_db', JSON.stringify(db));
+        localStorage.setItem(`zensuite_current_active_${currentSuiteMode}_id`, currentLocalFileId);
+        updateUrlParameters(currentLocalFileId, currentSuiteMode);
+
+        processDoubleSlashChapters();
+        updateLeftMarginChapterNavigator();
+        
+        historyStack = [];
+        historyIndex = -1;
+        recordHistorySnapshot();
+
+        pickerModal.style.display = 'none';
+        launchpadView.classList.remove('active');
+        workspaceView.classList.add('active');
+        switchWorkspaceView('scribe');
+        pickerModifierSync();
+    })
+    .catch(error => {
+        showZenAlert("Cloud Load Error", "Failed to retrieve document from Google Drive: " + error.message);
+        saveIndicator.textContent = "Load Failed";
+    });
+}
 
     let cloudSaveDebounceTimer = null;
 
