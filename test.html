@@ -2360,7 +2360,7 @@
     let isAutoBackupEnabled = false;
     let autoBackupMinutes = 10;
     let tokenRenewalTimer = null;
-    let historyDebounceTimer = null; // Declared globally to prevent initialization order errors
+    let historyDebounceTimer = null;
 
     const MAX_HISTORY_STEPS = 50;
     let historyStack = [];
@@ -2372,6 +2372,8 @@
     const btnRedoDesktop = document.getElementById('btn-redo-desktop');
     const btnUndoMobile = document.getElementById('btn-undo-mobile');
     const btnRedoMobile = document.getElementById('btn-redo-mobile');
+    const btnScribe = document.getElementById('btn-mode-scribe');
+    const btnPlot = document.getElementById('btn-mode-plot');
 
     /* ------------------------------------------------------------------
         ROBUST .DOCX & .PDF EXPORT FUNCTIONS WITH FULL FORMATTING SUPPORT
@@ -4412,8 +4414,6 @@
         currentWorkspaceTab = tab;
         const scribeContainer = document.getElementById('scribe-editor-container');
         const plotContainer = document.getElementById('plot-view-container');
-        const btnScribe = document.getElementById('btn-mode-scribe');
-        const btnPlot = document.getElementById('btn-mode-plot');
 
         if (tab === 'scribe') {
             btnScribe.classList.add('active');
@@ -4634,8 +4634,6 @@
     function handlePlotZoom(columnsValue) {
         const grid = document.getElementById('plot-cards-grid');
         const cols = parseInt(columnsValue, 10) || 3;
-        
-        // Adjust column count directly (3 to 7 columns) so cards resize and fill full width proportionally
         grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
     }
 
