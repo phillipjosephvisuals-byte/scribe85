@@ -961,7 +961,6 @@
         }
 
         .plot-cards-grid {
-            --card-height: 320px;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 24px;
@@ -975,10 +974,10 @@
             border-radius: 8px;
             display: flex;
             flex-direction: column;
-            height: var(--card-height);
+            height: 320px;
             position: relative;
             box-shadow: 0 6px 20px rgba(0,0,0,0.4);
-            transition: height 0.15s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
             overflow: hidden;
             user-select: none;
         }
@@ -2091,7 +2090,7 @@
         </div>
 
         <span class="launchpad-footer-tag">
-            © 2026 Phillip Joseph Villarreal. All Rights Reserved.
+            &copy; 2026 Phillip Joseph Villarreal. All Rights Reserved.
         </span>
 
     </div>
@@ -2224,7 +2223,7 @@
                             </g>
                         </svg>
                     </svg>
-                </div>
+                </button>
 
                 <div class="inline-theme-picker">
                     <div class="theme-square sq-dark" title="Classic Dark" onclick="applyAppTheme('dark')"></div>
@@ -2361,6 +2360,7 @@
     let isAutoBackupEnabled = false;
     let autoBackupMinutes = 10;
     let tokenRenewalTimer = null;
+    let historyDebounceTimer = null; // Declared globally to prevent initialization order errors
 
     const MAX_HISTORY_STEPS = 50;
     let historyStack = [];
@@ -4639,7 +4639,6 @@
         grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
     }
 
-    let historyDebounceTimer;
     editor.addEventListener('input', () => {
         processInlineMarkdownFormatting(); 
         processDoubleSlashChapters();
