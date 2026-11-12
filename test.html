@@ -4597,7 +4597,7 @@
                 let innerText = b.innerHTML || b.innerText || "";
                 if (b.dataset.chapterTitle === 'true' || bIdx === 0) {
                     let cleanTitle = innerText.replace(/^\/\/(.*?)\/\/$/, '$1').trim();
-                    newHtml += `<div data-chapter-title="true">//${cleanTitle}//</div>`;
+                    newHtml += `<div data-chapter-title="true">${cleanTitle}</div>`;
                 } else {
                     newHtml += `<div>${innerText}</div>`;
                 }
