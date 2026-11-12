@@ -2090,7 +2090,7 @@
         </div>
 
         <span class="launchpad-footer-tag">
-            &copy; 2026 Phillip Joseph Villarreal. All Rights Reserved.
+            © 2026 Phillip Joseph Villarreal. All Rights Reserved.
         </span>
 
     </div>
@@ -4416,18 +4416,18 @@
         const plotContainer = document.getElementById('plot-view-container');
 
         if (tab === 'scribe') {
-            btnScribe.classList.add('active');
-            btnPlot.classList.remove('active');
-            plotContainer.classList.remove('active');
-            scribeContainer.style.display = 'flex';
+            if (btnScribe) btnScribe.classList.add('active');
+            if (btnPlot) btnPlot.classList.remove('active');
+            if (plotContainer) plotContainer.classList.remove('active');
+            if (scribeContainer) scribeContainer.style.display = 'flex';
             document.body.classList.remove('distraction-free');
             document.body.classList.remove('plot-view-active');
             updateLeftMarginChapterNavigator();
         } else {
-            btnPlot.classList.add('active');
-            btnScribe.classList.remove('active');
-            scribeContainer.style.display = 'none';
-            plotContainer.classList.add('active');
+            if (btnPlot) btnPlot.classList.add('active');
+            if (btnScribe) btnScribe.classList.remove('active');
+            if (scribeContainer) scribeContainer.style.display = 'none';
+            if (plotContainer) plotContainer.classList.add('active');
             document.body.classList.add('distraction-free');
             document.body.classList.add('plot-view-active');
             buildPlotCardsFromEditor(activePlotChapterIndex);
