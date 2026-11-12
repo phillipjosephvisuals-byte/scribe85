@@ -962,7 +962,6 @@
 
         .plot-cards-grid {
             --card-height: 320px;
-            --card-scale: 1;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 24px;
@@ -1016,7 +1015,7 @@
         }
 
         .chapter-card-header {
-            padding: calc(10px * var(--card-scale)) calc(14px * var(--card-scale));
+            padding: 10px 14px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.06);
             display: flex;
             justify-content: space-between;
@@ -1025,7 +1024,7 @@
         }
 
         .chapter-card-title {
-            font-size: calc(0.85rem * var(--card-scale));
+            font-size: 0.85rem;
             font-weight: bold;
             color: var(--accent-color);
             text-shadow: var(--text-glow);
@@ -1039,7 +1038,7 @@
         }
 
         .chapter-card-stats {
-            font-size: calc(0.7rem * var(--card-scale));
+            font-size: 0.7rem;
             color: var(--muted-color);
             cursor: pointer;
             transition: color 0.2s ease;
@@ -1060,8 +1059,8 @@
         .chapter-card-body {
             flex-grow: 1;
             overflow-y: auto;
-            padding: calc(14px * var(--card-scale));
-            font-size: calc(0.8rem * var(--card-scale));
+            padding: 14px;
+            font-size: 0.8rem;
             line-height: 1.6;
             color: var(--text-color);
             white-space: pre-wrap;
@@ -2092,7 +2091,7 @@
         </div>
 
         <span class="launchpad-footer-tag">
-            &copy; 2026 Phillip Joseph Villarreal. All Rights Reserved.
+            © 2026 Phillip Joseph Villarreal. All Rights Reserved.
         </span>
 
     </div>
@@ -2224,29 +2223,20 @@
                                 </g>
                             </g>
                         </svg>
-                    </button>
-
-                    <div class="inline-theme-picker">
-                        <div class="theme-square sq-dark" title="Classic Dark" onclick="applyAppTheme('dark')"></div>
-                        <div class="theme-square sq-amber" title="Amber CRT" onclick="applyAppTheme('amber')"></div>
-                        <div class="theme-square sq-matrix" title="Matrix Green" onclick="applyAppTheme('matrix')"></div>
-                        <div class="theme-square sq-cobalt" title="Retro Cobalt" onclick="applyAppTheme('cobalt')"></div>
-                    </div>
+                    </svg>
                 </div>
 
-                <div class="sync-status">
-                    <span id="save-indicator">Synced</span>
-                    <div class="sync-dot" id="sync-dot"></div>
+                <div class="inline-theme-picker">
+                    <div class="theme-square sq-dark" title="Classic Dark" onclick="applyAppTheme('dark')"></div>
+                    <div class="theme-square sq-amber" title="Amber CRT" onclick="applyAppTheme('amber')"></div>
+                    <div class="theme-square sq-matrix" title="Matrix Green" onclick="applyAppTheme('matrix')"></div>
+                    <div class="theme-square sq-cobalt" title="Retro Cobalt" onclick="applyAppTheme('cobalt')"></div>
                 </div>
             </div>
 
-            <div class="header-center-hub">
-                <input type="text" class="doc-title" spellcheck="false" placeholder="untitled">
-            </div>
-
-            <div class="workspace-mode-toggles">
-                <button class="mode-toggle-btn active" id="btn-mode-scribe" onclick="switchWorkspaceView('scribe')">scribe</button>
-                <button class="mode-toggle-btn" id="btn-mode-plot" onclick="switchWorkspaceView('plot')">plot</button>
+            <div class="sync-status">
+                <span id="save-indicator">Synced</span>
+                <div class="sync-dot" id="sync-dot"></div>
             </div>
         </header>
 
@@ -2322,14 +2312,14 @@
                             <span style="font-size: 0.7rem; color: var(--muted-color);">Zoom</span>
                             <span>-</span>
                         </div>
-                        <input type="range" id="plot-zoom-slider" min="0.4" max="1" step="0.05" value="1" oninput="handlePlotZoom(this.value)">
+                        <input type="range" id="plot-zoom-slider" min="3" max="7" step="1" value="3" oninput="handlePlotZoom(this.value)">
                         <div class="zoom-slider-labels">
                             <span>+</span>
                         </div>
                     </div>
                 </div>
                 <div class="plot-grid-scroll-well" id="plot-grid-scroll-well">
-                    <div class="plot-cards-grid" id="plot-cards-grid">
+                    <div class="plot-cards-grid" id="plot-cards-grid" style="grid-template-columns: repeat(3, 1fr);">
                         <!-- Cards injected dynamically -->
                     </div>
                 </div>
@@ -3763,7 +3753,7 @@
                         <button class="list-delete-btn" title="Delete Draft">Delete</button>
                         <button class="list-download-btn" title="Download Local File">↓</button>
                     </div>
-                ';
+                `;
                 
                 item.querySelector('.load-trigger').addEventListener('click', () => { loadLocalFile(file.id); });
                 item.querySelector('.list-rename-btn').addEventListener('click', (e) => { e.stopPropagation(); requestDocumentRename(file.id, file.title, 'local'); });
@@ -4641,23 +4631,12 @@
         }, 100);
     }
 
-       function handlePlotZoom(zoomValue) {
+    function handlePlotZoom(columnsValue) {
         const grid = document.getElementById('plot-cards-grid');
-        const numericZoom = parseFloat(zoomValue) || 1;
+        const cols = parseInt(columnsValue, 10) || 3;
         
-        // Map zoomValue (0.4 to 1.0) to column count (7 columns zoomed out -> 3 columns zoomed in)
-        let columnsCount = 3;
-        if (numericZoom <= 0.45) columnsCount = 7;
-        else if (numericZoom <= 0.55) columnsCount = 6;
-        else if (numericZoom <= 0.70) columnsCount = 5;
-        else if (numericZoom <= 0.85) columnsCount = 4;
-    
-        // Keep grid full-width; scale card height, gaps, and typography proportionally
-        grid.style.transform = 'none';
-        grid.style.gridTemplateColumns = `repeat(${columnsCount}, 1fr)`;
-        grid.style.gap = `${Math.round(24 * numericZoom)}px`;
-        grid.style.setProperty('--card-height', `${Math.round(320 * numericZoom)}px`);
-        grid.style.setProperty('--card-scale', Math.max(0.65, numericZoom));
+        // Adjust column count directly (3 to 7 columns) so cards resize and fill full width proportionally
+        grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
     }
 
     let historyDebounceTimer;
