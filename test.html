@@ -919,6 +919,17 @@
             border-radius: 20px;
             font-size: 0.75rem;
             color: var(--muted-color);
+            position: relative;
+        }
+
+        .zoom-slider-labels {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            user-select: none;
         }
 
         .zoom-slider-wrapper input[type="range"] {
@@ -1040,13 +1051,14 @@
         .chapter-card-body-wrapper {
             position: relative;
             flex-grow: 1;
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
             transition: opacity 0.2s ease;
         }
 
         .chapter-card-body {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
+            flex-grow: 1;
             overflow-y: auto;
             padding: 14px;
             font-size: 0.8rem;
@@ -1064,14 +1076,14 @@
             border-radius: 4px;
         }
 
-        .chapter-card-body::after {
+        .chapter-card-body-wrapper::after {
             content: '';
-            position: sticky;
+            position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
-            height: 40px;
-            background: linear-gradient(to bottom, transparent, var(--bg-color));
+            height: 45px;
+            background: linear-gradient(to bottom, transparent, rgba(18, 20, 28, 0.95));
             pointer-events: none;
             display: block;
         }
@@ -2306,8 +2318,14 @@
                 <div class="plot-toolbar">
                     <span style="font-size: 0.8rem; color: var(--muted-color); text-transform: uppercase; letter-spacing: 1px;">Chapter Card Navigator</span>
                     <div class="zoom-slider-wrapper">
-                        <span>Zoom</span>
+                        <div class="zoom-slider-labels">
+                            <span style="font-size: 0.7rem; color: var(--muted-color);">Zoom</span>
+                            <span>-</span>
+                        </div>
                         <input type="range" id="plot-zoom-slider" min="0.4" max="1" step="0.05" value="1" oninput="handlePlotZoom(this.value)">
+                        <div class="zoom-slider-labels">
+                            <span>+</span>
+                        </div>
                     </div>
                 </div>
                 <div class="plot-grid-scroll-well" id="plot-grid-scroll-well">
@@ -4626,11 +4644,12 @@
         const grid = document.getElementById('plot-cards-grid');
         const numericZoom = parseFloat(zoomValue) || 1;
         
-        // Dynamically adjust columns based on zoom level so cards reflow to fill the space
+        // Scale grid columns dynamically to use full width up to 7 columns when zoomed out
         let columnsCount = 3;
-        if (numericZoom <= 0.55) columnsCount = 6;
-        else if (numericZoom <= 0.7) columnsCount = 5;
-        else if (numericZoom <= 0.85) columnsCount = 4;
+        if (numericZoom <= 0.5) columnsCount = 7;
+        else if (numericZoom <= 0.6) columnsCount = 6;
+        else if (numericZoom <= 0.75) columnsCount = 5;
+        else if (numericZoom <= 0.9) columnsCount = 4;
 
         grid.style.gridTemplateColumns = `repeat(${columnsCount}, 1fr)`;
         grid.style.transform = `scale(${numericZoom})`;
