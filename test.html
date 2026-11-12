@@ -2090,7 +2090,7 @@
         </div>
 
         <span class="launchpad-footer-tag">
-            © 2026 Phillip Joseph Villarreal. All Rights Reserved.
+            &copy; 2026 Phillip Joseph Villarreal. All Rights Reserved.
         </span>
 
     </div>
@@ -2318,7 +2318,7 @@
                     </div>
                 </div>
                 <div class="plot-grid-scroll-well" id="plot-grid-scroll-well">
-                    <div class="plot-cards-grid" id="plot-cards-grid" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="plot-cards-grid" id="plot-cards-grid">
                         <!-- Cards injected dynamically -->
                     </div>
                 </div>
@@ -3374,16 +3374,18 @@
         const cleanText = text.replace(/\u200B/g, "");
         
         const charCount = cleanText.length;
-        charCountEl.textContent = charCount.toLocaleString();
+        if (charCountEl) charCountEl.textContent = charCount.toLocaleString();
 
         const words = cleanText.trim().split(/\s+/).filter(word => word.length > 0);
         const wordCount = words.length;
-        wordCountEl.textContent = wordCount.toLocaleString();
+        if (wordCountEl) wordCountEl.textContent = wordCount.toLocaleString();
 
         const readingTime = Math.ceil(wordCount / 200);
-        readTimeEl.textContent = currentSuiteMode === 'screenplay' 
-            ? `${Math.ceil(wordCount / 120)} min read` 
-            : `${readingTime} min read`;
+        if (readTimeEl) {
+            readTimeEl.textContent = currentSuiteMode === 'screenplay' 
+                ? `${Math.ceil(wordCount / 120)} min read` 
+                : `${readingTime} min read`;
+        }
     }
 
     function getSelectedBlocks() {
@@ -4321,6 +4323,7 @@
 
             processDoubleSlashChapters();
             updateLeftMarginChapterNavigator();
+            updateAnalytics(editor.innerText);
             
             historyStack = [];
             historyIndex = -1;
