@@ -2090,7 +2090,7 @@
         </div>
 
         <span class="launchpad-footer-tag">
-            © 2026 Phillip Joseph Villarreal. All Rights Reserved.
+            &copy; 2026 Phillip Joseph Villarreal. All Rights Reserved.
         </span>
 
     </div>
@@ -3881,20 +3881,6 @@
 
         if (currentSuiteMode === 'narrative' && e.key === 'Enter') {
             setTimeout(() => {
-                const selection = window.getSelection();
-                if (selection.rangeCount) {
-                    let currentBlock = selection.getRangeAt(0).startContainer;
-                    if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
-                    while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
-                        currentBlock = currentBlock.parentNode;
-                    }
-                    if (currentBlock && currentBlock !== editor) {
-                        const text = currentBlock.innerText.trim();
-                        if (!text.match(/^\/\/(.*?)\/\/$/, "")) {
-                            delete currentBlock.dataset.chapterTitle;
-                        }
-                    }
-                }
                 processDoubleSlashChapters();
                 applyDynamicListSpacing();
                 updateLeftMarginChapterNavigator();
@@ -3904,8 +3890,12 @@
         }
     });
 
-    editor.addEventListener('keyup', () => {
+    editor.addEventListener('blur', () => {
         processDoubleSlashChapters();
+        saveDocument();
+    });
+
+    editor.addEventListener('keyup', () => {
         updateLeftMarginChapterNavigator();
         if (currentSuiteMode === 'screenplay') updateLiveElementTag();
     });
@@ -4668,7 +4658,7 @@
 
         setTimeout(() => {
             const chapters = parseDocumentIntoChapters();
-            if (chapters[chapterIndex] && chapters[index].blocks.length > 0) {
+            if (chapters[chapterIndex] && chapters[chapterIndex].blocks.length > 0) {
                 const targetBlock = chapters[chapterIndex].blocks[0];
                 targetBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 
@@ -4690,7 +4680,6 @@
 
     editor.addEventListener('input', () => {
         processInlineMarkdownFormatting(); 
-        processDoubleSlashChapters();
         updateAnalytics(editor.innerText);
         updateLeftMarginChapterNavigator();
         
