@@ -879,7 +879,7 @@
             font-weight: 875;
         }
 
-        /* Start writing here floating pointer tooltip with slow pulse */
+        /* Gentle, slow-pulsing floating tooltip */
         .start-writing-tooltip {
             position: absolute;
             top: 42px;
@@ -913,9 +913,9 @@
         }
 
         @keyframes slowPulseTooltip {
-            0% { transform: scale(1); opacity: 0.7; box-shadow: 0 4px 12px rgba(0,0,0,0.4), 0 0 0px rgba(255,255,255,0); }
-            50% { transform: scale(1.04); opacity: 1; box-shadow: 0 6px 20px rgba(0,0,0,0.6), 0 0 10px rgba(255,255,255,0.25); }
-            100% { transform: scale(1); opacity: 0.7; box-shadow: 0 4px 12px rgba(0,0,0,0.4), 0 0 0px rgba(255,255,255,0); }
+            0% { transform: translateY(0) scale(1); opacity: 0.6; }
+            50% { transform: translateY(-4px) scale(1.02); opacity: 1; }
+            100% { transform: translateY(0) scale(1); opacity: 0.6; }
         }
 
         /* PLOT VIEW CONTAINER & STYLES */
@@ -2131,7 +2131,7 @@
     <div id="picker-modal" class="modal-overlay">
         <div class="modal-box">
             <h3 id="modal-context-title">Narrative Workspace</h3>
-             
+            
             <div class="modal-tabs-bar">
                 <button class="modal-tab-btn active" id="tab-toggle-local">Local Storage</button>
                 <button class="modal-tab-btn" id="tab-toggle-cloud">Cloud Integration</button>
@@ -2929,6 +2929,17 @@
     let accessToken = null;
     let chapterWordGoals = {};
 
+    function switchAppView(viewName) {
+        if (viewName === 'launchpad') {
+            launchpadView.classList.add('active');
+            workspaceView.classList.remove('active');
+            document.body.classList.remove('distraction-free');
+        } else if (viewName === 'workspace') {
+            launchpadView.classList.remove('active');
+            workspaceView.classList.add('active');
+        }
+    }
+
     function checkEditorTooltip() {
         if (!startWritingTooltip) return;
         const text = editor.innerText.replace(/[\u200B\u00A0]/g, "").trim();
@@ -2940,17 +2951,16 @@
     }
 
     function focusEditorStart() {
+        if (!workspaceView.classList.contains('active') || currentWorkspaceTab !== 'scribe') return;
         editor.focus();
-        const range = document.createRange();
         if (editor.firstChild) {
+            const range = document.createRange();
             range.setStart(editor.firstChild, 0);
-        } else {
-            range.setStart(editor, 0);
+            range.collapse(true);
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
         }
-        range.collapse(true);
-        const sel = window.getSelection();
-        sel.removeAllRanges();
-        sel.addRange(range);
     }
 
     function showLeftMarginAlert() {
@@ -3131,9 +3141,7 @@
         localStorage.setItem('zensuite_view_state', 'launchpad');
         updateUrlParameters(null, null);
         
-        workspaceView.classList.remove('active');
-        launchpadView.classList.add('active');
-        document.body.classList.remove('distraction-free');
+        switchAppView('launchpad');
     });
 
     function configureWorkspaceUIPresentation() {
@@ -3239,8 +3247,7 @@
         checkEditorTooltip();
         
         pickerModal.style.display = 'none';
-        launchpadView.classList.remove('active');
-        workspaceView.classList.add('active');
+        switchAppView('workspace');
         switchWorkspaceView('scribe');
         focusEditorStart();
     }
@@ -3780,11 +3787,10 @@
 
             configureWorkspaceUIPresentation();
             pickerModal.style.display = 'none';
-            launchpadView.classList.remove('active');
-            workspaceView.classList.add('active');
+            switchAppView('workspace');
             switchWorkspaceView('scribe');
-            checkEditorTooltip();
             focusEditorStart();
+            checkEditorTooltip();
         };
         reader.readAsText(file);
     }
@@ -4206,8 +4212,7 @@
         checkEditorTooltip();
         
         pickerModal.style.display = 'none';
-        launchpadView.classList.remove('active');
-        workspaceView.classList.add('active');
+        switchAppView('workspace');
         switchWorkspaceView('scribe');
         focusEditorStart();
     }
@@ -4250,13 +4255,11 @@
 
         if (targetDocId && viewState === 'workspace') {
             loadLocalFile(targetDocId);
-            launchpadView.classList.remove('active');
-            workspaceView.classList.add('active');
+            switchAppView('workspace');
         } else {
             processDoubleSlashChapters();
             updateLeftMarginChapterNavigator();
-            launchpadView.classList.add('active');
-            workspaceView.classList.remove('active');
+            switchAppView('launchpad');
         }
 
         checkEditorTooltip();
@@ -4386,11 +4389,10 @@
             recordHistorySnapshot();
 
             pickerModal.style.display = 'none';
-            launchpadView.classList.remove('active');
-            workspaceView.classList.add('active');
+            switchAppView('workspace');
             switchWorkspaceView('scribe');
-            pickerModifierSync();
             focusEditorStart();
+            pickerModifierSync();
         })
         .catch(error => {
             showZenAlert("Cloud Load Error", "Failed to retrieve document from Google Drive: " + error.message);
@@ -4483,7 +4485,7 @@
             document.body.classList.remove('distraction-free');
             document.body.classList.remove('plot-view-active');
             updateLeftMarginChapterNavigator();
-            focusEditorStart();
+            setTimeout(focusEditorStart, 50);
         } else {
             if (btnPlot) btnPlot.classList.add('active');
             if (btnScribe) btnScribe.classList.remove('active');
@@ -4678,7 +4680,7 @@
 
         setTimeout(() => {
             const chapters = parseDocumentIntoChapters();
-            if (chapters[chapterIndex] && chapters[index] && chapters[chapterIndex].blocks.length > 0) {
+            if (chapters[chapterIndex] && chapters[chapterIndex].blocks.length > 0) {
                 const targetBlock = chapters[chapterIndex].blocks[0];
                 targetBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 
