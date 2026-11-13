@@ -3291,48 +3291,62 @@
     }
 
     function processDoubleSlashChapters() {
-        if (currentSuiteMode !== 'narrative') return;
-        
-        Array.from(editor.childNodes).forEach(node => {
-            if (node.nodeType === Node.TEXT_NODE && node.nodeValue.trim() !== '') {
-                const div = document.createElement('div');
-                div.textContent = node.nodeValue;
-                editor.replaceChild(div, node);
-            } else if (node.nodeType === Node.TEXT_NODE) {
-                editor.removeChild(node);
-            }
-        });
+    if (currentSuiteMode !== 'narrative') return;
+    
+    // Clean up rogue text nodes
+    Array.from(editor.childNodes).forEach(node => {
+        if (node.nodeType === Node.TEXT_NODE && node.nodeValue.trim() !== '') {
+            const div = document.createElement('div');
+            div.textContent = node.nodeValue;
+            editor.replaceChild(div, node);
+        } else if (node.nodeType === Node.TEXT_NODE) {
+            editor.removeChild(node);
+        }
+    });
 
-        const blocks = Array.from(editor.children);
+    const blocks = Array.from(editor.children);
+    const selection = window.getSelection();
+    
+    // Check if the user's cursor is currently inside a block being typed into
+    let activeBlock = null;
+    if (selection.rangeCount) {
+        let node = selection.getRangeAt(0).startContainer;
+        if (node.nodeType === Node.TEXT_NODE) node = node.parentNode;
+        while (node && node.parentNode !== editor && node !== editor) {
+            node = node.parentNode;
+        }
+        activeBlock = node;
+    }
 
-        blocks.forEach(block => {
-            const rawText = block.innerText || block.textContent || "";
-            const cleanText = rawText.replace(/[\u00A0\u200B]/g, "").trim();
-            const chapterRegex = new RegExp("^//(.*?)//$");
-            const match = cleanText.match(chapterRegex);
+    blocks.forEach(block => {
+        const rawText = block.innerText || block.textContent || "";
+        const cleanText = rawText.replace(/[\u00A0\u200B]/g, "").trim();
+        const chapterRegex = new RegExp("^//(.*?)//$");
+        const match = cleanText.match(chapterRegex);
 
-            if (match) {
-                const innerTitle = match[1].trim();
-                if (block.dataset.chapterTitle !== "true") {
-                    block.dataset.chapterTitle = "true";
-                    block.innerText = innerTitle;
+        if (match) {
+            const innerTitle = match[1].trim();
+            // Do not convert while the user is actively typing a single slash "/" or partial syntax
+            if (block.dataset.chapterTitle !== "true" && block !== activeBlock) {
+                block.dataset.chapterTitle = "true";
+                block.innerText = innerTitle;
 
-                    let nextBlock = block.nextElementSibling;
-                    if (!nextBlock || nextBlock.dataset.chapterTitle === 'true' || nextBlock.innerText.trim() !== '') {
-                        const newDiv = document.createElement('div');
-                        newDiv.innerHTML = '<br>';
-                        if (nextBlock) {
-                            editor.insertBefore(newDiv, nextBlock);
-                        } else {
-                            editor.appendChild(newDiv);
-                        }
+                let nextBlock = block.nextElementSibling;
+                if (!nextBlock || nextBlock.dataset.chapterTitle === 'true' || nextBlock.innerText.trim() !== '') {
+                    const newDiv = document.createElement('div');
+                    newDiv.innerHTML = '<br>';
+                    if (nextBlock) {
+                        editor.insertBefore(newDiv, nextBlock);
+                    } else {
+                        editor.appendChild(newDiv);
                     }
                 }
             }
-        });
+        }
+    });
 
-        updateLeftMarginChapterNavigator();
-    }
+    updateLeftMarginChapterNavigator();
+}
 
     function parseRawContentToEditorHTML(content) {
         if (!content) return "<div>Start typing here...</div>";
@@ -4638,20 +4652,27 @@
         grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
     }
 
-    editor.addEventListener('input', () => {
-        processInlineMarkdownFormatting(); 
-        processDoubleSlashChapters();
-        updateAnalytics(editor.innerText);
-        updateLeftMarginChapterNavigator();
-        
-        clearTimeout(idleTimer);
-        idleTimer = setTimeout(startTypingDistractionHide, 1000); 
-        
-        saveDocument();
+   let chapterParseTimer = null;
 
-        clearTimeout(historyDebounceTimer);
-        historyDebounceTimer = setTimeout(recordHistorySnapshot, 400);
-    });
+editor.addEventListener('input', () => {
+    processInlineMarkdownFormatting(); 
+    updateAnalytics(editor.innerText);
+    
+    clearTimeout(chapterParseTimer);
+    chapterParseTimer = setTimeout(() => {
+        processDoubleSlashChapters();
+    }, 120); // Prevents caret snap-back while typing slashes
+    
+    updateLeftMarginChapterNavigator();
+    
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(startTypingDistractionHide, 1000); 
+    
+    saveDocument();
+
+    clearTimeout(historyDebounceTimer);
+    historyDebounceTimer = setTimeout(recordHistorySnapshot, 400);
+});
 </script>
 </body>
 </html>
