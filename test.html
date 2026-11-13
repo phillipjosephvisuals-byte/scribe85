@@ -879,11 +879,42 @@
             font-weight: 875;
         }
 
-        .editor:empty:before {
-            content: attr(placeholder);
-            color: var(--muted-color);
-            opacity: 0.6;
+        /* Start writing here floating pointer tooltip */
+        .start-writing-tooltip {
+            position: absolute;
+            top: 42px;
+            left: 130px;
+            background: rgba(18, 20, 28, 0.95);
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-family: var(--font-mono);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
             pointer-events: none;
+            z-index: 25;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            animation: pulseTooltip 2s infinite alternate ease-in-out;
+            text-shadow: var(--text-glow);
+        }
+
+        .start-writing-tooltip::before {
+            content: '◀';
+            font-size: 0.65rem;
+            color: var(--accent-color);
+        }
+
+        .start-writing-tooltip.hidden {
+            display: none !important;
+        }
+
+        @keyframes pulseTooltip {
+            0% { transform: translateY(0); opacity: 0.85; }
+            100% { transform: translateY(-3px); opacity: 1; }
         }
 
         /* PLOT VIEW CONTAINER & STYLES */
@@ -2305,10 +2336,10 @@
                     <button class="margin-widget-btn" id="btn-bold-toggle" title="Toggle Bold"><b>B</b></button>
                     <button class="margin-widget-btn" id="btn-italic-toggle" title="Toggle Italic"><i>I</i></button>
                     <button class="margin-widget-btn" id="btn-underline-toggle" title="Toggle Underline"><u>U</u></button>
-                    <button class="margin-widget-btn" id="btn-chapter-toggle" title="Toggle Chapter Title" style="font-size: 0.68rem; font-weight: bold;">ch.</button>
                 </div>
 
-                <div class="editor" contenteditable="true" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" placeholder="Start typing here...">Start typing here...</div>
+                <div class="start-writing-tooltip" id="start-writing-tooltip">Start writing here</div>
+                <div class="editor" contenteditable="true" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off"><div><br></div></div>
             </div>
 
             <!-- PLOT VIEW CONTAINER -->
@@ -2638,6 +2669,7 @@
         updateLeftMarginChapterNavigator();
         if (currentSuiteMode === 'narrative') applyDynamicListSpacing();
         if (currentSuiteMode === 'screenplay') updateLiveElementTag();
+        checkEditorTooltip();
         saveDocument();
 
         if (snapshot.caretOffset !== undefined) {
@@ -2866,7 +2898,6 @@
     const btnBoldToggle = document.getElementById('btn-bold-toggle');
     const btnItalicToggle = document.getElementById('btn-italic-toggle');
     const btnUnderlineToggle = document.getElementById('btn-underline-toggle');
-    const btnChapterToggle = document.getElementById('btn-chapter-toggle');
 
     const localDocsTarget = document.getElementById('local-docs-target');
     const restoreDropZone = document.getElementById('restore-drop-zone');
@@ -2885,6 +2916,7 @@
     const charCountEl = document.getElementById('char-count');
     const readTimeEl = document.getElementById('read-time');
     const elementStatusTag = document.getElementById('element-status-tag');
+    const startWritingTooltip = document.getElementById('start-writing-tooltip');
     
     const syncDot = document.getElementById('sync-dot');
     const saveIndicator = document.getElementById('save-indicator');
@@ -2895,6 +2927,16 @@
     let tokenClient;
     let accessToken = null;
     let chapterWordGoals = {};
+
+    function checkEditorTooltip() {
+        if (!startWritingTooltip) return;
+        const text = editor.innerText.replace(/[\u200B\u00A0]/g, "").trim();
+        if (text === "" && currentSuiteMode === 'narrative') {
+            startWritingTooltip.classList.remove('hidden');
+        } else {
+            startWritingTooltip.classList.add('hidden');
+        }
+    }
 
     function showLeftMarginAlert() {
         leftMarginAlert.style.display = 'flex';
@@ -3008,7 +3050,7 @@
     function executeEmergencyAutoDownload() {
         if (!workspaceView.classList.contains('active')) return;
         const content = editor.innerHTML;
-        if (!content || content === 'Start typing here...') return;
+        if (!content || content.includes('<br>')) return;
 
         const title = docTitle ? docTitle.value : 'scribe85-backup';
         exportDocumentToDisk(`${title}_AUTO_BACKUP`, content, currentSuiteMode);
@@ -3094,6 +3136,7 @@
         }
         renderGhostMarginGuide();
         updateLeftMarginChapterNavigator();
+        checkEditorTooltip();
     }
 
     function createDriveFile() {
@@ -3105,7 +3148,7 @@
             appProperties: { suiteMode: currentSuiteMode }
         };
 
-        const plainTextContent = editor.innerText || "Start typing here...";
+        const plainTextContent = editor.innerText || "";
         const form = new FormData();
         form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
         form.append('file', new Blob([plainTextContent], { type: 'text/plain' }));
@@ -3148,7 +3191,7 @@
             editor.innerHTML = '<div data-element="scene-heading">INT. NEW SCENE - DAY</div>';
             if (docTitle) docTitle.value = "untitledScript.fountain";
         } else {
-            editor.innerHTML = '<div>Start typing here...</div>';
+            editor.innerHTML = '<div><br></div>';
             if (docTitle) docTitle.value = "untitledProse.rtf"; 
         }
 
@@ -3178,6 +3221,7 @@
         if (currentSuiteMode === 'screenplay') updateLiveElementTag();
         pickerModifierSync();
         renderGhostMarginGuide();
+        checkEditorTooltip();
         
         pickerModal.style.display = 'none';
         launchpadView.classList.remove('active');
@@ -3393,7 +3437,7 @@
     }
 
     function parseRawContentToEditorHTML(content) {
-        if (!content) return "<div>Start typing here...</div>";
+        if (!content) return "<div><br></div>";
         if (content.includes('<div') || content.includes('<p')) {
             return content;
         }
@@ -3412,7 +3456,7 @@
                 html += `<div>${line}</div>`;
             }
         });
-        return html || "<div>Start typing here...</div>";
+        return html || "<div><br></div>";
     }
 
     function updateAnalytics(text) {
@@ -3483,56 +3527,6 @@
         updateMarginListWidget();
     }
 
-    function toggleChapterWidgetStyle() {
-        const selection = window.getSelection();
-        if (!selection.rangeCount) return;
-        const range = selection.getRangeAt(0);
-
-        if (!selection.isCollapsed) {
-            let parentSpan = range.commonAncestorContainer;
-            if (parentSpan.nodeType === Node.TEXT_NODE) parentSpan = parentSpan.parentNode;
-            
-            if (parentSpan && parentSpan.classList && parentSpan.classList.contains('inline-chapter')) {
-                const parent = parentSpan.parentNode;
-                while (parentSpan.firstChild) {
-                    parent.insertBefore(parentSpan.firstChild, parentSpan);
-                }
-                parent.removeChild(parentSpan);
-            } else {
-                try {
-                    const span = document.createElement('span');
-                    span.className = 'inline-chapter';
-                    span.appendChild(range.extractContents());
-                    range.insertNode(span);
-                } catch (e) {}
-            }
-        } else {
-            let targetBlock = range.startContainer;
-            if (targetBlock.nodeType === Node.TEXT_NODE) targetBlock = targetBlock.parentNode;
-            while (targetBlock && targetBlock.parentNode !== editor && targetBlock !== editor) {
-                targetBlock = targetBlock.parentNode;
-            }
-
-            if (!targetBlock || targetBlock === editor) {
-                targetBlock = editor.firstElementChild;
-            }
-            if (!targetBlock || targetBlock === editor) return;
-
-            if (targetBlock.dataset.chapterTitle === 'true') {
-                delete targetBlock.dataset.chapterTitle;
-            } else {
-                targetBlock.dataset.chapterTitle = "true";
-            }
-        }
-
-        applyDynamicListSpacing();
-        updateAnalytics(editor.innerText);
-        updateLeftMarginChapterNavigator();
-        saveDocument();
-        recordHistorySnapshot();
-        updateMarginListWidget();
-    }
-
     function updateMarginListWidget() {
         if (currentSuiteMode !== 'narrative' || currentWorkspaceTab !== 'scribe') {
             marginListWidget.style.display = 'none';
@@ -3566,16 +3560,8 @@
         const isAllBullets = selectedBlocks.length > 0 && selectedBlocks.every(b => (b.dataset.listType === 'bullet' || /^•\s/.test(b.innerText.trim())));
         const isAllNumbers = selectedBlocks.length > 0 && selectedBlocks.every(b => (b.dataset.listType === 'number' || /^\d+[\.\)]\s/.test(b.innerText.trim())));
         
-        let activeBlock = range.startContainer;
-        if (activeBlock.nodeType === Node.TEXT_NODE) activeBlock = activeBlock.parentNode;
-        while (activeBlock && activeBlock.parentNode !== editor && activeBlock !== editor) {
-            activeBlock = activeBlock.parentNode;
-        }
-        const isCurrentChapter = activeBlock && activeBlock.dataset.chapterTitle === 'true';
-
         btnBulletToggle.classList.toggle('active', isAllBullets);
         btnNumberToggle.classList.toggle('active', isAllNumbers);
-        btnChapterToggle.classList.toggle('active', isCurrentChapter);
 
         const hasBold = isStylePresentInSelection(selection, 'b', 'strong');
         const hasItalic = isStylePresentInSelection(selection, 'i', 'em');
@@ -3643,7 +3629,6 @@
     btnBoldToggle.addEventListener('mousedown', (e) => { e.preventDefault(); toggleInlineFormatting('b'); });
     btnItalicToggle.addEventListener('mousedown', (e) => { e.preventDefault(); toggleInlineFormatting('i'); });
     btnUnderlineToggle.addEventListener('mousedown', (e) => { e.preventDefault(); toggleInlineFormatting('u'); });
-    btnChapterToggle.addEventListener('mousedown', (e) => { e.preventDefault(); toggleChapterWidgetStyle(); });
 
     document.addEventListener('selectionchange', () => {
         if (workspaceView.classList.contains('active') && currentWorkspaceTab === 'scribe') {
@@ -3715,6 +3700,7 @@
         updateLeftMarginChapterNavigator();
         saveDocument();
         recordHistorySnapshot();
+        checkEditorTooltip();
     });
 
     editor.addEventListener('copy', (e) => {
@@ -3781,6 +3767,7 @@
             launchpadView.classList.remove('active');
             workspaceView.classList.add('active');
             switchWorkspaceView('scribe');
+            checkEditorTooltip();
         };
         reader.readAsText(file);
     }
@@ -3913,6 +3900,7 @@
         processDoubleSlashChapters();
         updateLeftMarginChapterNavigator();
         if (currentSuiteMode === 'screenplay') updateLiveElementTag();
+        checkEditorTooltip();
     });
 
     editor.addEventListener('click', () => {
@@ -4198,6 +4186,7 @@
         updateLeftMarginChapterNavigator();
         pickerModifierSync();
         renderGhostMarginGuide();
+        checkEditorTooltip();
         
         pickerModal.style.display = 'none';
         launchpadView.classList.remove('active');
@@ -4251,6 +4240,8 @@
             launchpadView.classList.add('active');
             workspaceView.classList.remove('active');
         }
+
+        checkEditorTooltip();
 
         if (typeof google !== 'undefined') {
             tokenClient = google.accounts.oauth2.initTokenClient({
@@ -4369,6 +4360,7 @@
             processDoubleSlashChapters();
             updateLeftMarginChapterNavigator();
             updateAnalytics(editor.innerText);
+            checkEditorTooltip();
             
             historyStack = [];
             historyIndex = -1;
@@ -4690,6 +4682,7 @@
         processDoubleSlashChapters();
         updateAnalytics(editor.innerText);
         updateLeftMarginChapterNavigator();
+        checkEditorTooltip();
         
         clearTimeout(idleTimer);
         idleTimer = setTimeout(startTypingDistractionHide, 1000); 
