@@ -879,7 +879,7 @@
             font-weight: 875;
         }
 
-        /* Start writing here floating pointer tooltip */
+        /* Start writing here floating pointer tooltip with slow pulse */
         .start-writing-tooltip {
             position: absolute;
             top: 42px;
@@ -887,7 +887,7 @@
             background: rgba(18, 20, 28, 0.95);
             border: 1px solid var(--accent-color);
             color: var(--accent-color);
-            padding: 5px 12px;
+            padding: 6px 14px;
             border-radius: 6px;
             font-size: 0.72rem;
             font-family: var(--font-mono);
@@ -898,7 +898,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            animation: pulseTooltip 2s infinite alternate ease-in-out;
+            animation: slowPulseTooltip 3s infinite ease-in-out;
             text-shadow: var(--text-glow);
         }
 
@@ -912,9 +912,10 @@
             display: none !important;
         }
 
-        @keyframes pulseTooltip {
-            0% { transform: translateY(0); opacity: 0.85; }
-            100% { transform: translateY(-3px); opacity: 1; }
+        @keyframes slowPulseTooltip {
+            0% { transform: scale(1); opacity: 0.7; box-shadow: 0 4px 12px rgba(0,0,0,0.4), 0 0 0px rgba(255,255,255,0); }
+            50% { transform: scale(1.04); opacity: 1; box-shadow: 0 6px 20px rgba(0,0,0,0.6), 0 0 10px rgba(255,255,255,0.25); }
+            100% { transform: scale(1); opacity: 0.7; box-shadow: 0 4px 12px rgba(0,0,0,0.4), 0 0 0px rgba(255,255,255,0); }
         }
 
         /* PLOT VIEW CONTAINER & STYLES */
@@ -2130,7 +2131,7 @@
     <div id="picker-modal" class="modal-overlay">
         <div class="modal-box">
             <h3 id="modal-context-title">Narrative Workspace</h3>
-            
+             
             <div class="modal-tabs-bar">
                 <button class="modal-tab-btn active" id="tab-toggle-local">Local Storage</button>
                 <button class="modal-tab-btn" id="tab-toggle-cloud">Cloud Integration</button>
@@ -2938,6 +2939,20 @@
         }
     }
 
+    function focusEditorStart() {
+        editor.focus();
+        const range = document.createRange();
+        if (editor.firstChild) {
+            range.setStart(editor.firstChild, 0);
+        } else {
+            range.setStart(editor, 0);
+        }
+        range.collapse(true);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+    }
+
     function showLeftMarginAlert() {
         leftMarginAlert.style.display = 'flex';
         saveIndicator.textContent = "cloud not synced";
@@ -3227,6 +3242,7 @@
         launchpadView.classList.remove('active');
         workspaceView.classList.add('active');
         switchWorkspaceView('scribe');
+        focusEditorStart();
     }
 
     newDocBtn.addEventListener('click', () => {
@@ -3768,6 +3784,7 @@
             workspaceView.classList.add('active');
             switchWorkspaceView('scribe');
             checkEditorTooltip();
+            focusEditorStart();
         };
         reader.readAsText(file);
     }
@@ -4192,6 +4209,7 @@
         launchpadView.classList.remove('active');
         workspaceView.classList.add('active');
         switchWorkspaceView('scribe');
+        focusEditorStart();
     }
 
     function pickerModifierSync() {
@@ -4242,6 +4260,7 @@
         }
 
         checkEditorTooltip();
+        focusEditorStart();
 
         if (typeof google !== 'undefined') {
             tokenClient = google.accounts.oauth2.initTokenClient({
@@ -4371,6 +4390,7 @@
             workspaceView.classList.add('active');
             switchWorkspaceView('scribe');
             pickerModifierSync();
+            focusEditorStart();
         })
         .catch(error => {
             showZenAlert("Cloud Load Error", "Failed to retrieve document from Google Drive: " + error.message);
@@ -4463,6 +4483,7 @@
             document.body.classList.remove('distraction-free');
             document.body.classList.remove('plot-view-active');
             updateLeftMarginChapterNavigator();
+            focusEditorStart();
         } else {
             if (btnPlot) btnPlot.classList.add('active');
             if (btnScribe) btnScribe.classList.remove('active');
@@ -4657,7 +4678,7 @@
 
         setTimeout(() => {
             const chapters = parseDocumentIntoChapters();
-            if (chapters[chapterIndex] && chapters[chapterIndex].blocks.length > 0) {
+            if (chapters[chapterIndex] && chapters[index] && chapters[chapterIndex].blocks.length > 0) {
                 const targetBlock = chapters[chapterIndex].blocks[0];
                 targetBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 
