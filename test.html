@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -518,17 +519,11 @@
         .modal-close-btn { background: transparent; border: none; color: var(--muted-color); font-family: var(--font-mono); font-size: 0.8rem; cursor: pointer; display: block; text-align: center; width: 100%; padding-top: 5px; }
         .modal-close-btn:hover { color: var(--text-color); }
 
-        /* Unified Chapter Styling (Shared properties between widget and markdown trigger) */
-        .inline-chapter,
-        body.mode-narrative .editor div[data-chapter-title="true"] {
-            font-size: 1.5rem;
+        /* Inline Chapter Span Styling */
+        .inline-chapter {
+            font-size: 1.35rem;
             font-weight: bold;
             text-shadow: var(--text-glow);
-        }
-
-        body.mode-narrative .editor div[data-chapter-title="true"] {
-            margin-top: 3.6em;    
-            margin-bottom: 1.8em; 
         }
 
         /* ------------------------------------------------------------------
@@ -1575,6 +1570,15 @@
             transition: margin-bottom 0.2s ease, margin-top 0.2s ease;
         }
 
+        /* Chapter Title Specific Spacing & Typography */
+        body.mode-narrative .editor div[data-chapter-title="true"] {
+            font-size: 1.65rem; 
+            font-weight: bold;
+            margin-top: 3.6em;   
+            margin-bottom: 1.8em; 
+            text-shadow: var(--text-glow);
+        }
+
         body.mode-narrative .editor div[data-first-line-indent="true"] {
             text-indent: 2em;
         }
@@ -2205,7 +2209,7 @@
             <div class="mobile-header-top-row">
                 <div class="doc-left">
                     <button class="header-logo-container" id="return-home-btn" title="Return to scribe85 Launchpad">
-                         <svg width="100%" height="100%" viewBox="0 0 2102 340" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+                       <svg width="100%" height="100%" viewBox="0 0 2102 340" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
                             <g transform="matrix(4.16667,0,0,4.16667,-875.209,-2882.7)">
                                 <g transform="matrix(1.13216,0,0,1.13216,51.044,-99.6933)">
                                     <path d="M140.445,728.643C140.445,725.605 142.908,723.142 145.945,723.142C158.55,723.142 188.445,723.142 188.445,723.142L188.445,735.142L153.885,735.142L153.885,741.142L188.445,741.142L188.445,765.642C188.445,768.68 185.982,771.142 182.945,771.142C170.34,771.142 140.445,771.142 140.445,771.142L140.445,759.142L175.005,759.142L175.005,753.142L140.445,753.142L140.445,728.643Z" style="fill-rule:nonzero;"/>
@@ -2219,27 +2223,18 @@
                                 </g>
                             </g>
                         </svg>
-                    </button>
+                    </svg>
+                </button>
 
-                    <div class="inline-theme-picker">
-                        <div class="theme-square sq-dark" title="Classic Dark" onclick="applyAppTheme('dark')"></div>
-                        <div class="theme-square sq-amber" title="Amber CRT" onclick="applyAppTheme('amber')"></div>
-                        <div class="theme-square sq-matrix" title="Matrix Green" onclick="applyAppTheme('matrix')"></div>
-                        <div class="theme-square sq-cobalt" title="Retro Cobalt" onclick="applyAppTheme('cobalt')"></div>
-                    </div>
+                <div class="inline-theme-picker">
+                    <div class="theme-square sq-dark" title="Classic Dark" onclick="applyAppTheme('dark')"></div>
+                    <div class="theme-square sq-amber" title="Amber CRT" onclick="applyAppTheme('amber')"></div>
+                    <div class="theme-square sq-matrix" title="Matrix Green" onclick="applyAppTheme('matrix')"></div>
+                    <div class="theme-square sq-cobalt" title="Retro Cobalt" onclick="applyAppTheme('cobalt')"></div>
                 </div>
             </div>
 
-            <div class="header-center-hub">
-                <input type="text" class="doc-title" value="untitledProse.rtf" title="Click to rename document">
-            </div>
-
-            <div class="workspace-mode-toggles">
-                <button class="mode-toggle-btn active" id="btn-mode-scribe" onclick="switchWorkspaceView('scribe')">scribe</button>
-                <button class="mode-toggle-btn" id="btn-mode-plot" onclick="switchWorkspaceView('plot')">plot</button>
-            </div>
-
-            <div class="sync-status" style="display:none;">
+            <div class="sync-status">
                 <span id="save-indicator">Synced</span>
                 <div class="sync-dot" id="sync-dot"></div>
             </div>
@@ -3093,42 +3088,6 @@
         updateLeftMarginChapterNavigator();
     }
 
-    function createDriveFile() {
-        if (!accessToken) return Promise.resolve(null);
-        const title = (currentSuiteMode === 'screenplay' ? "untitledScript.fountain" : "untitledProse.rtf");
-        const metadata = {
-            name: title,
-            mimeType: 'text/plain',
-            appProperties: { suiteMode: currentSuiteMode }
-        };
-
-        const plainTextContent = "Start typing here...";
-        const form = new FormData();
-        form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-        form.append('file', new Blob([plainTextContent], { type: 'text/plain' }));
-
-        return fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${accessToken}` },
-            body: form
-        })
-        .then(res => {
-            if (res.status === 401 || res.status === 403) { handleAuthError(); throw new Error("Auth expired"); }
-            return res.json();
-        })
-        .then(file => {
-            currentDriveFileId = file.id;
-            saveIndicator.textContent = "Synced";
-            syncDot.className = 'sync-dot connected';
-            if (accessToken) listDriveFiles();
-            return file.id;
-        })
-        .catch(err => {
-            showZenAlert("Cloud Error", "Failed to create remote file: " + err.message);
-            return null;
-        });
-    }
-
     function initializeDocumentTrack(originTab) {
         if (originTab === 'local') {
             const currentLocalCount = getLocalDatabase().filter(item => item.suiteMode === currentSuiteMode).length;
@@ -3159,12 +3118,9 @@
 
         if (originTab === 'cloud' && accessToken) {
             saveIndicator.textContent = "Allocating Node...";
-            createDriveFile().then(() => {
-                pickerModal.style.display = 'none';
-            });
+            createDriveFile(); 
         } else {
             currentDriveFileId = null;
-            pickerModal.style.display = 'none';
         }
 
         historyStack = [];
@@ -3179,6 +3135,7 @@
         pickerModifierSync();
         renderGhostMarginGuide();
         
+        pickerModal.style.display = 'none';
         launchpadView.classList.remove('active');
         workspaceView.classList.add('active');
         switchWorkspaceView('scribe');
@@ -3327,24 +3284,43 @@
 
     function processDoubleSlashChapters() {
         if (currentSuiteMode !== 'narrative') return;
+        
+        Array.from(editor.childNodes).forEach(node => {
+            if (node.nodeType === Node.TEXT_NODE && node.nodeValue.trim() !== '') {
+                const div = document.createElement('div');
+                div.textContent = node.nodeValue;
+                editor.replaceChild(div, node);
+            } else if (node.nodeType === Node.TEXT_NODE) {
+                editor.removeChild(node);
+            }
+        });
 
         const blocks = Array.from(editor.children);
         const selection = window.getSelection();
+        let activeBlock = null;
+        let wasCursorInActiveBlock = false;
+
+        if (selection.rangeCount) {
+            let node = selection.getRangeAt(0).startContainer;
+            if (node.nodeType === Node.TEXT_NODE) node = node.parentNode;
+            while (node && node.parentNode !== editor && node !== editor) {
+                node = node.parentNode;
+            }
+            activeBlock = node;
+        }
 
         blocks.forEach(block => {
             const rawText = block.innerText || block.textContent || "";
             const cleanText = rawText.replace(/[\u00A0\u200B]/g, "").trim();
-            const chapterRegex = /^\/\/(.*?)\/\/$/;
+            const chapterRegex = new RegExp("^//(.*?)//$");
             const match = cleanText.match(chapterRegex);
-
-            const isCursorInsideBlock = selection.rangeCount && block.contains(selection.anchorNode);
 
             if (match) {
                 const innerTitle = match[1].trim();
-                // Format as chapter title when cursor is outside or when finalized
-                if (!isCursorInsideBlock) {
+                if (block.dataset.chapterTitle !== "true") {
                     block.dataset.chapterTitle = "true";
                     block.innerText = innerTitle;
+                    wasCursorInActiveBlock = (block === activeBlock);
 
                     let nextBlock = block.nextElementSibling;
                     if (!nextBlock || nextBlock.dataset.chapterTitle === 'true' || nextBlock.innerText.trim() !== '') {
@@ -3355,14 +3331,16 @@
                         } else {
                             editor.appendChild(newDiv);
                         }
+                        nextBlock = newDiv;
                     }
-                }
-            } else if (block.dataset.chapterTitle === 'true' && isCursorInsideBlock) {
-                // Reveal // syntax if user clicks back inside to edit
-                const currentText = block.innerText.trim();
-                if (!currentText.startsWith("//")) {
-                    block.innerText = `//${currentText}//`;
-                    delete block.dataset.chapterTitle;
+
+                    if (wasCursorInActiveBlock && nextBlock) {
+                        const range = document.createRange();
+                        range.setStart(nextBlock, 0);
+                        range.collapse(true);
+                        selection.removeAllRanges();
+                        selection.addRange(range);
+                    }
                 }
             }
         });
@@ -3466,37 +3444,40 @@
         if (!selection.rangeCount) return;
         const range = selection.getRangeAt(0);
 
-        let targetBlock = range.startContainer;
-        if (targetBlock.nodeType === Node.TEXT_NODE) targetBlock = targetBlock.parentNode;
-        while (targetBlock && targetBlock.parentNode !== editor && targetBlock !== editor) {
-            targetBlock = targetBlock.parentNode;
-        }
-
-        if (!targetBlock || targetBlock === editor) {
-            targetBlock = editor.firstElementChild;
-        }
-        if (!targetBlock || targetBlock === editor) return;
-
-        if (targetBlock.dataset.chapterTitle === 'true') {
-            delete targetBlock.dataset.chapterTitle;
-        } else {
-            targetBlock.dataset.chapterTitle = "true";
+        if (!selection.isCollapsed) {
+            let parentSpan = range.commonAncestorContainer;
+            if (parentSpan.nodeType === Node.TEXT_NODE) parentSpan = parentSpan.parentNode;
             
-            // Automatically insert a normal text line below it and move cursor there
-            let nextBlock = targetBlock.nextElementSibling;
-            if (!nextBlock || nextBlock.dataset.chapterTitle === 'true' || nextBlock.innerText.trim() !== '') {
-                const newDiv = document.createElement('div');
-                newDiv.innerHTML = '<br>';
-                if (nextBlock) {
-                    editor.insertBefore(newDiv, nextBlock);
-                } else {
-                    editor.appendChild(newDiv);
+            if (parentSpan && parentSpan.classList && parentSpan.classList.contains('inline-chapter')) {
+                const parent = parentSpan.parentNode;
+                while (parentSpan.firstChild) {
+                    parent.insertBefore(parentSpan.firstChild, parentSpan);
                 }
-                const newRange = document.createRange();
-                newRange.setStart(newDiv, 0);
-                newRange.collapse(true);
-                selection.removeAllRanges();
-                selection.addRange(newRange);
+                parent.removeChild(parentSpan);
+            } else {
+                try {
+                    const span = document.createElement('span');
+                    span.className = 'inline-chapter';
+                    span.appendChild(range.extractContents());
+                    range.insertNode(span);
+                } catch (e) {}
+            }
+        } else {
+            let targetBlock = range.startContainer;
+            if (targetBlock.nodeType === Node.TEXT_NODE) targetBlock = targetBlock.parentNode;
+            while (targetBlock && targetBlock.parentNode !== editor && targetBlock !== editor) {
+                targetBlock = targetBlock.parentNode;
+            }
+
+            if (!targetBlock || targetBlock === editor) {
+                targetBlock = editor.firstElementChild;
+            }
+            if (!targetBlock || targetBlock === editor) return;
+
+            if (targetBlock.dataset.chapterTitle === 'true') {
+                delete targetBlock.dataset.chapterTitle;
+            } else {
+                targetBlock.dataset.chapterTitle = "true";
             }
         }
 
@@ -3623,12 +3604,9 @@
     document.addEventListener('selectionchange', () => {
         if (workspaceView.classList.contains('active') && currentWorkspaceTab === 'scribe') {
             const selection = window.getSelection();
-            if (selection.rangeCount) {
-                if (!selection.isCollapsed) {
-                    savedSelectionRange = selection.getRangeAt(0).cloneRange();
-                    updateMarginListWidget();
-                }
-                highlightActiveChapterInLeftNav(parseDocumentIntoChapters());
+            if (selection.rangeCount && !selection.isCollapsed) {
+                savedSelectionRange = selection.getRangeAt(0).cloneRange();
+                updateMarginListWidget();
             }
         }
     });
@@ -3702,6 +3680,7 @@
         e.preventDefault();
     });
 
+    // Event listeners for both Local and Cloud drop zones & file inputs
     restoreDropZone.addEventListener('click', () => { manualFileInput.click(); });
     restoreDropZone.addEventListener('dragover', (e) => { e.preventDefault(); restoreDropZone.classList.add('dragover'); });
     restoreDropZone.addEventListener('dragleave', () => { restoreDropZone.classList.remove('dragover'); });
@@ -3865,14 +3844,16 @@
             setTimeout(() => {
                 const selection = window.getSelection();
                 if (selection.rangeCount) {
-                    let node = selection.getRangeAt(0).startContainer;
-                    if (node.nodeType === Node.TEXT_NODE) node = node.parentNode;
-                    while (node && node.parentNode !== editor && node !== editor) {
-                        node = node.parentNode;
+                    let currentBlock = selection.getRangeAt(0).startContainer;
+                    if (currentBlock.nodeType === Node.TEXT_NODE) currentBlock = currentBlock.parentNode;
+                    while (currentBlock && currentBlock.parentNode !== editor && currentBlock !== editor) {
+                        currentBlock = currentBlock.parentNode;
                     }
-                    if (node && node !== editor) {
-                        // Prevent leaking chapter title formatting onto newly created lines after Enter
-                        node.removeAttribute('data-chapter-title');
+                    if (currentBlock && currentBlock !== editor) {
+                        const text = currentBlock.innerText.trim();
+                        if (!text.match(/^\/\/(.*?)\/\/$/)) {
+                            delete currentBlock.dataset.chapterTitle;
+                        }
                     }
                 }
                 processDoubleSlashChapters();
@@ -3884,12 +3865,8 @@
         }
     });
 
-    editor.addEventListener('blur', () => {
-        processDoubleSlashChapters();
-        saveDocument();
-    });
-
     editor.addEventListener('keyup', () => {
+        processDoubleSlashChapters();
         updateLeftMarginChapterNavigator();
         if (currentSuiteMode === 'screenplay') updateLiveElementTag();
     });
@@ -3921,6 +3898,7 @@
                 }
                 const chapTitleText = match ? match[1].trim() : (rawText || `Chapter ${dynamicChapterCounter}`);
                 block.dataset.chapterTitle = "true";
+                block.innerText = chapTitleText;
                 
                 currentChapter = { title: chapTitleText, blocks: [block] };
                 dynamicChapterCounter++;
@@ -4223,11 +4201,6 @@
             loadLocalFile(targetDocId);
             launchpadView.classList.remove('active');
             workspaceView.classList.add('active');
-            if (urlParams.get('tab') === 'plot') {
-                switchWorkspaceView('plot');
-            } else {
-                switchWorkspaceView('scribe');
-            }
         } else {
             processDoubleSlashChapters();
             updateLeftMarginChapterNavigator();
@@ -4446,10 +4419,6 @@
         const scribeContainer = document.getElementById('scribe-editor-container');
         const plotContainer = document.getElementById('plot-view-container');
 
-        const url = new URL(window.location);
-        url.searchParams.set('tab', tab);
-        window.history.replaceState({}, '', url);
-
         if (tab === 'scribe') {
             if (btnScribe) btnScribe.classList.add('active');
             if (btnPlot) btnPlot.classList.remove('active');
@@ -4493,7 +4462,7 @@
                 </div>
                 <div class="chapter-card-header">
                     <span class="chapter-card-title" contenteditable="true" spellcheck="false" title="Click to rename chapter">${chap.title}</span>
-                    <span class="chapter-card-stats" title="Click to adjust word goal">${wordCount}/${goalWords}w</span>
+                    <span class="chapter-card-stats" title="Click to adjust word goal">${wordCount}/${goalWords} words</span>
                 </div>
                 <div class="chapter-card-body-wrapper">
                     <div class="chapter-card-body">${fullChapText}</div>
@@ -4631,7 +4600,7 @@
                 let innerText = b.innerHTML || b.innerText || "";
                 if (b.dataset.chapterTitle === 'true' || bIdx === 0) {
                     let cleanTitle = innerText.replace(/^\/\/(.*?)\/\/$/, '$1').trim();
-                    newHtml += `<div data-chapter-title="true">${cleanTitle}</div>`;
+                    newHtml += `<div data-chapter-title="true">//${cleanTitle}//</div>`;
                 } else {
                     newHtml += `<div>${innerText}</div>`;
                 }
