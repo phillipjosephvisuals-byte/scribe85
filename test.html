@@ -3363,8 +3363,7 @@
 
             if (match) {
                 const innerTitle = match[1].trim();
-                // Only format if the user has finished typing the closing // and moved away from the block
-                if (block.dataset.chapterTitle !== "true" && block !== activeBlock) {
+                if (block !== activeBlock) {
                     block.dataset.chapterTitle = "true";
                     block.innerText = innerTitle;
 
@@ -3379,9 +3378,12 @@
                         }
                     }
                 }
-            } else if (block.dataset.chapterTitle === 'true') {
-                // If the user went back and edited it so it's no longer matching //title//, remove the chapter attribute
-                delete block.dataset.chapterTitle;
+            } else if (block.dataset.chapterTitle === 'true' && block !== activeBlock) {
+                const currentText = block.innerText.trim();
+                if (!currentText.startsWith("//")) {
+                    block.innerText = `//${currentText}//`;
+                    delete block.dataset.chapterTitle;
+                }
             }
         });
 
@@ -3894,7 +3896,7 @@
                     }
                     if (currentBlock && currentBlock !== editor) {
                         const text = currentBlock.innerText.trim();
-                        if (!text.match(/^\/\/(.*?)\/\/$/, "")) {
+                        if (!text.match(/^\/\/(.*?)\/\/$/)) {
                             delete currentBlock.dataset.chapterTitle;
                         }
                     }
