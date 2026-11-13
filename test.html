@@ -2222,141 +2222,142 @@
                                 </g>
                             </g>
                         </svg>
-                    </button>
+                    </svg>
+                </button>
 
-                    <div class="inline-theme-picker">
-                        <div class="theme-square sq-dark" title="Classic Dark" onclick="applyAppTheme('dark')"></div>
-                        <div class="theme-square sq-amber" title="Amber CRT" onclick="applyAppTheme('amber')"></div>
-                        <div class="theme-square sq-matrix" title="Matrix Green" onclick="applyAppTheme('matrix')"></div>
-                        <div class="theme-square sq-cobalt" title="Retro Cobalt" onclick="applyAppTheme('cobalt')"></div>
-                    </div>
+                <div class="inline-theme-picker">
+                    <div class="theme-square sq-dark" title="Classic Dark" onclick="applyAppTheme('dark')"></div>
+                    <div class="theme-square sq-amber" title="Amber CRT" onclick="applyAppTheme('amber')"></div>
+                    <div class="theme-square sq-matrix" title="Matrix Green" onclick="applyAppTheme('matrix')"></div>
+                    <div class="theme-square sq-cobalt" title="Retro Cobalt" onclick="applyAppTheme('cobalt')"></div>
                 </div>
-            </div>
-
-            <div class="header-center-hub">
-                <input type="text" class="doc-title" value="untitledProse.rtf" title="Click to rename document">
-            </div>
-
-            <div class="workspace-mode-toggles">
-                <button class="mode-toggle-btn active" id="btn-mode-scribe" onclick="switchWorkspaceView('scribe')">scribe</button>
-                <button class="mode-toggle-btn" id="btn-mode-plot" onclick="switchWorkspaceView('plot')">plot</button>
-            </div>
-
-            <div class="sync-status" style="display:none;">
-                <span id="save-indicator">Synced</span>
-                <div class="sync-dot" id="sync-dot"></div>
-            </div>
-        </header>
-
-        <div class="left-margin-alert-card" id="left-margin-alert">
-            <div class="left-margin-alert-title">⚠️ Cloud Sync Offline</div>
-            <div class="left-margin-alert-desc">Your Google Drive session has expired. Save a backup copy to your disk to safeguard your edits.</div>
-            <button class="left-margin-download-btn" onclick="executeManualDownloadBackup()">↓ Download Document</button>
-            <button class="left-margin-reconnect-btn" onclick="triggerGoogleAuth(true)">Reconnect Drive</button>
-        </div>
-
-        <!-- LEFT MARGIN CHAPTER NAVIGATOR -->
-        <div class="left-margin-chapter-nav chrome-element" id="left-margin-chapter-nav">
-            <div class="left-margin-chapter-nav-title">Chapters</div>
-            <div class="left-margin-chapter-list" id="left-margin-chapter-list">
-                <!-- Dynamically populated -->
             </div>
         </div>
 
-        <div class="margin-ghost-guide-wrapper chrome-element" id="margin-ghost-guide-wrapper">
-            <div class="desktop-history-row">
-                <button class="desktop-history-btn" id="btn-undo-desktop" title="Undo (Ctrl+Z)" onclick="performUndo()" disabled>↶</button>
-                <button class="desktop-history-btn" id="btn-redo-desktop" title="Redo (Ctrl+Y)" onclick="performRedo()" disabled>↷</button>
-            </div>
-
-            <div class="margin-ghost-guide" id="margin-ghost-guide">
-                <div class="ghost-guide-title" id="ghost-guide-title">Narrative Guide</div>
-                <div class="ghost-guide-list" id="ghost-guide-list"></div>
-            </div>
+        <div class="header-center-hub">
+            <input type="text" class="doc-title" value="untitledProse.rtf" title="Click to rename document">
         </div>
 
-        <main id="workspace-main">
-            <!-- SCRIBE EDITOR VIEW -->
-            <div class="editor-container" id="scribe-editor-container">
-                <div class="left-margin-element-indicator" id="left-margin-element-indicator">1. Slug Line</div>
-                <div class="next-line-navigation-prompt" id="next-line-navigation-prompt"></div>
+        <div class="workspace-mode-toggles">
+            <button class="mode-toggle-btn active" id="btn-mode-scribe" onclick="switchWorkspaceView('scribe')">scribe</button>
+            <button class="mode-toggle-btn" id="btn-mode-plot" onclick="switchWorkspaceView('plot')">plot</button>
+        </div>
 
-                <div class="margin-list-widget" id="margin-list-widget">
-                    <button class="margin-widget-btn" id="btn-bullet-toggle" title="Toggle Bulleted List">
-                        <svg viewBox="0 0 24 24">
-                            <circle cx="4" cy="6" r="2.5"/>
-                            <line x1="10" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2"/>
-                            <circle cx="4" cy="12" r="2.5"/>
-                            <line x1="10" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2"/>
-                            <circle cx="4" cy="18" r="2.5"/>
-                            <line x1="10" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2"/>
-                        </svg>
-                    </button>
-                    <button class="margin-widget-btn" id="btn-number-toggle" title="Toggle Numbered List">
-                        <svg viewBox="0 0 24 24">
-                            <text x="1" y="8" font-size="7" font-family="monospace" fill="currentColor">1.</text>
-                            <line x1="10" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2"/>
-                            <text x="1" y="14" font-size="7" font-family="monospace" fill="currentColor">2.</text>
-                            <line x1="10" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2"/>
-                            <text x="1" y="20" font-size="7" font-family="monospace" fill="currentColor">3.</text>
-                            <line x1="10" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2"/>
-                        </svg>
-                    </button>
-                    <button class="margin-widget-btn" id="btn-bold-toggle" title="Toggle Bold"><b>B</b></button>
-                    <button class="margin-widget-btn" id="btn-italic-toggle" title="Toggle Italic"><i>I</i></button>
-                    <button class="margin-widget-btn" id="btn-underline-toggle" title="Toggle Underline"><u>U</u></button>
-                    <button class="margin-widget-btn" id="btn-chapter-toggle" title="Toggle Chapter Title" style="font-size: 0.68rem; font-weight: bold;">ch.</button>
-                </div>
+        <div class="sync-status" style="display:none;">
+            <span id="save-indicator">Synced</span>
+            <div class="sync-dot" id="sync-dot"></div>
+        </div>
+    </header>
 
-                <div class="editor" contenteditable="true" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" placeholder="Start typing here...">Start typing here...</div>
-            </div>
-
-            <!-- PLOT VIEW CONTAINER -->
-            <div id="plot-view-container">
-                <div class="plot-toolbar">
-                    <span style="font-size: 0.8rem; color: var(--muted-color); text-transform: uppercase; letter-spacing: 1px;">Chapter Card Navigator</span>
-                    <div class="zoom-slider-wrapper">
-                        <div class="zoom-slider-labels">
-                            <span style="font-size: 0.7rem; color: var(--muted-color);">Zoom</span>
-                            <span>-</span>
-                        </div>
-                        <input type="range" id="plot-zoom-slider" min="3" max="7" step="1" value="3" oninput="handlePlotZoom(this.value)">
-                        <div class="zoom-slider-labels">
-                            <span>+</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="plot-grid-scroll-well" id="plot-grid-scroll-well">
-                    <div class="plot-cards-grid" id="plot-cards-grid">
-                        <!-- Cards injected dynamically -->
-                    </div>
-                </div>
-            </div>
-        </main>
-
-        <footer class="chrome-element">
-            <div class="stats-left">
-                <span id="word-count-wrapper"><strong id="word-count">0</strong></span>
-                <span id="char-count-wrapper" style="margin-left: 12px;">Characters: <strong id="char-count">0</strong></span>
-            </div>
-
-            <div class="footer-center">
-                <button class="footer-files-btn" onclick="openPickerModal(event)">Files</button>
-            </div>
-
-            <div class="mobile-history-center">
-                <button class="mobile-history-btn" id="btn-undo-mobile" title="Undo" onclick="performUndo()" disabled>↶</button>
-                <button class="mobile-history-btn" id="btn-redo-mobile" title="Redo" onclick="performRedo()" disabled>↷</button>
-            </div>
-
-            <button class="mobile-footer-action-btn" onclick="openMobileGuideModal(event)">Guide</button>
-
-            <div class="stats-right">
-                <span id="element-status-tag" style="display: none; margin-right: 15px;">Element: 1. Slug Line</span>
-                <span id="read-time">0 min read</span>
-            </div>
-        </footer>
+    <div class="left-margin-alert-card" id="left-margin-alert">
+        <div class="left-margin-alert-title">⚠️ Cloud Sync Offline</div>
+        <div class="left-margin-alert-desc">Your Google Drive session has expired. Save a backup copy to your disk to safeguard your edits.</div>
+        <button class="left-margin-download-btn" onclick="executeManualDownloadBackup()">↓ Download Document</button>
+        <button class="left-margin-reconnect-btn" onclick="triggerGoogleAuth(true)">Reconnect Drive</button>
     </div>
+
+    <!-- LEFT MARGIN CHAPTER NAVIGATOR -->
+    <div class="left-margin-chapter-nav chrome-element" id="left-margin-chapter-nav">
+        <div class="left-margin-chapter-nav-title">Chapters</div>
+        <div class="left-margin-chapter-list" id="left-margin-chapter-list">
+            <!-- Dynamically populated -->
+        </div>
+    </div>
+
+    <div class="margin-ghost-guide-wrapper chrome-element" id="margin-ghost-guide-wrapper">
+        <div class="desktop-history-row">
+            <button class="desktop-history-btn" id="btn-undo-desktop" title="Undo (Ctrl+Z)" onclick="performUndo()" disabled>↶</button>
+            <button class="desktop-history-btn" id="btn-redo-desktop" title="Redo (Ctrl+Y)" onclick="performRedo()" disabled>↷</button>
+        </div>
+
+        <div class="margin-ghost-guide" id="margin-ghost-guide">
+            <div class="ghost-guide-title" id="ghost-guide-title">Narrative Guide</div>
+            <div class="ghost-guide-list" id="ghost-guide-list"></div>
+        </div>
+    </div>
+
+    <main id="workspace-main">
+        <!-- SCRIBE EDITOR VIEW -->
+        <div class="editor-container" id="scribe-editor-container">
+            <div class="left-margin-element-indicator" id="left-margin-element-indicator">1. Slug Line</div>
+            <div class="next-line-navigation-prompt" id="next-line-navigation-prompt"></div>
+
+            <div class="margin-list-widget" id="margin-list-widget">
+                <button class="margin-widget-btn" id="btn-bullet-toggle" title="Toggle Bulleted List">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="4" cy="6" r="2.5"/>
+                        <line x1="10" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="4" cy="12" r="2.5"/>
+                        <line x1="10" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="4" cy="18" r="2.5"/>
+                        <line x1="10" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                </button>
+                <button class="margin-widget-btn" id="btn-number-toggle" title="Toggle Numbered List">
+                    <svg viewBox="0 0 24 24">
+                        <text x="1" y="8" font-size="7" font-family="monospace" fill="currentColor">1.</text>
+                        <line x1="10" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2"/>
+                        <text x="1" y="14" font-size="7" font-family="monospace" fill="currentColor">2.</text>
+                        <line x1="10" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2"/>
+                        <text x="1" y="20" font-size="7" font-family="monospace" fill="currentColor">3.</text>
+                        <line x1="10" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                </button>
+                <button class="margin-widget-btn" id="btn-bold-toggle" title="Toggle Bold"><b>B</b></button>
+                <button class="margin-widget-btn" id="btn-italic-toggle" title="Toggle Italic"><i>I</i></button>
+                <button class="margin-widget-btn" id="btn-underline-toggle" title="Toggle Underline"><u>U</u></button>
+                <button class="margin-widget-btn" id="btn-chapter-toggle" title="Toggle Chapter Title" style="font-size: 0.68rem; font-weight: bold;">ch.</button>
+            </div>
+
+            <div class="editor" contenteditable="true" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" placeholder="Start typing here...">Start typing here...</div>
+        </div>
+
+        <!-- PLOT VIEW CONTAINER -->
+        <div id="plot-view-container">
+            <div class="plot-toolbar">
+                <span style="font-size: 0.8rem; color: var(--muted-color); text-transform: uppercase; letter-spacing: 1px;">Chapter Card Navigator</span>
+                <div class="zoom-slider-wrapper">
+                    <div class="zoom-slider-labels">
+                        <span style="font-size: 0.7rem; color: var(--muted-color);">Zoom</span>
+                        <span>-</span>
+                    </div>
+                    <input type="range" id="plot-zoom-slider" min="3" max="7" step="1" value="3" oninput="handlePlotZoom(this.value)">
+                    <div class="zoom-slider-labels">
+                        <span>+</span>
+                    </div>
+                </div>
+            </div>
+            <div class="plot-grid-scroll-well" id="plot-grid-scroll-well">
+                <div class="plot-cards-grid" id="plot-cards-grid">
+                    <!-- Cards injected dynamically -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="chrome-element">
+        <div class="stats-left">
+            <span id="word-count-wrapper"><strong id="word-count">0</strong></span>
+            <span id="char-count-wrapper" style="margin-left: 12px;">Characters: <strong id="char-count">0</strong></span>
+        </div>
+
+        <div class="footer-center">
+            <button class="footer-files-btn" onclick="openPickerModal(event)">Files</button>
+        </div>
+
+        <div class="mobile-history-center">
+            <button class="mobile-history-btn" id="btn-undo-mobile" title="Undo" onclick="performUndo()" disabled>↶</button>
+            <button class="mobile-history-btn" id="btn-redo-mobile" title="Redo" onclick="performRedo()" disabled>↷</button>
+        </div>
+
+        <button class="mobile-footer-action-btn" onclick="openMobileGuideModal(event)">Guide</button>
+
+        <div class="stats-right">
+            <span id="element-status-tag" style="display: none; margin-right: 15px;">Element: 1. Slug Line</span>
+            <span id="read-time">0 min read</span>
+        </div>
+    </footer>
+</div>
 
 <script>
     const CLIENT_ID = '819668101637-b1s5v7l35g6tu0oqt9j71argnr925phc.apps.googleusercontent.com';
@@ -3354,7 +3355,7 @@
 
             if (match) {
                 const innerTitle = match[1].trim();
-                // Only format and hide slashes if the cursor is NOT currently inside this block
+                // ONLY convert and hide slashes when the cursor leaves the block (blur/click elsewhere)
                 if (!isCursorInsideBlock) {
                     block.dataset.chapterTitle = "true";
                     block.innerText = innerTitle;
@@ -3370,7 +3371,8 @@
                         }
                     }
                 }
-            } else if (block.dataset.chapterTitle === 'true' && !isCursorInsideBlock) {
+            } else if (block.dataset.chapterTitle === 'true' && isCursorInsideBlock) {
+                // If the user clicks back into a styled chapter title to edit it, reveal the // syntax so they can edit it cleanly
                 const currentText = block.innerText.trim();
                 if (!currentText.startsWith("//")) {
                     block.innerText = `//${currentText}//`;
@@ -4666,7 +4668,7 @@
 
         setTimeout(() => {
             const chapters = parseDocumentIntoChapters();
-            if (chapters[chapterIndex] && chapters[chapterIndex].blocks.length > 0) {
+            if (chapters[chapterIndex] && chapters[index].blocks.length > 0) {
                 const targetBlock = chapters[chapterIndex].blocks[0];
                 targetBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 
