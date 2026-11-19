@@ -14,7 +14,7 @@
 
     <style>
         /* ------------------------------------------------------------------
-            1. CORE DESIGN SYSTEM & THEME TOKENS
+1. CORE DESIGN SYSTEM & THEME TOKENS
         ------------------------------------------------------------------ */
         :root {
             --bg-color: #12141c;      
@@ -54,7 +54,7 @@
         }
 
         /* ------------------------------------------------------------------
-            2. THE LAUNCHPAD LANDING SCREEN
+2. THE LAUNCHPAD LANDING SCREEN
         ------------------------------------------------------------------ */
         #launchpad-view {
             justify-content: center;
@@ -318,7 +318,7 @@
         }
 
         /* ------------------------------------------------------------------
-            3. FLOATING PICKER MODAL DIALOG CONTAINER
+3. FLOATING PICKER MODAL DIALOG CONTAINER
         ------------------------------------------------------------------ */
         .modal-overlay {
             position: fixed;
@@ -608,7 +608,7 @@
         }
 
         /* ------------------------------------------------------------------
-            4. WORKSPACE STYLES
+4. WORKSPACE STYLES
         ------------------------------------------------------------------ */
         .chrome-element {
             transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1601,7 +1601,6 @@
             transition: margin-bottom 0.2s ease, margin-top 0.2s ease;
         }
 
-        /* Chapter Title Specific Spacing & Typography */
         body.mode-narrative .editor div[data-chapter-title="true"] {
             font-size: 1.65rem; 
             font-weight: bold;
@@ -1673,7 +1672,7 @@
         }
 
         /* ------------------------------------------------------------------
-            5. STRICT ISOLATED 8.5" x 11" PORTRAIT PRINT & PDF STYLESHEET
+5. STRICT ISOLATED 8.5" x 11" PORTRAIT PRINT & PDF STYLESHEET
         ------------------------------------------------------------------ */
         @media print {
             body > *:not(#workspace-view) {
@@ -1829,7 +1828,7 @@
         }
 
         /* ------------------------------------------------------------------
-            6. RESPONSIVE MEDIA QUERIES
+6. RESPONSIVE MEDIA QUERIES
         ------------------------------------------------------------------ */
         @media (max-width: 1180px) {
             .margin-ghost-guide-wrapper, .left-margin-chapter-nav { display: none !important; }
@@ -2274,15 +2273,15 @@
                 <button class="mode-toggle-btn" id="btn-mode-plot" onclick="switchWorkspaceView('plot')">plot</button>
             </div>
 
-            <div class="sync-status" style="display:none;">
-                <span id="save-indicator">Synced</span>
+            <div class="sync-status">
+                <span id="save-indicator">Local</span>
                 <div class="sync-dot" id="sync-dot"></div>
             </div>
         </header>
 
         <div class="left-margin-alert-card" id="left-margin-alert">
             <div class="left-margin-alert-title">⚠️ Cloud Sync Offline</div>
-            <div class="left-margin-alert-desc">Your Google Drive session has expired. Save a backup copy to your disk to safeguard your edits.</div>
+            <div class="left-margin-alert-desc">Your Google Drive session has expired or you are offline. Save a backup copy to your disk to safeguard your edits.</div>
             <button class="left-margin-download-btn" onclick="executeManualDownloadBackup()">↓ Download Document</button>
             <button class="left-margin-reconnect-btn" onclick="triggerGoogleAuth(true)">Reconnect Drive</button>
         </div>
@@ -2827,6 +2826,7 @@
 
     function disconnectGoogleAccount() {
         hideLeftMarginAlert();
+        if (tokenRenewalTimer) clearTimeout(tokenRenewalTimer);
         if (accessToken && typeof google !== 'undefined') {
             google.accounts.oauth2.revoke(accessToken, () => {
                 accessToken = null;
@@ -2985,6 +2985,7 @@
 
     function handleAuthError() {
         accessToken = null;
+        if (tokenRenewalTimer) clearTimeout(tokenRenewalTimer);
         localStorage.removeItem('zensuite_google_access_token');
         localStorage.removeItem('zensuite_google_token_exp');
         pickerModifierSync();
@@ -3001,7 +3002,7 @@
     }
 
     function trySilentTokenRefresh() {
-        if (!tokenClient) return;
+        if (!tokenClient || !navigator.onLine) return;
         try {
             tokenClient.requestAccessToken({ prompt: '' });
         } catch (err) {
@@ -3187,6 +3188,7 @@
         })
         .then(file => {
             currentDriveFileId = file.id;
+            saveDocument(true);
             saveIndicator.textContent = "Synced";
             syncDot.className = 'sync-dot connected';
             if (accessToken) listDriveFiles();
@@ -3200,7 +3202,7 @@
 
     function initializeDocumentTrack(originTab) {
         if (originTab === 'local') {
-            const currentLocalCount = getLocalDatabase().filter(item => item.suiteMode === currentSuiteMode).length;
+            const currentLocalCount = getLocalDatabase().filter(item => item.suiteMode === currentSuiteMode && !item.driveId).length;
             if (currentLocalCount >= 10) {
                 showZenAlert(
                     "⚠️ Local Storage Limit Reached", 
@@ -3224,13 +3226,14 @@
         localStorage.setItem('zensuite_active_suite_mode', currentSuiteMode);
         localStorage.setItem('zensuite_view_state', 'workspace');
 
-        saveDocument();
-
         if (originTab === 'cloud' && accessToken) {
+            currentDriveFileId = null;
+            saveDocument();
             saveIndicator.textContent = "Allocating Node...";
             createDriveFile(); 
         } else {
             currentDriveFileId = null;
+            saveDocument();
         }
 
         historyStack = [];
@@ -4099,6 +4102,7 @@
         const item = db.find(i => i.id === fileId);
         if (item) {
             item.title = newTitle;
+            item.lastModified = Date.now();
             localStorage.setItem('zensuite_local_db', JSON.stringify(db));
             if (currentLocalFileId === fileId && docTitle) docTitle.value = newTitle;
             listLocalFiles();
@@ -4118,7 +4122,7 @@
             return res.json();
         })
         .then(() => {
-            saveIndicator.textContent = "Renamed";
+            saveIndicator.textContent = "Synced";
             if (currentDriveFileId === fileId && docTitle) docTitle.value = newTitle;
             listDriveFiles();
         })
@@ -4169,17 +4173,30 @@
         return raw ? JSON.parse(raw) : [];
     }
 
+    // Fix 2: Local-first saves, exempt cloud cache from 10-slot standalone cap, record lastModified, and provide quota fallback
     function saveToLocalDatabase(fileObj) {
         let db = getLocalDatabase();
         const index = db.findIndex(item => item.id === fileObj.id);
+        
+        fileObj.lastModified = Date.now();
+
         if (index !== -1) {
             db[index] = fileObj; 
         } else {
-            if (db.filter(i => i.suiteMode === currentSuiteMode).length >= 10) return;
+            const isCloudCache = Boolean(fileObj.driveId);
+            const standaloneLocalCount = db.filter(i => i.suiteMode === currentSuiteMode && !i.driveId).length;
+            if (!isCloudCache && standaloneLocalCount >= 10) return;
+            
             db.unshift(fileObj); 
         }
-        localStorage.setItem('zensuite_local_db', JSON.stringify(db));
-        localStorage.setItem(`zensuite_current_active_${currentSuiteMode}_id`, currentLocalFileId);
+
+        try {
+            localStorage.setItem('zensuite_local_db', JSON.stringify(db));
+            localStorage.setItem(`zensuite_current_active_${currentSuiteMode}_id`, currentLocalFileId);
+        } catch (e) {
+            localStorage.setItem('zensuite_emergency_draft', JSON.stringify(fileObj));
+            showZenAlert("Storage Quota Warning", "Browser storage is full. Download a backup immediately.");
+        }
     }
 
     function loadLocalFile(fileId) {
@@ -4218,15 +4235,19 @@
     }
 
     function pickerModifierSync() {
-        if (currentDriveFileId && accessToken) {
+        if (currentDriveFileId && accessToken && navigator.onLine) {
             syncDot.className = 'sync-dot connected';
             saveIndicator.textContent = "Synced";
+        } else if (currentDriveFileId && (!accessToken || !navigator.onLine)) {
+            syncDot.className = 'sync-dot offline';
+            saveIndicator.textContent = "cloud not synced";
         } else {
             syncDot.className = 'sync-dot';
             saveIndicator.textContent = accessToken ? "Ready" : "Local";
         }
     }
 
+    // Fix 1: Schedule token renewal on login/restore and flush pending cloud changes on reconnect
     window.onload = function() {
         requestPersistentStorage();
         const cachedTheme = localStorage.getItem('zensuite_saved_theme');
@@ -4240,6 +4261,16 @@
             if (localToggle) localToggle.checked = true;
             if (cloudToggle) cloudToggle.checked = true;
         }
+
+        const savedInterval = localStorage.getItem('zensuite_autobackup_interval');
+        if (savedInterval) {
+            autoBackupMinutes = parseInt(savedInterval, 10) || 10;
+            const localSelect = document.getElementById('auto-backup-interval-select');
+            const cloudSelect = document.getElementById('auto-backup-interval-select-cloud');
+            if (localSelect) localSelect.value = autoBackupMinutes;
+            if (cloudSelect) cloudSelect.value = autoBackupMinutes;
+        }
+        configureAutoBackupTimer();
 
         const urlParams = new URLSearchParams(window.location.search);
         const urlDocId = urlParams.get('doc');
@@ -4275,30 +4306,39 @@
                         return;
                     }
                     accessToken = tokenResponse.access_token;
+                    const expiresInMs = (tokenResponse.expires_in || 3599) * 1000;
                     localStorage.setItem('zensuite_google_access_token', accessToken);
-                    localStorage.setItem('zensuite_google_token_exp', Date.now() + (tokenResponse.expires_in * 1000));
+                    localStorage.setItem('zensuite_google_token_exp', Date.now() + expiresInMs);
                     
+                    scheduleTokenRenewal(expiresInMs);
                     hideLeftMarginAlert();
                     pickerModifierSync();
                     renderCloudTabInterface();
+
+                    if (currentDriveFileId && workspaceView.classList.contains('active')) {
+                        saveDocument(true);
+                    }
                 },
             });
 
             const isPersistChecked = localStorage.getItem('zensuite_persist_google_auth') !== 'false';
             const storedToken = localStorage.getItem('zensuite_google_access_token');
-            const tokenExp = localStorage.getItem('zensuite_google_token_exp');
+            const tokenExp = parseInt(localStorage.getItem('zensuite_google_token_exp') || '0', 10);
 
-            if (isPersistChecked && storedToken && tokenExp && Date.now() < parseInt(tokenExp, 10)) {
+            if (isPersistChecked && storedToken && tokenExp && Date.now() < tokenExp) {
                 accessToken = storedToken;
+                scheduleTokenRenewal(tokenExp - Date.now());
                 hideLeftMarginAlert();
                 pickerModifierSync();
                 renderCloudTabInterface();
-            } else if (isPersistChecked && tokenClient) {
+            } else if (isPersistChecked && tokenClient && navigator.onLine) {
                 try {
                     tokenClient.requestAccessToken({ prompt: '' });
                 } catch (e) {
-                    console.log("Silent token restore skipped.");
+                    handleAuthError();
                 }
+            } else if (currentDriveFileId && (!storedToken || Date.now() >= tokenExp || !navigator.onLine)) {
+                showLeftMarginAlert();
             }
         }
     };
@@ -4313,7 +4353,13 @@
         fetch(`https://www.googleapis.com/drive/v3/files?q=${query}&fields=files(id, name, modifiedTime)&orderBy=modifiedTime desc`, {
             headers: { 'Authorization': `Bearer ${accessToken}` }
         })
-        .then(res => res.json())
+        .then(res => {
+            if (res.status === 401 || res.status === 403) {
+                handleAuthError();
+                throw new Error("Auth expired");
+            }
+            return res.json();
+        })
         .then(data => {
             if (data.files && data.files.length > 0) {
                 targetNode.innerHTML = ''; 
@@ -4335,14 +4381,33 @@
             } else {
                 targetNode.innerHTML = `<div style="font-size:0.8rem; color:var(--muted-color); padding: 10px;">No cloud documents found.</div>`;
             }
+        })
+        .catch(() => {
+            if (targetNode) {
+                targetNode.innerHTML = `<div style="font-size:0.8rem; color:var(--muted-color); padding: 10px;">Unable to load cloud documents.</div>`;
+            }
         });
     }
 
+    // Fix 3: Offline fallback to cached local copy and timestamp conflict check before overwriting
     function fetchDocumentFromDrive(fileId, fileName) {
-        if (!accessToken) return;
-        saveIndicator.textContent = "Loading Cloud File...";
+        let db = getLocalDatabase();
+        let existingLocal = db.find(item => item.driveId === fileId);
+
+        if (!navigator.onLine || !accessToken) {
+            if (existingLocal) {
+                loadLocalFile(existingLocal.id);
+                showLeftMarginAlert();
+                return;
+            } else {
+                showZenAlert("Offline", "You are offline and this cloud document has not been cached locally yet.");
+                return;
+            }
+        }
+
+        saveIndicator.textContent = "Checking Cloud Version...";
         
-        fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+        fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?fields=id,name,modifiedTime`, {
             headers: { 'Authorization': `Bearer ${accessToken}` }
         })
         .then(res => {
@@ -4350,20 +4415,35 @@
                 handleAuthError();
                 throw new Error("Auth expired");
             }
-            return res.text();
+            return res.json();
+        })
+        .then(meta => {
+            const cloudModifiedTime = new Date(meta.modifiedTime).getTime();
+            const localModifiedTime = existingLocal ? (existingLocal.lastModified || 0) : 0;
+
+            if (existingLocal && localModifiedTime > cloudModifiedTime + 5000) {
+                loadLocalFile(existingLocal.id);
+                saveDocument(true);
+                showZenAlert("Offline Edits Recovered", "Your local offline edits were newer than the cloud version and have been synced.");
+                return null;
+            }
+
+            return fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+                headers: { 'Authorization': `Bearer ${accessToken}` }
+            }).then(r => r.text());
         })
         .then(content => {
+            if (content === null) return;
+
             editor.innerHTML = parseRawContentToEditorHTML(content);
             if (docTitle) docTitle.value = fileName;
             currentDriveFileId = fileId;
 
-            let db = getLocalDatabase();
-            let existingLocal = db.find(item => item.driveId === fileId);
-            
             if (existingLocal) {
                 currentLocalFileId = existingLocal.id;
                 existingLocal.content = editor.innerHTML;
                 existingLocal.title = fileName;
+                existingLocal.lastModified = Date.now();
             } else {
                 currentLocalFileId = "drive_local_" + fileId;
                 db.unshift({
@@ -4371,7 +4451,8 @@
                     title: fileName,
                     content: editor.innerHTML,
                     suiteMode: currentSuiteMode,
-                    driveId: fileId
+                    driveId: fileId,
+                    lastModified: Date.now()
                 });
             }
             
@@ -4395,14 +4476,19 @@
             pickerModifierSync();
         })
         .catch(error => {
-            showZenAlert("Cloud Load Error", "Failed to retrieve document from Google Drive: " + error.message);
-            saveIndicator.textContent = "Load Failed";
+            if (existingLocal) {
+                loadLocalFile(existingLocal.id);
+                showLeftMarginAlert();
+            } else {
+                showZenAlert("Cloud Load Error", "Failed to retrieve document from Google Drive: " + error.message);
+                saveIndicator.textContent = "Load Failed";
+            }
         });
     }
 
     let cloudSaveDebounceTimer = null;
 
-    function saveDocument() {
+    function saveDocument(flushImmediately = false) {
         if (!workspaceView.classList.contains('active')) return; 
         
         const title = (docTitle ? docTitle.value : '') || 'untitledProse.rtf';
@@ -4428,12 +4514,22 @@
         saveToLocalDatabase(fileRecord);
         updateUrlParameters(currentLocalFileId, currentSuiteMode);
 
-        if (currentDriveFileId && !currentDriveFileId.startsWith('drive_') && accessToken) {
+        if (currentDriveFileId && !currentDriveFileId.startsWith('drive_')) {
+            if (!accessToken || !navigator.onLine) {
+                showLeftMarginAlert();
+                return;
+            }
+
             saveIndicator.textContent = "Syncing...";
+            saveIndicator.classList.remove('sync-offline');
             syncDot.className = 'sync-dot';
             
             clearTimeout(cloudSaveDebounceTimer);
-            cloudSaveDebounceTimer = setTimeout(() => {
+            const runCloudPatch = () => {
+                if (!accessToken || !navigator.onLine) {
+                    showLeftMarginAlert();
+                    return;
+                }
                 const plainTextContent = serializedContent.replace(/<\/div>/gi, '\n').replace(/<[^>]+>/g, '');
                 
                 fetch(`https://www.googleapis.com/upload/drive/v3/files/${currentDriveFileId}?uploadType=media`, {
@@ -4450,13 +4546,20 @@
                         throw new Error("Auth expired");
                     }
                     if (!res.ok) throw new Error("Cloud save failed");
+                    hideLeftMarginAlert();
                     saveIndicator.textContent = "Synced";
                     syncDot.className = 'sync-dot connected';
                 })
                 .catch(() => {
                     showLeftMarginAlert();
                 });
-            }, 1500);
+            };
+
+            if (flushImmediately) {
+                runCloudPatch();
+            } else {
+                cloudSaveDebounceTimer = setTimeout(runCloudPatch, 1500);
+            }
         }
     }
 
@@ -4464,7 +4567,7 @@
         const newTitle = docTitle.value.trim() || "untitled";
         saveDocument();
         
-        if (currentDriveFileId && !currentDriveFileId.startsWith('drive_') && accessToken) {
+        if (currentDriveFileId && !currentDriveFileId.startsWith('drive_') && accessToken && navigator.onLine) {
             executeCloudRename(currentDriveFileId, newTitle);
         }
     });
@@ -4714,6 +4817,19 @@
 
         clearTimeout(historyDebounceTimer);
         historyDebounceTimer = setTimeout(recordHistorySnapshot, 400);
+    });
+
+    // Fix 4: Online / offline connection listeners
+    window.addEventListener('offline', () => {
+        if (currentDriveFileId) {
+            showLeftMarginAlert();
+        }
+    });
+
+    window.addEventListener('online', () => {
+        if (currentDriveFileId) {
+            trySilentTokenRefresh();
+        }
     });
 </script>
 </body>
